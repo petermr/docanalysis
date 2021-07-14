@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ref id="B12-molecules-24-00890">
+ <label>12.</label>
+ <element-citation publication-type="journal">
+  <person-group person-group-type="author">
+   <name>
+    <surname>Zhao</surname>
+    <given-names>X.</given-names>
+   </name>
+   <name>
+    <surname>Liu</surname>
+    <given-names>Z.</given-names>
+   </name>
+   <name>
+    <surname>Liu</surname>
+    <given-names>Z.</given-names>
+   </name>
+   <name>
+    <surname>Meng</surname>
+    <given-names>R.</given-names>
+   </name>
+   <name>
+    <surname>Shi</surname>
+    <given-names>C.</given-names>
+   </name>
+   <name>
+    <surname>Chen</surname>
+    <given-names>X.</given-names>
+   </name>
+   <name>
+    <surname>Bu</surname>
+    <given-names>X.</given-names>
+   </name>
+   <name>
+    <surname>Guo</surname>
+    <given-names>N.</given-names>
+   </name>
+  </person-group>
+  <article-title>Phenotype and RNA-seq-based transcriptome profiling of 
+   <italic>Staphylococcus aureus</italic> biofilms in response to tea tree oil
+  </article-title>
+  <source>Microb. Pathog.</source>
+  <year>2018</year>
+  <volume>123</volume>
+  <fpage>304</fpage>
+  <lpage>313</lpage>
+  <pub-id pub-id-type="doi">10.1016/j.micpath.2018.07.027</pub-id>
+  <?supplied-pmid 30041003?>
+  <pub-id pub-id-type="pmid">30041003</pub-id>
+ </element-citation>
+</ref>

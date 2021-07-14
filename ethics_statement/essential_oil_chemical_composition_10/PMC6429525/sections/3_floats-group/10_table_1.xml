@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table-wrap id="molecules-24-00890-t001" orientation="portrait" position="float">
+ <object-id pub-id-type="pii">molecules-24-00890-t001_Table 1</object-id>
+ <label>Table 1</label>
+ <caption>
+  <p>MIC determined for CGEOs on 
+   <italic>S.</italic> spp strains. EOID indicates samples names. Sample names are the same as previously reported [
+   <xref rid="B22-molecules-24-00890" ref-type="bibr">22</xref>]. Ofloxacin MIC is also reported as a positive reference drug. All data are expressed in mg/mL.
+  </p>
+ </caption>
+ <table frame="hsides" rules="groups">
+  <thead>
+   <tr>
+    <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin" rowspan="1" colspan="1">EOID</th>
+    <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin" rowspan="1" colspan="1">
+     <italic>S. aureus</italic> 6538P
+    </th>
+    <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin" rowspan="1" colspan="1">
+     <italic>S. aureus</italic> 25923
+    </th>
+    <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin" rowspan="1" colspan="1">
+     <italic>S. epidermidis</italic> RP62A
+    </th>
+    <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin" rowspan="1" colspan="1">
+     <italic>S. epidermidis</italic> O-47
+    </th>
+   </tr>
+  </thead>
+  <tbody>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CJ1</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CJ2</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">50</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CJ3</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CJ6</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CJ12</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CJ24</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CJM1</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CJM2</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CJM3</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–12.5</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CJM4</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CJM5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CA1</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CA2</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CA3</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CA6</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CA12</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CA24</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CAM1</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CAM2</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5–6.25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5–6.25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CAM3</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CAM4</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">6.25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">6.25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CAM5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CS1</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CS2</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CS3</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CS6</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CS12</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5–6.25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CS24</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">6.25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5–6.25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CSM1</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CSM2</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CSM3</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CSM4</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5–6.25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5–6.25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CSM5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CO1</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CO2</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CO3</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CO6</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–12.5</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CO12</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">CO24</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">COM1</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–12.5</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">COM2</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–12.5</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">COM3</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–12.5</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">COM4</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">12.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">COM5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">&gt;25</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" style="border-bottom:solid thin" rowspan="1" colspan="1">Ofloxacin</td>
+    <td align="center" valign="middle" style="border-bottom:solid thin" rowspan="1" colspan="1">0.0002–0.0004</td>
+    <td align="center" valign="middle" style="border-bottom:solid thin" rowspan="1" colspan="1">0.0004–0.0008</td>
+    <td align="center" valign="middle" style="border-bottom:solid thin" rowspan="1" colspan="1">0.0002–0.0004</td>
+    <td align="center" valign="middle" style="border-bottom:solid thin" rowspan="1" colspan="1">0.0002–0.0004</td>
+   </tr>
+  </tbody>
+ </table>
+</table-wrap>

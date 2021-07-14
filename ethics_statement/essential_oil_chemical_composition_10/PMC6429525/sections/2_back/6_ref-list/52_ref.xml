@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ref id="B52-molecules-24-00890">
+ <label>52.</label>
+ <element-citation publication-type="book">
+  <person-group person-group-type="author">
+   <name>
+    <surname>Kluyver</surname>
+    <given-names>T.</given-names>
+   </name>
+   <name>
+    <surname>Ragan-Kelley</surname>
+    <given-names>B.</given-names>
+   </name>
+   <name>
+    <surname>Pérez</surname>
+    <given-names>F.</given-names>
+   </name>
+   <name>
+    <surname>Granger</surname>
+    <given-names>B.</given-names>
+   </name>
+   <name>
+    <surname>Bussonnier</surname>
+    <given-names>M.</given-names>
+   </name>
+   <name>
+    <surname>Frederic</surname>
+    <given-names>J.</given-names>
+   </name>
+   <name>
+    <surname>Kelley</surname>
+    <given-names>K.</given-names>
+   </name>
+   <name>
+    <surname>Hamrick</surname>
+    <given-names>J.</given-names>
+   </name>
+   <name>
+    <surname>Grout</surname>
+    <given-names>J.</given-names>
+   </name>
+   <name>
+    <surname>Corlay</surname>
+    <given-names>S.</given-names>
+   </name>
+   <etal/>
+  </person-group>
+  <article-title>Jupyter Notebooks—A publishing format for reproducible computational workflows</article-title>
+  <source>Positioning and Power in Academic Publishing: Players, Agents and Agendas</source>
+  <person-group person-group-type="editor">
+   <name>
+    <surname>Loizides</surname>
+    <given-names>F.</given-names>
+   </name>
+   <name>
+    <surname>Scmidt</surname>
+    <given-names>B.</given-names>
+   </name>
+  </person-group>
+  <publisher-name>IOS Press</publisher-name>
+  <publisher-loc>Amsterdam, The Netherlands</publisher-loc>
+  <year>2016</year>
+  <fpage>87</fpage>
+  <lpage>90</lpage>
+  <pub-id pub-id-type="doi">10.3233/978-1-61499-649-1-87</pub-id>
+ </element-citation>
+</ref>

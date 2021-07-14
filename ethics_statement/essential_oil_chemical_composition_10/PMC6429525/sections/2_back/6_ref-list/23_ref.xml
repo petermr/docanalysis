@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ref id="B23-molecules-24-00890">
+ <label>23.</label>
+ <element-citation publication-type="journal">
+  <person-group person-group-type="author">
+   <name>
+    <surname>Riahi</surname>
+    <given-names>S.</given-names>
+   </name>
+   <name>
+    <surname>Pourbasheer</surname>
+    <given-names>E.</given-names>
+   </name>
+   <name>
+    <surname>Ganjali</surname>
+    <given-names>M.R.</given-names>
+   </name>
+   <name>
+    <surname>Norouzi</surname>
+    <given-names>P.</given-names>
+   </name>
+  </person-group>
+  <article-title>Investigation of different linear and nonlinear chemometric methods for modeling of retention index of essential oil components: Concerns to support vector machine</article-title>
+  <source>J. Hazard Mater.</source>
+  <year>2009</year>
+  <volume>166</volume>
+  <fpage>853</fpage>
+  <lpage>859</lpage>
+  <pub-id pub-id-type="doi">10.1016/j.jhazmat.2008.11.097</pub-id>
+  <?supplied-pmid 19144466?>
+  <pub-id pub-id-type="pmid">19144466</pub-id>
+ </element-citation>
+</ref>

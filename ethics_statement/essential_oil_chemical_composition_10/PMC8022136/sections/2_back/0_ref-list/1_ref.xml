@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ref id="bib1">
+ <element-citation publication-type="journal" id="sref1">
+  <person-group person-group-type="author">
+   <name>
+    <surname>An</surname>
+    <given-names>K.</given-names>
+   </name>
+   <name>
+    <surname>Zhao</surname>
+    <given-names>D.</given-names>
+   </name>
+   <name>
+    <surname>Wang</surname>
+    <given-names>Z.</given-names>
+   </name>
+   <name>
+    <surname>Wu</surname>
+    <given-names>J.</given-names>
+   </name>
+   <name>
+    <surname>Xu</surname>
+    <given-names>Y.</given-names>
+   </name>
+   <name>
+    <surname>Xiao</surname>
+    <given-names>G.</given-names>
+   </name>
+  </person-group>
+  <article-title>Comparison of different drying methods on Chinese ginger (
+   <italic>Zingiber officinale Roscoe</italic>): changes in volatiles, chemical profile, antioxidant properties, and microstructure
+  </article-title>
+  <source>Food Chem.</source>
+  <volume>197</volume>
+  <year>2016</year>
+  <fpage>1292</fpage>
+  <lpage>1300</lpage>
+  <pub-id pub-id-type="pmid">26675871</pub-id>
+ </element-citation>
+</ref>

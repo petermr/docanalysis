@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<contrib-group>
+ <contrib contrib-type="author">
+  <contrib-id contrib-id-type="orcid" authenticated="true">https://orcid.org/0000-0001-5961-3328</contrib-id>
+  <name>
+   <surname>Patsilinakos</surname>
+   <given-names>Alexandros</given-names>
+  </name>
+  <xref ref-type="aff" rid="af1-molecules-24-00890">1</xref>
+  <xref ref-type="aff" rid="af2-molecules-24-00890">2</xref>
+  <xref ref-type="author-notes" rid="fn1-molecules-24-00890">†</xref>
+ </contrib>
+ <contrib contrib-type="author">
+  <name>
+   <surname>Artini</surname>
+   <given-names>Marco</given-names>
+  </name>
+  <xref ref-type="aff" rid="af3-molecules-24-00890">3</xref>
+  <xref ref-type="author-notes" rid="fn1-molecules-24-00890">†</xref>
+ </contrib>
+ <contrib contrib-type="author">
+  <name>
+   <surname>Papa</surname>
+   <given-names>Rosanna</given-names>
+  </name>
+  <xref ref-type="aff" rid="af3-molecules-24-00890">3</xref>
+ </contrib>
+ <contrib contrib-type="author">
+  <name>
+   <surname>Sabatino</surname>
+   <given-names>Manuela</given-names>
+  </name>
+  <xref ref-type="aff" rid="af2-molecules-24-00890">2</xref>
+ </contrib>
+ <contrib contrib-type="author">
+  <contrib-id contrib-id-type="orcid" authenticated="true">https://orcid.org/0000-0001-6718-8800</contrib-id>
+  <name>
+   <surname>Božović</surname>
+   <given-names>Mijat</given-names>
+  </name>
+  <xref ref-type="aff" rid="af4-molecules-24-00890">4</xref>
+ </contrib>
+ <contrib contrib-type="author">
+  <contrib-id contrib-id-type="orcid" authenticated="true">https://orcid.org/0000-0001-8535-0533</contrib-id>
+  <name>
+   <surname>Garzoli</surname>
+   <given-names>Stefania</given-names>
+  </name>
+  <xref ref-type="aff" rid="af5-molecules-24-00890">5</xref>
+ </contrib>
+ <contrib contrib-type="author">
+  <name>
+   <surname>Vrenna</surname>
+   <given-names>Gianluca</given-names>
+  </name>
+  <xref ref-type="aff" rid="af3-molecules-24-00890">3</xref>
+ </contrib>
+ <contrib contrib-type="author">
+  <name>
+   <surname>Buzzi</surname>
+   <given-names>Raissa</given-names>
+  </name>
+  <xref ref-type="aff" rid="af6-molecules-24-00890">6</xref>
+ </contrib>
+ <contrib contrib-type="author">
+  <name>
+   <surname>Manfredini</surname>
+   <given-names>Stefano</given-names>
+  </name>
+  <xref ref-type="aff" rid="af6-molecules-24-00890">6</xref>
+  <xref rid="c1-molecules-24-00890" ref-type="corresp">*</xref>
+ </contrib>
+ <contrib contrib-type="author">
+  <name>
+   <surname>Selan</surname>
+   <given-names>Laura</given-names>
+  </name>
+  <xref ref-type="aff" rid="af3-molecules-24-00890">3</xref>
+  <xref rid="c1-molecules-24-00890" ref-type="corresp">*</xref>
+ </contrib>
+ <contrib contrib-type="author">
+  <contrib-id contrib-id-type="orcid" authenticated="true">https://orcid.org/0000-0001-5399-975X</contrib-id>
+  <name>
+   <surname>Ragno</surname>
+   <given-names>Rino</given-names>
+  </name>
+  <xref ref-type="aff" rid="af1-molecules-24-00890">1</xref>
+  <xref ref-type="aff" rid="af2-molecules-24-00890">2</xref>
+  <xref rid="c1-molecules-24-00890" ref-type="corresp">*</xref>
+ </contrib>
+</contrib-group>

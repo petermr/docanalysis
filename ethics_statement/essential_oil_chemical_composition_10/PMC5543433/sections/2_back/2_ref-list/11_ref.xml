@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ref id="CR11">
+ <label>11.</label>
+ <element-citation publication-type="book">
+  <person-group person-group-type="author">
+   <name>
+    <surname>Pratt</surname>
+    <given-names>DE</given-names>
+   </name>
+  </person-group>
+  <person-group person-group-type="editor">
+   <name>
+    <surname>Simic</surname>
+    <given-names>MG</given-names>
+   </name>
+   <name>
+    <surname>Karel</surname>
+    <given-names>M</given-names>
+   </name>
+  </person-group>
+  <article-title>Natural antioxidants of soybean and other oil-seeds</article-title>
+  <source>Autoxidation in food and biological systems</source>
+  <year>1980</year>
+  <publisher-loc>New York</publisher-loc>
+  <publisher-name>Plenum Press</publisher-name>
+  <fpage>283</fpage>
+  <lpage>292</lpage>
+ </element-citation>
+</ref>

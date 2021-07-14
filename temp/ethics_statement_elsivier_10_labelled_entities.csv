@@ -1,0 +1,26 @@
+,Entities,Labels,Position_Start,Position_End
+0,the National Institute of Advanced Industrial Science and Technology,ORG,53,121
+1,A2018-290,ORG,207,216
+2,the Ministry of Education,ORG,272,297
+3,"Culture, Sports, Science",ORG,299,323
+4,the Guidelines for Proper Conduct,ORG,409,442
+5,Animal Experiments,ORG,446,464
+6,the Science Council of Japan,ORG,479,507
+7,the Institutional Review Board of Anam Hospital,ORG,535,582
+8,the Korea University Medical Center,ORG,603,638
+9,the Korea University Anam Hospital,ORG,703,737
+10,the Declaration of Helsinki,WORK_OF_ART,818,845
+11,the Institutional Animal Care and Use Committee (IACUC,ORG,908,962
+12,Seoul National University (Approval,ORG,967,1002
+13,the Western Sydney University Human Research Ethics Committee,ORG,1063,1124
+14,Australia,GPE,1126,1135
+15,the Johns Hopkins University Institutional,ORG,1165,1207
+16,IRB00122135,ORG,1231,1242
+17,U.C. Davis School of Medicine,ORG,1327,1356
+18,Saint Mary's,PERSON,1361,1373
+19,College of California Institutional Animal Care,ORG,1374,1421
+20,the National Institutes of Health,ORG,1465,1498
+21,Laboratory,ORG,1529,1539
+22,NIH Publications,ORG,1549,1565
+23,8023,DATE,1570,1574
+24,1978,DATE,1584,1588

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table-wrap id="molecules-24-02701-t002" orientation="portrait" position="float">
+ <object-id pub-id-type="pii">molecules-24-02701-t002_Table 2</object-id>
+ <label>Table 2</label>
+ <caption>
+  <p>Percentage of the main compounds in the LEO sample in comparison with the accepted percentages by European Pharmacopoeia (EPh).</p>
+ </caption>
+ <table frame="hsides" rules="groups">
+  <thead>
+   <tr>
+    <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin" rowspan="1" colspan="1">Component</th>
+    <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin" rowspan="1" colspan="1">EPh</th>
+    <th align="center" valign="middle" style="border-top:solid thin;border-bottom:solid thin" rowspan="1" colspan="1">Lavandin</th>
+   </tr>
+  </thead>
+  <tbody>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">linalool</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–45</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">41.6</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">linalyl acetate</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">25–46</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">23.0</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" rowspan="1" colspan="1">1,8-cineole</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">max. 2.5</td>
+    <td align="center" valign="middle" rowspan="1" colspan="1">5.2</td>
+   </tr>
+   <tr>
+    <td align="center" valign="middle" style="border-bottom:solid thin" rowspan="1" colspan="1">camphor</td>
+    <td align="center" valign="middle" style="border-bottom:solid thin" rowspan="1" colspan="1">12–18</td>
+    <td align="center" valign="middle" style="border-bottom:solid thin" rowspan="1" colspan="1">6.0</td>
+   </tr>
+  </tbody>
+ </table>
+</table-wrap>

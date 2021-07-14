@@ -1,0 +1,8 @@
+pandas
+spacy
+numpy
+matplotlib
+tqdm
+en_core_web_sm
+BeautifulSoup
+xml.etree.ElementTree
