@@ -452,7 +452,6 @@ class EthicStatements:
 
         df = pd.DataFrame(dict_with_parsed_xml)
         df = df.T
-        #logging.debug(df.shape)
         df.sort_values(by=["weight"], ascending=True)
         df.to_csv(path, encoding="utf-8", line_terminator="\r\n")
         logging.info(f"wrote output to {path}")
@@ -493,15 +492,15 @@ class EthicStatements:
             for sentence in sentences_to_pop:
                 dict_with_parsed_xml[statement]["sentence_dict"].pop(sentence)
 
-make_pygetpapers = False
-PROJECT_HOME = os.path.join(os.path.expanduser('~'), 'docanalysis')
+make_pygetpapers = True
+PROJECT_HOME = os.path.join((os.path.expanduser('~')),'docanalysis')
 NUM_PAPERS = 10
 ethic_statement_creator = EthicStatements()
 ethic_statement_creator.extract_entities_from_papers(
     PROJECT_HOME,
     "essential oil AND chemical composition",
     NUM_PAPERS,
-    f"essential_oil_chemical_composition_{NUM_PAPERS}",
+    os.path.join(PROJECT_HOME, f"essential_oil_chemical_composition_{NUM_PAPERS}"),
     os.path.join(
         PROJECT_HOME, "ethics_dictionary", "methods_key_phrases", "methods_key_phrases.xml"
     ),

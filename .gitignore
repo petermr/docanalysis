@@ -130,3 +130,6 @@ dmypy.json
 
 # temporary results
 temp/
+
+#corpus
+oil186/
