@@ -59,7 +59,7 @@ class EthicStatements:
         self.make_rows_from_sentence_dict(
             dict_with_parsed_xml=dict_with_parsed_xml)
         self.convert_dict_to_csv(
-            path=f"{OUTPUT}.csv", dict_with_parsed_xml=dict_with_parsed_xml
+            path=os.path.join(os.getcwd(), '../', 'temp', f"{OUTPUT}.csv"), dict_with_parsed_xml=dict_with_parsed_xml
         )
 
     def create_project_files(self, QUERY, HITS, OUTPUT):
@@ -266,7 +266,7 @@ class EthicStatements:
         :param dict_with_parsed_xml: [description]
         :type dict_with_parsed_xml: [type]
         """
-        nlp = spacy.load("en_core_web_sm")
+        nlp = spacy.load("en_core_web_sm",disable=['tagger', 'parser', 'ner'])
         logging.info(
             "splitting ethics statement containing paragraphs into sentences")
         logging.info("phrase matching at sentence level")
@@ -473,10 +473,10 @@ class EthicStatements:
 ethic_statement_creator = EthicStatements()
 ethic_statement_creator.extract_entities_from_papers(
     os.getcwd(),
-    "essential oil AND chemical composition",
-    100,
+    "(METHOD: stem cell AND (((SRC:MED OR SRC:PMC OR SRC:AGR OR SRC:CBA) NOT (PUB_TYPE:'Review')))) AND (FIRST_PDATE:2021)",
+    300,
     os.path.join(
-        os.getcwd(), "../", "ethics_dictionary", "e_cancer_clinical_trial_50",
+        os.getcwd(), "../", "stem_cell_research_300",
     ),
     os.path.join(
         os.getcwd(), "../", "ethics_dictionary", "ethics_key_phrases", "ethics_key_phrases.xml"
