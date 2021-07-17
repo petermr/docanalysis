@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 from glob import glob
 import spacy
@@ -23,7 +24,6 @@ class EthicStatements:
         self, working_directory, QUERY, HITS, OUTPUT, TERMS_XML_PATH
     ):
         """[summary]
-
         :param working_directory: [description]
         :type working_directory: [type]
         :param QUERY: [description]
@@ -36,8 +36,7 @@ class EthicStatements:
         :type TERMS_XML_PATH: [type]
         """
         # self.install_ami()
-        if make_pygetpapers:
-            self.create_project_files(QUERY, HITS, OUTPUT)
+        #self.create_project_files(QUERY, HITS, OUTPUT)
         dict_with_parsed_xml = self.make_dict_with_pmcids(
             working_directory, OUTPUT)
         terms = self.get_terms_from_ami_xml(TERMS_XML_PATH)
@@ -60,12 +59,11 @@ class EthicStatements:
         self.make_rows_from_sentence_dict(
             dict_with_parsed_xml=dict_with_parsed_xml)
         self.convert_dict_to_csv(
-            path=os.path.join(PROJECT_HOME,'temp', f"{OUTPUT}.csv"), dict_with_parsed_xml=dict_with_parsed_xml
+            path=f"{OUTPUT}.csv", dict_with_parsed_xml=dict_with_parsed_xml
         )
 
     def create_project_files(self, QUERY, HITS, OUTPUT):
         """[summary]
-
         :param QUERY: [description]
         :type QUERY: [type]
         :param HITS: [description]
@@ -88,7 +86,6 @@ class EthicStatements:
 
     def make_dict_with_pmcids(self, working_directory, output):
         """[summary]
-
         :param working_directory: [description]
         :type working_directory: [type]
         :param output: [description]
@@ -96,8 +93,6 @@ class EthicStatements:
         :return: [description]
         :rtype: [type]
         """
-
-        #TODO fix working directory 
 
         dict_with_parsed_xml = {}
         all_paragraphs = glob(
@@ -117,7 +112,6 @@ class EthicStatements:
         self, dict_with_parsed_xml, paragraph_file
     ):
         """[summary]
-
         :param dict_with_parsed_xml: [description]
         :type dict_with_parsed_xml: [type]
         :param paragraph_file: [description]
@@ -128,7 +122,6 @@ class EthicStatements:
 
     def add_ethic_statements_to_dict(self, dict_with_parsed_xml):
         """[summary]
-
         :param dict_with_parsed_xml: [description]
         :type dict_with_parsed_xml: [type]
         """
@@ -143,7 +136,6 @@ class EthicStatements:
 
     def make_rows_from_sentence_dict(self, dict_with_parsed_xml):
         """[summary]
-
         :param dict_with_parsed_xml: [description]
         :type dict_with_parsed_xml: [type]
         """
@@ -160,7 +152,6 @@ class EthicStatements:
 
     def initiate_lists(self):
         """[summary]
-
         :return: [description]
         :rtype: [type]
         """
@@ -175,7 +166,6 @@ class EthicStatements:
     def append_values_to_lists(self, dict_with_sentences, entities, labels, position_end,
                                position_start, sentence, sentence_has_terms, sentences):
         """[summary]
-
         :param dict_with_sentences: [description]
         :type dict_with_sentences: [type]
         :param entities: [description]
@@ -201,11 +191,10 @@ class EthicStatements:
         position_end.append(sentence_dict["position_end"])
         sentence_has_terms.append(sentence_dict["matched_phrases"])
 
-    def add_lists_for_sentences_to_dict(self, dict_for_statement, entities=False, labels=False,
-                                        position_end=False,
-                                        position_start=False, sentence_has_terms=False, sentences=False):
+    def add_lists_for_sentences_to_dict(self, dict_for_statement, entities=None, labels=None,
+                                        position_end=None,
+                                        position_start=None, sentence_has_terms=None, sentences=None):
         """[summary]
-
         :param dict_for_statement: [description]
         :type dict_for_statement: [type]
         :param entities: [description], defaults to False
@@ -221,22 +210,21 @@ class EthicStatements:
         :param sentences: [description], defaults to False
         :type sentences: bool, optional
         """
-        if sentences:
+        if sentences is not None:
             dict_for_statement["sentences"] = sentences
-        if entities:
+        if entities is not None:
             dict_for_statement["entities"] = entities
-        if labels:
+        if labels is not None:
             dict_for_statement["labels"] = labels
-        if position_start:
+        if position_start is not None:
             dict_for_statement["position_start"] = position_start
-        if position_end:
+        if position_end is not None:
             dict_for_statement["position_end"] = position_end
-        if sentence_has_terms:
+        if sentence_has_terms is not None:
             dict_for_statement["sentence_has_terms"] = sentence_has_terms
 
     def add_if_file_contains_terms(self, terms, dict_with_parsed_xml):
         """[summary]
-
         :param terms: [description]
         :type terms: [type]
         :param dict_with_parsed_xml: [description]
@@ -261,7 +249,6 @@ class EthicStatements:
 
     def initiate_phrase_matcher(self, terms):
         """[summary]
-
         :param terms: [description]
         :type terms: [type]
         :return: [description]
@@ -274,7 +261,6 @@ class EthicStatements:
 
     def sentence_based_phrase_matching(self, terms, dict_with_parsed_xml):
         """[summary]
-
         :param terms: [description]
         :type terms: [type]
         :param dict_with_parsed_xml: [description]
@@ -283,21 +269,23 @@ class EthicStatements:
         nlp = spacy.load("en_core_web_sm")
         logging.info(
             "splitting ethics statement containing paragraphs into sentences")
+        logging.info("phrase matching at sentence level")
         for statement in tqdm(dict_with_parsed_xml):
+            if len(dict_with_parsed_xml) == 0:
+                logging.warning("No terms matching")
+                sys.exit(1)
             sentence_dict = dict_with_parsed_xml[statement]
             sentences = self.split_in_sentences(
                 sentence_dict["parsed"]
             )
             matcher = self.initiate_phrase_matcher(terms)
             sentence_dict["sentence_dict"] = {}
-            logging.info("phrase matching at sentence level")
             for sentence in tqdm(sentences):
                 self.add_matched_phrases_for_sentence(
                     matcher, nlp, sentence, sentence_dict)
 
     def add_matched_phrases_for_sentence(self, matcher, nlp, sentence, sentence_dict):
         """[summary]
-
         :param matcher: [description]
         :type matcher: [type]
         :param nlp: [description]
@@ -321,7 +309,6 @@ class EthicStatements:
     @staticmethod
     def split_in_sentences(text):
         """[summary]
-
         :param text: [description]
         :type text: [type]
         :return: [description]
@@ -334,7 +321,6 @@ class EthicStatements:
     @staticmethod
     def get_terms_from_ami_xml(xml_path):
         """[summary]
-
         :param xml_path: [description]
         :type xml_path: [type]
         :return: [description]
@@ -350,7 +336,6 @@ class EthicStatements:
 
     def iterate_over_xml_and_populate_sentence_dict(self, dict_with_parsed_xml):
         """[summary]
-
         :param dict_with_parsed_xml: [description]
         :type dict_with_parsed_xml: [type]
         """
@@ -368,7 +353,6 @@ class EthicStatements:
         self, dict_with_parsed_xml, dict_to_add_list_to,
     ):
         """[summary]
-
         :param dict_with_parsed_xml: [description]
         :type dict_with_parsed_xml: [type]
         :param dict_to_add_list_to: [description]
@@ -390,7 +374,6 @@ class EthicStatements:
 
     def add_parsed_xml(self, dict_with_parsed_xml, ethics_statement, root):
         """[summary]
-
         :param dict_with_parsed_xml: [description]
         :type dict_with_parsed_xml: [type]
         :param ethics_statement: [description]
@@ -409,7 +392,6 @@ class EthicStatements:
 
     def make_required_lists(self):
         """[summary]
-
         :return: [description]
         :rtype: [type]
         """
@@ -423,7 +405,6 @@ class EthicStatements:
         self, entities, labels, position_end, position_start, ent=None
     ):
         """[summary]
-
         :param entities: [description]
         :type entities: [type]
         :param labels: [description]
@@ -443,7 +424,6 @@ class EthicStatements:
 
     def convert_dict_to_csv(self, path, dict_with_parsed_xml):
         """[summary]
-
         :param path: [description]
         :type path: [type]
         :param dict_with_parsed_xml: [description]
@@ -452,13 +432,11 @@ class EthicStatements:
 
         df = pd.DataFrame(dict_with_parsed_xml)
         df = df.T
-        df.sort_values(by=["weight"], ascending=True)
         df.to_csv(path, encoding="utf-8", line_terminator="\r\n")
         logging.info(f"wrote output to {path}")
 
     def remove_tems_which_have_false_terms(self, dict_with_parsed_xml):
         """[summary]
-
         :param dict_with_parsed_xml: [description]
         :type dict_with_parsed_xml: [type]
         """
@@ -472,7 +450,6 @@ class EthicStatements:
 
     def remove_sentences_not_having_terms(self, dict_with_parsed_xml):
         """[summary]
-
         :param dict_with_parsed_xml: [description]
         :type dict_with_parsed_xml: [type]
         """
@@ -492,17 +469,17 @@ class EthicStatements:
             for sentence in sentences_to_pop:
                 dict_with_parsed_xml[statement]["sentence_dict"].pop(sentence)
 
-make_pygetpapers = True
-PROJECT_HOME = os.path.join((os.path.expanduser('~')),'docanalysis')
-NUM_PAPERS = 10
+
 ethic_statement_creator = EthicStatements()
 ethic_statement_creator.extract_entities_from_papers(
-    PROJECT_HOME,
+    os.getcwd(),
     "essential oil AND chemical composition",
-    NUM_PAPERS,
-    os.path.join(PROJECT_HOME, f"essential_oil_chemical_composition_{NUM_PAPERS}"),
+    100,
     os.path.join(
-        PROJECT_HOME, "ethics_dictionary", "methods_key_phrases", "methods_key_phrases.xml"
+        os.getcwd(), "../", "ethics_dictionary", "e_cancer_clinical_trial_50",
+    ),
+    os.path.join(
+        os.getcwd(), "../", "ethics_dictionary", "ethics_key_phrases", "ethics_key_phrases.xml"
     ),
 )
 
