@@ -6,3 +6,4 @@ tqdm
 en_core_web_sm
 BeautifulSoup
 xml.etree.ElementTree
+git+git://github.com/petermr/pygetpapers

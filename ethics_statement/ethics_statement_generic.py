@@ -473,13 +473,13 @@ class EthicStatements:
 ethic_statement_creator = EthicStatements()
 ethic_statement_creator.extract_entities_from_papers(
     os.getcwd(),
-    "(METHOD: stem cell AND (((SRC:MED OR SRC:PMC OR SRC:AGR OR SRC:CBA) NOT (PUB_TYPE:'Review')))) AND (FIRST_PDATE:2021)",
+    "(METHOD: stem cell AND (((SRC:MED OR SRC:PMC OR SRC:AGR OR SRC:CBA) NOT (PUB_TYPE:'Review')))) AND (FIRST_PDATE:2020)",
     300,
     os.path.join(
-        os.getcwd(), "../", "stem_cell_research_300",
+        os.getcwd(), "../", "oil186",
     ),
     os.path.join(
-        os.getcwd(), "../", "ethics_dictionary", "ethics_key_phrases", "ethics_key_phrases.xml"
+        os.getcwd(), "../", "ethics_dictionary", "features_ack", "features_ack.xml"
     ),
 )
 
