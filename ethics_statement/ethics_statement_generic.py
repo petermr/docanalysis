@@ -36,7 +36,7 @@ class EthicStatements:
         :type TERMS_XML_PATH: [type]
         """
         # self.install_ami()
-        #self.create_project_files(QUERY, HITS, OUTPUT)
+        self.create_project_files(QUERY, HITS, OUTPUT)
         dict_with_parsed_xml = self.make_dict_with_pmcids(
             working_directory, OUTPUT)
         terms = self.get_terms_from_ami_xml(TERMS_XML_PATH)
@@ -266,7 +266,7 @@ class EthicStatements:
         :param dict_with_parsed_xml: [description]
         :type dict_with_parsed_xml: [type]
         """
-        nlp = spacy.load("en_core_web_sm",disable=['tagger', 'parser', 'ner'])
+        nlp = spacy.load("en_core_web_sm")
         logging.info(
             "splitting ethics statement containing paragraphs into sentences")
         logging.info("phrase matching at sentence level")
@@ -473,13 +473,13 @@ class EthicStatements:
 ethic_statement_creator = EthicStatements()
 ethic_statement_creator.extract_entities_from_papers(
     os.getcwd(),
-    "(METHOD: stem cell AND (((SRC:MED OR SRC:PMC OR SRC:AGR OR SRC:CBA) NOT (PUB_TYPE:'Review')))) AND (FIRST_PDATE:2020)",
-    300,
+    "lantana",
+    20,
     os.path.join(
-        os.getcwd(), "../", "oil186",
+        os.path.expanduser('~'), "ethics_statement_corpus_1000"
     ),
     os.path.join(
-        os.getcwd(), "../", "ethics_dictionary", "features_ack", "features_ack.xml"
+        os.getcwd(), "../", "ethics_dictionary", "ethics_key_phrases", "ethics_key_phrases.xml"
     ),
 )
 
