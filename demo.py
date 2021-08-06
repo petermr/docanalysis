@@ -1,5 +1,5 @@
 import os
-from docanalysis.extract_entities import DocAnalysis
+from docanalysis import DocAnalysis
 ethic_statement_creator = DocAnalysis()
 dict_for_entities = ethic_statement_creator.extract_entities_from_papers(
     "essential oil AND chemical composition",

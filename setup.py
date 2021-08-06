@@ -7,30 +7,25 @@ except ImportError:
     from distutils.core import setup
 import configparser
 import os
-with open(os.path.join(os.path.dirname(__file__), "ethics_statement", "config.ini")) as f:
-    config_file = f.read()
-config = configparser.RawConfigParser(allow_no_value=True)
-config.read_string(config_file)
-version = config.get("ethics_statement", "version")
 
 with open('README.md') as readme_file:
     readme = readme_file.read()
 requirements = ['pandas', 'spacy', 'numpy',
-            'matplotlib','tqdm','en_core_web_sm','BeautifulSoup','xml.etree.ElementTree']
+                'matplotlib', 'tqdm', 'en_core_web_sm', 'beautifulsoup4']
 
 setup(
-    name='ethics_statement',
-    version=f"{version}",
+    name='docanalysis',
+    version="0.0.2",
     description='extract structured information from ethics paragraphs',
     long_description=readme,
     author='Ayush Garg, Shweata N. Hegde',
     author_email='ayush@science.org.in',
     url='https://github.com/petermr/docanalysis',
     packages=[
-        'ethics_statement',
+        'extract_entities',
     ],
-    package_dir={'ethics_statement':
-                 'ethics_statement_generic'},
+    package_dir={'extract_entities':
+                 'docanalysis'},
     include_package_data=True,
     install_requires=requirements,
     license='Apache License',
