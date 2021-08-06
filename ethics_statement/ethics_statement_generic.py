@@ -36,7 +36,7 @@ class EthicStatements:
         :type TERMS_XML_PATH: [type]
         """
         # self.install_ami()
-        #self.create_project_files(QUERY, HITS, OUTPUT)
+        # self.create_project_files(QUERY, HITS, OUTPUT)
         dict_with_parsed_xml = self.make_dict_with_pmcids(
             working_directory, OUTPUT)
         terms = self.get_terms_from_ami_xml(TERMS_XML_PATH)
@@ -47,17 +47,7 @@ class EthicStatements:
         self.remove_tems_which_have_false_terms(
             dict_with_parsed_xml=dict_with_parsed_xml
         )
-        self.sentence_based_phrase_matching(
-            terms=terms, dict_with_parsed_xml=dict_with_parsed_xml
-        )
-        self.remove_sentences_not_having_terms(
-            dict_with_parsed_xml=dict_with_parsed_xml
-        )
-        self.iterate_over_xml_and_populate_sentence_dict(
-            dict_with_parsed_xml=dict_with_parsed_xml
-        )
-        self.make_rows_from_sentence_dict(
-            dict_with_parsed_xml=dict_with_parsed_xml)
+
         self.convert_dict_to_csv(
             path=f"{OUTPUT}.csv", dict_with_parsed_xml=dict_with_parsed_xml
         )
@@ -230,7 +220,7 @@ class EthicStatements:
         :param dict_with_parsed_xml: [description]
         :type dict_with_parsed_xml: [type]
         """
-        matcher = self.initiate_phrase_matcher(terms)
+        # matcher = self.initiate_phrase_matcher(terms)
 
         logging.info("phrase matching at top level")
 
@@ -239,12 +229,10 @@ class EthicStatements:
             statement_dict = dict_with_parsed_xml[statement]
             statement_dict["has_terms"] = False
             statement_dict["weight"] = 0
-            doc = nlp(statement_dict["parsed"])
-            matches = matcher(doc)
-            for match_id, start, end in matches:
-                matched_span = doc[start:end]
-                matched_phrases.append(matched_span.text)
-                statement_dict["has_terms"] = matched_phrases
+            for term in terms:
+                if term in statement_dict["parsed"]:
+                    matched_phrases.append(term)
+            statement_dict["has_terms"] = matched_phrases
             statement_dict["weight"] = len(matched_phrases)
 
     def initiate_phrase_matcher(self, terms):
@@ -266,25 +254,26 @@ class EthicStatements:
         :param dict_with_parsed_xml: [description]
         :type dict_with_parsed_xml: [type]
         """
-        nlp = spacy.load("en_core_web_sm")
+        from joblib import Parallel, delayed
+
+        # nlp = spacy.load("en_core_web_sm")
         logging.info(
             "splitting ethics statement containing paragraphs into sentences")
         logging.info("phrase matching at sentence level")
-        for statement in tqdm(dict_with_parsed_xml):
-            if len(dict_with_parsed_xml) == 0:
-                logging.warning("No terms matching")
-                sys.exit(1)
-            sentence_dict = dict_with_parsed_xml[statement]
-            sentences = self.split_in_sentences(
-                sentence_dict["parsed"]
-            )
-            matcher = self.initiate_phrase_matcher(terms)
-            sentence_dict["sentence_dict"] = {}
-            for sentence in tqdm(sentences):
-                self.add_matched_phrases_for_sentence(
-                    matcher, nlp, sentence, sentence_dict)
+        Parallel(n_jobs=10)(delayed(self.parallel_sentence_based_matcher)(
+            terms, dict_with_parsed_xml[sentence]) for sentence in tqdm(dict_with_parsed_xml))
 
-    def add_matched_phrases_for_sentence(self, matcher, nlp, sentence, sentence_dict):
+    def parallel_sentence_based_matcher(self, terms, sentence_dict):
+        logging.info("doing parallel_sentence_based_matcher")
+        sentences = self.split_in_sentences(
+            sentence_dict["parsed"]
+        )
+        sentence_dict["sentence_dict"] = {}
+        for sentence in tqdm(sentences):
+            self.add_matched_phrases_for_sentence(
+                sentence, terms, sentence_dict)
+
+    def add_matched_phrases_for_sentence(self, sentence, terms, sentence_dict):
         """[summary]
         :param matcher: [description]
         :type matcher: [type]
@@ -295,13 +284,12 @@ class EthicStatements:
         :param sentence_dict: [description]
         :type sentence_dict: [type]
         """
+        logging.info("Started phrase matching")
         sentence_dict["sentence_dict"][sentence] = {}
         matched_phrases = []
-        doc = nlp(sentence)
-        matches = matcher(doc)
-        for match_id, start, end in matches:
-            matched_span = doc[start:end]
-            matched_phrases.append(matched_span.text)
+        for term in terms:
+            if term in sentence:
+                matched_phrases.append(term)
         sentence_dict["sentence_dict"][sentence][
             "matched_phrases"
         ] = matched_phrases
@@ -314,7 +302,6 @@ class EthicStatements:
         :return: [description]
         :rtype: [type]
         """
-        nlp = spacy.load("en_core_web_sm")
         doc = nlp(text)
         return [str(sent).strip() for sent in doc.sents]
 
@@ -476,7 +463,7 @@ ethic_statement_creator.extract_entities_from_papers(
     "essential oil AND chemical composition",
     100,
     os.path.join(
-        os.getcwd(), "../", "ethics_dictionary", "e_cancer_clinical_trial_50",
+        os.getcwd(), "../", "corpus", "e_cancer_clinical_trial_50",
     ),
     os.path.join(
         os.getcwd(), "../", "ethics_dictionary", "ethics_key_phrases", "ethics_key_phrases.xml"
