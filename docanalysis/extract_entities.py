@@ -35,7 +35,7 @@ class DocAnalysis:
         :return: dict with entities extracted
         :rtype: dict
         """
-        #self.create_project_files(QUERY, HITS, OUTPUT)
+        self.create_project_files(QUERY, HITS, OUTPUT)
         # self.install_ami()
         dict_with_parsed_xml = self.make_dict_with_parsed_xml(
             OUTPUT)
@@ -48,26 +48,6 @@ class DocAnalysis:
         self.convert_dict_to_csv(
             path=os.path.join(OUTPUT, 'entities.csv'), dict_with_parsed_xml=dict_with_parsed_xml)
         return dict_with_parsed_xml
-
-    def create_project_and_make_csv(self, QUERY, HITS, OUTPUT):
-        """[summary]
-
-        :param working_directory: [description]
-        :type working_directory: [type]
-        :param QUERY: [description]
-        :type QUERY: [type]
-        :param HITS: [description]
-        :type HITS: [type]
-        :param OUTPUT: [description]
-        :type OUTPUT: [type]
-        """
-        self.create_project_files(QUERY, HITS, OUTPUT)
-        # self.install_ami()
-        dict_with_parsed_xml = self.make_dict_with_parsed_xml(
-            OUTPUT)
-        self.add_parsed_sections_to_dict(dict_with_parsed_xml)
-        self.convert_dict_to_csv(
-            path=f'{OUTPUT}_spacy.csv', dict_with_parsed_xml=dict_with_parsed_xml)
 
     def create_project_files(self, QUERY, HITS, OUTPUT):
         os.system(f'pygetpapers -q "{QUERY}" -k {HITS} -o {OUTPUT} -x')
