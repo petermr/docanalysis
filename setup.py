@@ -11,7 +11,7 @@ import os
 with open('README.md') as readme_file:
     readme = readme_file.read()
 requirements = ['pandas', 'spacy', 'numpy',
-                'matplotlib', 'tqdm', 'en_core_web_sm', 'beautifulsoup4']
+                'matplotlib', 'tqdm', 'beautifulsoup4', ]
 
 setup(
     name='docanalysis',

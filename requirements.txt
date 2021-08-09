@@ -3,5 +3,4 @@ spacy
 numpy
 matplotlib
 tqdm
-en_core_web_sm
 beautifulsoup4
