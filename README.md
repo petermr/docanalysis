@@ -67,6 +67,8 @@ To break this down,
 Dictionary, in `ami`'s terminology, a set of terms/phrases in XML format. 
 Dictionaries related to ethics and acknowledgments are available in [Ethics Dictionary](https://github.com/petermr/docanalysis/tree/main/ethics_dictionary) folder
 
+If you'd like to create a custom dictionary, you can find the steps, [here]()
+
 ## History
 
 History is available in [`dictionary` repository](https://github.com/petermr/dictionary/blob/main/ethics_statement_project/ethics_statement_project.md)   
