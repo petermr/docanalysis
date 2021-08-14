@@ -15,7 +15,7 @@ requirements = ['pandas', 'spacy', 'numpy',
 
 setup(
     name='docanalysis',
-    version="0.0.2",
+    version="0.0.3",
     description='extract structured information from ethics paragraphs',
     long_description=readme,
     author='Ayush Garg, Shweata N. Hegde',

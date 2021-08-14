@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 from glob import glob
 import spacy
@@ -19,34 +20,53 @@ class DocAnalysis:
     """ """
 
     def __init__(self):
+        self.labels_to_get = []
         logging.basicConfig(level=logging.INFO)
 
-    def extract_entities_from_papers(self, QUERY, HITS, OUTPUT, TERMS_XML_PATH):
+    def extract_entities_from_papers(self, CORPUS_PATH, TERMS_XML_PATH, QUERY=None, HITS=None, make_project=False, install_ami=False, removefalse=False, create_csv=True, csv_name='entities.csv', labels_to_get=['GPE', 'ORG']):
         """[summary]
 
-        :param QUERY: query to extract entities from
-        :type QUERY: string
-        :param HITS: number of papers to get
-        :type HITS: int
-        :param OUTPUT: output directory
-        :type OUTPUT: str
-        :param TERMS_XML_PATH: path to xml dict conatining terms
-        :type TERMS_XML_PATH: string
-        :return: dict with entities extracted
-        :rtype: dict
+        :param QUERY: [description]
+        :type QUERY: [type]
+        :param HITS: [description]
+        :type HITS: [type]
+        :param CORPUS_PATH: [description]
+        :type CORPUS_PATH: [type]
+        :param TERMS_XML_PATH: [description]
+        :type TERMS_XML_PATH: [type]
+        :param make_project: [description], defaults to False
+        :type make_project: bool, optional
+        :param install_ami: [description], defaults to False
+        :type install_ami: bool, optional
+        :param removefalse: [description], defaults to True
+        :type removefalse: bool, optional
+        :param create_csv: [description], defaults to True
+        :type create_csv: bool, optional
+        :param csv_name: [description], defaults to 'entities.csv'
+        :type csv_name: str, optional
+        :return: [description]
+        :rtype: [type]
         """
-        self.create_project_files(QUERY, HITS, OUTPUT)
-        # self.install_ami()
+        self.labels_to_get = labels_to_get
+        if make_project:
+            if not QUERY or not HITS:
+                logging.warning('Please provide QUERY and HITS as parameters')
+                sys.exit(1)
+            self.create_project_files(QUERY, HITS, CORPUS_PATH)
+        if install_ami:
+            self.install_ami()
         dict_with_parsed_xml = self.make_dict_with_parsed_xml(
-            OUTPUT)
+            CORPUS_PATH)
         terms = self.get_terms_from_ami_xml(TERMS_XML_PATH)
         self.add_parsed_sections_to_dict(dict_with_parsed_xml)
         self.add_if_file_contains_terms(
             terms=terms, dict_with_parsed_xml=dict_with_parsed_xml)
-        self.remove_tems_which_have_false_terms(
-            dict_with_parsed_xml=dict_with_parsed_xml)
-        self.convert_dict_to_csv(
-            path=os.path.join(OUTPUT, 'entities.csv'), dict_with_parsed_xml=dict_with_parsed_xml)
+        if removefalse:
+            self.remove_statements_not_having_xmldict_terms_or_entities(
+                dict_with_parsed_xml=dict_with_parsed_xml)
+        if create_csv:
+            self.convert_dict_to_csv(
+                path=os.path.join(CORPUS_PATH, csv_name), dict_with_parsed_xml=dict_with_parsed_xml)
         return dict_with_parsed_xml
 
     def create_project_files(self, QUERY, HITS, OUTPUT):
@@ -138,11 +158,11 @@ class DocAnalysis:
         dict_for_sentence['position_end'] = position_end
 
     def add_parsed_entities_to_lists(self, entities, labels, position_end, position_start, ent=None):
-
-        entities.append(ent)
-        labels.append(ent.label_)
-        position_start.append(ent.start_char)
-        position_end.append(ent.end_char)
+        if ent.label_ in self.labels_to_get:
+            entities.append(ent)
+            labels.append(ent.label_)
+            position_start.append(ent.start_char)
+            position_end.append(ent.end_char)
 
     def convert_dict_to_csv(self, path, dict_with_parsed_xml):
 
@@ -159,7 +179,7 @@ class DocAnalysis:
         df.to_csv(path, encoding='utf-8', line_terminator='\r\n')
         logging.info(f"wrote output to {path}")
 
-    def remove_tems_which_have_false_terms(self, dict_with_parsed_xml):
+    def remove_statements_not_having_xmldict_terms_or_entities(self, dict_with_parsed_xml):
         statement_to_pop = []
         for statement in dict_with_parsed_xml:
             sentect_dict = dict_with_parsed_xml[statement]

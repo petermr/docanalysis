@@ -2,12 +2,10 @@ import os
 from docanalysis import DocAnalysis
 ethic_statement_creator = DocAnalysis()
 dict_for_entities = ethic_statement_creator.extract_entities_from_papers(
-    "ethics statement",
-    10,
-    os.path.join(
-        os.getcwd(), "corpus", "ethics_statement_2",
+    CORPUS_PATH=os.path.join(
+        os.getcwd(), "corpus", "e_cancer_clinical_trial_50",
     ),
-    os.path.join(
+    TERMS_XML_PATH=os.path.join(
         os.getcwd(), "ethics_dictionary", "ethics_key_phrases", "ethics_key_phrases.xml"
     ),
 )
