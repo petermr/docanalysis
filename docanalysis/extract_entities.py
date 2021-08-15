@@ -23,7 +23,7 @@ class DocAnalysis:
         self.labels_to_get = []
         logging.basicConfig(level=logging.INFO)
 
-    def extract_entities_from_papers(self, CORPUS_PATH, TERMS_XML_PATH, QUERY=None, HITS=None, make_project=False, install_ami=False, removefalse=False, create_csv=True, csv_name='entities.csv', labels_to_get=['GPE', 'ORG']):
+    def extract_entities_from_papers(self, CORPUS_PATH, TERMS_XML_PATH, QUERY=None, HITS=None, make_project=False, install_ami=False, removefalse=True, create_csv=True, csv_name='entities.csv', labels_to_get=['GPE', 'ORG']):
         """[summary]
 
         :param QUERY: [description]
