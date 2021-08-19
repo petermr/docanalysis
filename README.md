@@ -1,17 +1,16 @@
 # docanalysis
-- Semantic analysis of text documents including sentence and paragraph splitting
-- Unsupervised entity extraction from sections of papers that have defined boilerplates. For example, Ethics Statements, Funders, Acknowledgments, and so on. 
+Unsupervised entity extraction from sections of papers that have defined boilerplates. Examples of such sections include - Ethics Statements, Funders, Acknowledgments, and so on. 
 
 ## Purpose
 ### Primary Purpose
 - Extracting Ethics Committees and other entities related to Ethics Statements from papers
-- Curating the extracted entities to public repositories like Wikidata
-- Building a feedback loop where we go from unsupervised entity extraction, to curating the extracted information in public repositories to then supervised entity extraction.  
+- Curating the extracted entities to public databases like Wikidata
+- Building a feedback loop where we go from unsupervised entity extraction to curating the extracted information in public repositories to then, supervised entity extraction.  
 
 ### Subsidary Purpose(s)
-The package can be used beyond Ethics Statements. As long as the section you are interested in has a defined set of boilerplates, the package can be used. The only additional step would be dictionary creation. Check the section below where we discuss what dictionaries are and how to create them. 
+The use case can go beyond Ethics Statements. `docanalysis` is a general package that can extract relevant entities from the section of your interest.
 
-For example, acknowledgements, data availabilty statmement, funding all have a fairly generic sentence structure. By defining a dictionary of boilerplates specific to the sections, you can use `docanalysis` to extract entities. In case of acknowledgements or funding, you might be interested in the players involved. Or you might have a use-case which we might have never thought of!
+Sections like Acknowledgements, Data Availability Statements, etc., all have a fairly generic sentence structure. All you have to do is create an `ami` dictionary that contains boilerplates of the section of your interest. You can, then, use `docanalysis` to extract entities. Check this section [dictionaries](https://github.com/petermr/docanalysis#how-to-run) which outlines steps for creating custom dictionaries. In case of acknowledgements or funding, you might be interested in the players involved. Or you might have a use-case which we might have never thought of!
 ## Installation 
 - Git clone the repository
     ```
@@ -22,14 +21,14 @@ For example, acknowledgements, data availabilty statmement, funding all have a f
     python setup.py install
     ```
 
-## Tools Used
-- [`pygetpapers`](https://github.com/petermr/pygetpapers) - scraper to download papers
-- `[ami`](https://github.com/petermr/ami3) - section the papers
-- [nltk](https://www.nltk.org/) - sentence splitting
-- [spaCy](https://spacy.io/) - Named-Entity Recognition 
+## Tools Used and their purpose
+- [`pygetpapers`](https://github.com/petermr/pygetpapers) - scrape repositories to download papers of interest
+- [`ami`](https://github.com/petermr/ami3) - section the papers
+- [nltk](https://www.nltk.org/) - split sentence
+- [spaCy](https://spacy.io/) - recognize Named-Entities and label them
     - Here's the list of NER labels [SpaCy's English model](https://spacy.io/models/en) provides:  
      `CARDINAL, DATE, EVENT, FAC, GPE, LANGUAGE, LAW, LOC, MONEY, NORP, ORDINAL, ORG, PERCENT, PERSON, PRODUCT, QUANTITY, TIME, WORK_OF_ART`
-
+    - In most of our projects (Ethics Statements and Acknowledgements Mining), we are mainly interested in GPE (Geopolitical Entities), ORG (Organization)
 ## Documentation
 
 ```
