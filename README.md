@@ -22,11 +22,13 @@ For example, acknowledgements, data availabilty statmement, funding all have a f
     python setup.py install
     ```
 
-## Architecture
-- `pygetpapers` - scraper
-- `ami` - section the papers
-- nltk - sentence splitting
-- spaCy - Named-Entity Recognition
+## Tools Used
+- [`pygetpapers`](https://github.com/petermr/pygetpapers) - scraper to download papers
+- `[ami`](https://github.com/petermr/ami3) - section the papers
+- [nltk](https://www.nltk.org/) - sentence splitting
+- [spaCy](https://spacy.io/) - Named-Entity Recognition 
+    - Here's the list of NER labels [SpaCy's English model](https://spacy.io/models/en) provides:  
+     `CARDINAL, DATE, EVENT, FAC, GPE, LANGUAGE, LAW, LOC, MONEY, NORP, ORDINAL, ORG, PERCENT, PERSON, PRODUCT, QUANTITY, TIME, WORK_OF_ART`
 
 ## Documentation
 
@@ -44,7 +46,7 @@ Parameters: CORPUS_PATH: path to an existing corpus (CProject)
             removefalse: removes sentences with zero matches with dictionary phrases and sentences with no Named-Entities recognized
             create_csv: creates .csv output in CORPUS_PATH. 
             csv_name:Default csv file name is `entities.csv`
-            labels_to_get: SpaCy recognizes Named-Entites and labels them. You can choose for lables you are interested by providing it as a list. For all available labels, check out the Architecture section. 
+            labels_to_get: SpaCy recognizes Named-Entites and labels them. You can choose for lables you are interested by providing it as a list. For all available labels, check out the Tools Used section. 
 ```
 ## How to run?
 The entry point to run the package is `demo.py`. 
@@ -86,7 +88,7 @@ To break this down,
 Dictionary, in `ami`'s terminology, a set of terms/phrases in XML format. 
 Dictionaries related to ethics and acknowledgments are available in [Ethics Dictionary](https://github.com/petermr/docanalysis/tree/main/ethics_dictionary) folder
 
-If you'd like to create a custom dictionary, you can find the steps, [here]()
+If you'd like to create a custom dictionary, you can find the steps, [here](https://github.com/petermr/tigr2ess/blob/master/dictionaries/TUTORIAL.md)
 
 ## History
 
@@ -95,7 +97,7 @@ History is available in [`dictionary` repository](https://github.com/petermr/dic
 Warning: The previous repository is messy! 
 
 ## Credits: 
-- Daniel Meitchen and Peter Murray-Rust for ideas, help and guidance
+- Daniel Meitchen and Peter Murray-Rust for ideas, help and mentoring
 - Ayush for doing most of the heavy-listing in writing code
 
 ## Research Idea
