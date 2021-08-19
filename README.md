@@ -1,6 +1,6 @@
 # docanalysis
 - Semantic analysis of text documents including sentence and paragraph splitting
-- Unsupervised entity extraction from sections of paper with defined boilerplates
+- Unsupervised entity extraction from sections of papers that have defined boilerplates. For example, Ethics Statements, Funders, Acknowledgments, and so on. 
 
 ## Purpose
 ### Primary Purpose
@@ -27,6 +27,25 @@ For example, acknowledgements, data availabilty statmement, funding all have a f
 - `ami` - section the papers
 - nltk - sentence splitting
 - spaCy - Named-Entity Recognition
+
+## Documentation
+
+```
+extract_entities_from_papers(CORPUS_PATH, TERMS_XML_PATH, QUERY=None, HITS=None, make_project=False, install_ami=False, removefalse=True, create_csv=True, csv_name='entities.csv', labels_to_get=['GPE', 'ORG'])
+```
+
+```
+Parameters: CORPUS_PATH: path to an existing corpus (CProject)
+            TERMS_XML_PATH: path to ami dictionary (some are in ethics dictionary folder)
+            QUERY: Query set to EPMC 
+            HITS: No. of papers you wish to download 
+            make_project: Defaults to False. To create a new CProject using pygetpapers set it to True                          
+            install_ami: installs Java ami if given True
+            removefalse: removes sentences with zero matches with dictionary phrases and sentences with no Named-Entities recognized
+            create_csv: creates .csv output in CORPUS_PATH. 
+            csv_name:Default csv file name is `entities.csv`
+            labels_to_get: SpaCy recognizes Named-Entites and labels them. You can choose for lables you are interested by providing it as a list. For all available labels, check out the Architecture section. 
+```
 ## How to run?
 The entry point to run the package is `demo.py`. 
 
