@@ -10,7 +10,7 @@ Unsupervised entity extraction from sections of papers that have defined boilerp
 ### Subsidary Purpose(s)
 The use case can go beyond Ethics Statements. `docanalysis` is a general package that can extract relevant entities from the section of your interest.
 
-Sections like Acknowledgements, Data Availability Statements, etc., all have a fairly generic sentence structure. All you have to do is create an `ami` dictionary that contains boilerplates of the section of your interest. You can, then, use `docanalysis` to extract entities. Check this section [dictionaries](https://github.com/petermr/docanalysis#how-to-run) which outlines steps for creating custom dictionaries. In case of acknowledgements or funding, you might be interested in the players involved. Or you might have a use-case which we might have never thought of!
+Sections like Acknowledgements, Data Availability Statements, etc., all have a fairly generic sentence structure. All you have to do is create an `ami` dictionary that contains boilerplates of the section of your interest. You can, then, use `docanalysis` to extract entities. Check this section [dictionaries](https://github.com/petermr/docanalysis#What is-a-dictionary) which outlines steps for creating custom dictionaries. In case of acknowledgements or funding, you might be interested in the players involved. Or you might have a use-case which we might have never thought of!
 ## Installation 
 - Git clone the repository
     ```
@@ -48,9 +48,8 @@ Parameters: CORPUS_PATH: path to an existing corpus (CProject)
             labels_to_get: SpaCy recognizes Named-Entites and labels them. You can choose for lables you are interested by providing it as a list. For all available labels, check out the Tools Used section. 
 ```
 ## How to run?
-The entry point to run the package is `demo.py`. 
+We have created `demo.py` where you can run the package. 
 
-Let's look at an example. This is a copy of `demo.py`. 
 ```
 import os
 from docanalysis import DocAnalysis
@@ -93,10 +92,9 @@ If you'd like to create a custom dictionary, you can find the steps, [here](http
 
 History is available in [`dictionary` repository](https://github.com/petermr/dictionary/blob/main/ethics_statement_project/ethics_statement_project.md)   
 
-Warning: The previous repository is messy! 
+Warning: The dictionary repository is messy! 
 
 ## Credits: 
-- Daniel Meitchen and Peter Murray-Rust for ideas, help and mentoring
-- Ayush for doing most of the heavy-listing in writing code
+[Daniel Mietchen](https://github.com/Daniel-Mietchen), [Peter Murray-Rust](https://github.com/petermr), [Ayush Garg](https://github.com/ayush4921), [Shweata N. Hegde](https://github.com/ShweataNHegde/)
 
 ## Research Idea
