@@ -1,3 +1,4 @@
+pygetpapers
 pandas
 spacy
 numpy
