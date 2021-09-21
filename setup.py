@@ -10,7 +10,7 @@ import os
 
 with open('README.md') as readme_file:
     readme = readme_file.read()
-requirements = ['pandas', 'spacy', 'numpy',
+requirements = ['pygetpapers', 'pandas', 'spacy', 'numpy',
                 'matplotlib', 'tqdm', 'beautifulsoup4']
 
 setup(
