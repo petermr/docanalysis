@@ -23,15 +23,15 @@ class DocAnalysis:
         self.labels_to_get = []
         logging.basicConfig(level=logging.INFO)
 
-    def extract_entities_from_papers(self, corpus_path, terms_xml_path, QUERY=None, HITS=None,
+    def extract_entities_from_papers(self, corpus_path, terms_xml_path, query=None, hits=30,
                                      make_project=False, install_ami=False, removefalse=True, create_csv=True,
                                      csv_name='entities.csv', labels_to_get=['GPE', 'ORG']):
         """[summary]
 
-        :param QUERY: [description]
-        :type QUERY: [type]
-        :param HITS: [description]
-        :type HITS: [type]
+        :param query: [description]
+        :type query: [type]
+        :param hits: [description]
+        :type hits: [type]
         :param corpus_path: [description]
         :type corpus_path: [type]
         :param terms_xml_path: [description]
@@ -51,18 +51,31 @@ class DocAnalysis:
         """
         self.labels_to_get = labels_to_get
         if make_project:
-            if not QUERY or not HITS:
-                logging.warning('Please provide QUERY and HITS as parameters')
-                sys.exit(1)
-            self.create_project_files(QUERY, HITS, corpus_path)
+            if not query:
+                logging.warning('Please provide query as parameter')
+                return
+            logging.info(f"making project/searching {query} for {hits} hits into {corpus_path}")
+            self.create_project_files(query, hits, corpus_path)
         if install_ami:
+            logging.info(f"installing ami3 (check whether this is a good idea)")
             self.install_ami()
-        dict_with_parsed_xml = self.make_dict_with_parsed_xml(
-            corpus_path)
-        terms = self.get_terms_from_ami_xml(terms_xml_path)
+
+        logging.info(f"dict with parsed xml in {corpus_path}")
+        dict_with_parsed_xml = self.make_dict_with_parsed_xml(corpus_path)
+        # print(f"dict_with_parsed_xml {dict_with_parsed_xml.keys()}")
+        # print(f"dict_with_parsed_xml {dict_with_parsed_xml[1]}")
+
+        logging.info(f"getting terms from/to {terms_xml_path}")
+        # terms = self.get_terms_from_ami_xml(terms_xml_path)  # (1) fails - move later?
+
+        logging.info(f"add parsed_sections to dict: {len(dict_with_parsed_xml)}")
         self.add_parsed_sections_to_dict(dict_with_parsed_xml)
+        logging.info(f"added parsed_sections to dict: {len(dict_with_parsed_xml)}")
+
+        terms = self.get_terms_from_ami_xml(terms_xml_path)  # moved from (1)
         self.add_if_file_contains_terms(
             terms=terms, dict_with_parsed_xml=dict_with_parsed_xml)
+
         if removefalse:
             self.remove_statements_not_having_xmldict_terms_or_entities(
                 dict_with_parsed_xml=dict_with_parsed_xml)
@@ -86,16 +99,17 @@ class DocAnalysis:
         all_paragraphs = glob(os.path.join(
             output, '*', 'sections', '**', '[1_9]_p.xml'), recursive=True)
         counter = 1
+        logging.info(f"starting  tokenization on {len(all_paragraphs)} paragraphs")
         for section_path in tqdm(all_paragraphs):
             paragraph_path = section_path
             paragraph_text = self.read_text_from_path(paragraph_path)
             sentences = tokenize.sent_tokenize(paragraph_text)
             for sentence in sentences:
                 dict_with_parsed_xml[counter] = {}
-                dict_for_senteces = dict_with_parsed_xml[counter]
-                dict_for_senteces["file_path"] = section_path
-                dict_for_senteces["paragraph"] = paragraph_text
-                dict_for_senteces["sentence"] = sentence
+                dict_for_sentences = dict_with_parsed_xml[counter]
+                dict_for_sentences["file_path"] = section_path
+                dict_for_sentences["paragraph"] = paragraph_text
+                dict_for_sentences["sentence"] = sentence
                 counter += 1
         logging.info(f"Found {len(dict_with_parsed_xml)} sentences")
         return dict_with_parsed_xml

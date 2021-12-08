@@ -9,8 +9,8 @@ if not term_dir.exists():
 dict_for_entities = ethic_statement_creator.extract_entities_from_papers(
     corpus_path=Path(os.getcwd(), "corpus", "terpenes", ),
     terms_xml_path=Path(term_dir, "terpenes_key_phrases.xml"),
-    QUERY="terpenes",
-    HITS=10,
+    query="terpenes",
+    hits=10,
     make_project=True
 )
 print(f"dict {dict_for_entities}")

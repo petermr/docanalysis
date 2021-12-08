@@ -13,6 +13,7 @@ def create_phrases_file(phrases_dir, phrases_file, dictionary_dir=ETHICS_DICTION
     if not terms_xml_dir.exists():
         terms_xml_dir.mkdir()
     terms_xml_path = Path(terms_xml_dir, phrases_file)
+    return terms_xml_path
 
 
 def get_or_create_corpus_dir(subdir_name, corpus_dir=CORPUS_DIR):
@@ -28,16 +29,14 @@ def get_or_create_corpus_dir(subdir_name, corpus_dir=CORPUS_DIR):
     return subdir
 
 
-corpus_path = get_or_create_corpus_dir("e_cancer_clinical_trial_50")
-phrases_file = create_phrases_file("ethics_key_phrases", "ethics_key_phrases.xml")
-
-
-def run_analysis(corpus_path, phrases_file):
+def run_analysis(corpus_path, phrases_file, query=None, hits=30):
     dict_for_entities = doc_analysis.extract_entities_from_papers(
         corpus_path=corpus_path,
         terms_xml_path=terms_xml_path,
+        query=query,
+        hits=hits,
+        make_project=True
     )
-    print(f"dict {dict_for_entities}")
     create_and_write_list_for_fields(dict_for_entities, "ORG", "org.text")
     create_and_write_list_for_fields(dict_for_entities, "GPE", "GPE.text")
 
@@ -49,4 +48,27 @@ def create_and_write_list_for_fields(dict_for_entities, field, out_filename):
         f.write(str(list_with_orgs))
 
 
-run_analysis(corpus_path, phrases_file)
+ETHICS = "ethics"
+TERPENES = "terpenes"
+options = {
+    ETHICS,
+    TERPENES
+}
+
+if ETHICS in options:
+    corpus_dir = get_or_create_corpus_dir("e_cancer_clinical_trial_50")
+    phrases_file = create_phrases_file("ethics_key_phrases", "ethics_key_phrases.xml", )
+    run_analysis(
+        corpus_dir,
+        phrases_file,
+        query="ethics"
+    )
+
+if TERPENES in options:
+    run_analysis(
+        get_or_create_corpus_dir(TERPENES),
+        create_phrases_file("terpenes_key_phrases", "terpenes_key_phrases.xml", dictionary_dir="terpenes_dictionary"),
+        query=TERPENES,
+        hits = 20,
+    )
+
