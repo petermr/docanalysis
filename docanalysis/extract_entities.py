@@ -23,17 +23,19 @@ class DocAnalysis:
         self.labels_to_get = []
         logging.basicConfig(level=logging.INFO)
 
-    def extract_entities_from_papers(self, CORPUS_PATH, TERMS_XML_PATH, QUERY=None, HITS=None, make_project=False, install_ami=False, removefalse=True, create_csv=True, csv_name='entities.csv', labels_to_get=['GPE', 'ORG']):
+    def extract_entities_from_papers(self, corpus_path, terms_xml_path, QUERY=None, HITS=None,
+                                     make_project=False, install_ami=False, removefalse=True, create_csv=True,
+                                     csv_name='entities.csv', labels_to_get=['GPE', 'ORG']):
         """[summary]
 
         :param QUERY: [description]
         :type QUERY: [type]
         :param HITS: [description]
         :type HITS: [type]
-        :param CORPUS_PATH: [description]
-        :type CORPUS_PATH: [type]
-        :param TERMS_XML_PATH: [description]
-        :type TERMS_XML_PATH: [type]
+        :param corpus_path: [description]
+        :type corpus_path: [type]
+        :param terms_xml_path: [description]
+        :type terms_xml_path: [type]
         :param make_project: [description], defaults to False
         :type make_project: bool, optional
         :param install_ami: [description], defaults to False
@@ -52,12 +54,12 @@ class DocAnalysis:
             if not QUERY or not HITS:
                 logging.warning('Please provide QUERY and HITS as parameters')
                 sys.exit(1)
-            self.create_project_files(QUERY, HITS, CORPUS_PATH)
+            self.create_project_files(QUERY, HITS, corpus_path)
         if install_ami:
             self.install_ami()
         dict_with_parsed_xml = self.make_dict_with_parsed_xml(
-            CORPUS_PATH)
-        terms = self.get_terms_from_ami_xml(TERMS_XML_PATH)
+            corpus_path)
+        terms = self.get_terms_from_ami_xml(terms_xml_path)
         self.add_parsed_sections_to_dict(dict_with_parsed_xml)
         self.add_if_file_contains_terms(
             terms=terms, dict_with_parsed_xml=dict_with_parsed_xml)
@@ -66,7 +68,7 @@ class DocAnalysis:
                 dict_with_parsed_xml=dict_with_parsed_xml)
         if create_csv:
             self.convert_dict_to_csv(
-                path=os.path.join(CORPUS_PATH, csv_name), dict_with_parsed_xml=dict_with_parsed_xml)
+                path=os.path.join(corpus_path, csv_name), dict_with_parsed_xml=dict_with_parsed_xml)
         return dict_with_parsed_xml
 
     def create_project_files(self, QUERY, HITS, OUTPUT):
