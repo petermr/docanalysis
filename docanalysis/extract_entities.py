@@ -58,7 +58,8 @@ class DocAnalysis:
             self.create_project_files(query, hits, corpus_path)
         if install_ami:
             logging.info(f"installing ami3 (check whether this is a good idea)")
-            self.install_ami()
+            logging.info(f"please check independently that ami is installed")
+            # self.install_ami()
 
         logging.info(f"dict with parsed xml in {corpus_path}")
         dict_with_parsed_xml = self.make_dict_with_parsed_xml(corpus_path)
@@ -88,10 +89,15 @@ class DocAnalysis:
         os.system(f'pygetpapers -q "{QUERY}" -k {HITS} -o {OUTPUT} -x')
         os.system(f"ami -p {OUTPUT} section")
 
-    def install_ami(self):
-        os.system("git clone https://github.com/petermr/ami3.git")
-        os.system("cd ami3")
-        os.system("mvn install -Dmaven.test.skip=true")
+    """
+    removed as too complex. 
+    TODO maybe have a check that `ami` is installed, but install elsewhere
+    """
+    # def install_ami(self):
+    #     os.system("git clone https://github.com/petermr/ami3.git")
+    #     os.system("cd ami3")
+    #     os.system("mvn install -Dmaven.test.skip=true")
+
 
     def make_dict_with_parsed_xml(self, output):
 
