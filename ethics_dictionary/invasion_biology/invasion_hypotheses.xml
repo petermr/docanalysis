@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dictionary title="invasion_hypotheses">
+ <entry term="biotic resistance hypothesis" name="biotic resistance hypothesis" id="CM.invasion_hypotheses.0"/>
+ <entry term="darwin's naturalization and limiting similarity hypotheses" name="darwin's naturalization and limiting similarity hypotheses" id="CM.invasion_hypotheses.1"/>
+ <entry term="disturbance hypothesis" name="disturbance hypothesis" id="CM.invasion_hypotheses.2"/>
+ <entry term="enemy release hypothesis" name="enemy release hypothesis" wikipedia="enemy release hypothesis" id="CM.invasion_hypotheses.3"/>
+ <entry term="evolution of increased competitive ability and shifting defence hypotheses" name="evolution of increased competitive ability and shifting defence hypotheses" id="CM.invasion_hypotheses.4"/>
+ <entry term="invasional meltdown hypothesis" name="invasional meltdown hypothesis" id="CM.invasion_hypotheses.5"/>
+ <entry term="novel weapons hypothesis " name="novel weapons hypothesis " id="CM.invasion_hypotheses.6"/>
+ <entry term="phenotypic plasticity hypothesis " name="phenotypic plasticity hypothesis " id="CM.invasion_hypotheses.7"/>
+ <entry term="propagule pressure hypothesis" name="propagule pressure hypothesis" id="CM.invasion_hypotheses.8"/>
+ <entry term="synthesizing invasion hypotheses" name="synthesizing invasion hypotheses" id="CM.invasion_hypotheses.9"/>
+ <entry term="tens rule" name="tens rule" id="CM.invasion_hypotheses.10"/>
+</dictionary>
