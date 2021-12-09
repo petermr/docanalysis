@@ -8,7 +8,14 @@ CORPUS_DIR =  Path(os.getcwd(), "corpus")
 
 
 def create_phrases_file(phrases_dir, phrases_file, dictionary_dir=ETHICS_DICTIONARY_DIR):
-    global terms_xml_path
+    """
+    Creates file for phrases based on the dictionary dir and dictionary name
+
+    creates directories if they do not exist
+    :param phrases_dir: directory holding the phrases file
+    :param phrases_file: file holding phrases file
+
+    """
     terms_xml_dir = Path(dictionary_dir, phrases_dir)
     if not terms_xml_dir.exists():
         terms_xml_dir.mkdir()
@@ -68,7 +75,7 @@ if TERPENES in options:
     run_analysis(
         get_or_create_corpus_dir(TERPENES),
         create_phrases_file("terpenes_key_phrases", "terpenes_key_phrases.xml", dictionary_dir="terpenes_dictionary"),
-        query=TERPENES,
+        query="terpenes",
         hits = 20,
     )
 
