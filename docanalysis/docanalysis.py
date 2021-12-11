@@ -1,6 +1,6 @@
 import logging
 import os
-from docanalysis.create_read_dictionary import CreateReadDict
+from docanalysis.create_read_dictionary import Dictionary
 from docanalysis.download_pre_process import DownloadPapers
 from docanalysis.parse_sections import ParseSections
 from docanalysis.util import Util
@@ -55,7 +55,7 @@ class DocAnalysis:
         GetEntities.add_parsed_sections_to_dict(dict_with_parsed_xml)
         logging.info(f"added parsed_sections to dict: {len(dict_with_parsed_xml)}")
 
-        terms = CreateReadDict.get_terms_from_ami_xml(terms_xml_path)  # moved from (1)
+        terms = Dictionary.get_terms_from_ami_xml(terms_xml_path)  # moved from (1)
         ParseSections.add_if_file_contains_terms(
             terms=terms, dict_with_parsed_xml=dict_with_parsed_xml)
 

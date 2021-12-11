@@ -2,18 +2,28 @@ import xml.etree.ElementTree as ET
 import logging
 import yake
 
-class CreateReadDict:
+class Dictionary:
     def __init__(self):
         logging.basicConfig(level=logging.INFO)
 
-    def get_terms_from_ami_xml(self, xml_path):
+    def get_terms_from_ami_xml(self, dict_path):
+        tree = ET.parse(dict_path)
+        dict_root = tree.getroot()
+        logging.info(f"reading terms from dictionary {dict_path}")
+        terms = self.get_terms_from_entries(dict_root)
+        return terms
 
-        tree = ET.parse(xml_path)
-        root = tree.getroot()
+    def get_terms_from_entries(self, root):
+        """extract terms from entries in dictionary
+        Args:
+            root (): [description]
+
+        Returns:
+            [list]: list of terms
+        """
         terms = []
         for para in root.iter('entry'):
             terms.append(para.attrib["term"])
-        logging.info(f"reading terms from dictionary {xml_path}")
         return terms
 
     def key_phrase_extraction(self, section, dict_with_parsed_xml):
