@@ -1,6 +1,7 @@
 from pathlib import Path
 import xml.etree.ElementTree as ET
-from docanalysis.create_read_dictionary import Dictionary
+from ..docanalysis.create_read_dictionary import Dictionary
+import unittest
 DOCANALYSIS_TOP = Path(__file__).parent.parent
 ETHICS_300 = Path(DOCANALYSIS_TOP, 'stem_cell_research_300')
 print(ETHICS_300)
@@ -8,6 +9,7 @@ PAPERS_NUMBER = 300
 DICT_DIRECTORY = Path(DOCANALYSIS_TOP, 'ethics_dictionary')
 TEST_DICT = Path(DICT_DIRECTORY, 'ethics_demo', 'ethics_demo.xml')
 
+dictionary_validation = False
 class TestEthics:
     def setUp(self):
         """common resources
@@ -19,13 +21,17 @@ class TestEthics:
         """
         assert TEST_DICT.exists(), f"dictionary {TEST_DICT} must exist"
     
+    @unittest.skipUnless(dictionary_validation, 'dictionary validation not setup')
     def test_ethics_dictionary_validity(self):
-        pass
+        from py4ami.dict_lib import AMIDict  # move this out
+        AMIDict.create_dict_from_path(TEST_DICT)
     
     def test_for_terms(self):
-        dict_root = ET.parse(TEST_DICT)
-        assert dict_root is not None
-        terms = Dictionary.get_terms_from_entries(dict_root)
+        """checks whether we get 
+        """
+        #dict_root = ET.parse(TEST_DICT)
+        #assert dict_root is not None
+        terms = Dictionary.get_terms_from_ami_xml(TEST_DICT)
         assert terms is not None
         assert len(terms) == 7
 
