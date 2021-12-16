@@ -1,1 +1,0 @@
-from docanalysis.docanalysis import DocAnalysis
