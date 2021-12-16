@@ -2,6 +2,7 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 from ..docanalysis.create_read_dictionary import Dictionary
 import unittest
+
 DOCANALYSIS_TOP = Path(__file__).parent.parent
 ETHICS_300 = Path(DOCANALYSIS_TOP, 'stem_cell_research_300')
 print(ETHICS_300)
@@ -10,6 +11,7 @@ DICT_DIRECTORY = Path(DOCANALYSIS_TOP, 'ethics_dictionary')
 TEST_DICT = Path(DICT_DIRECTORY, 'ethics_demo', 'ethics_demo.xml')
 
 dictionary_validation = False
+
 class TestEthics:
     def setUp(self):
         """common resources
@@ -34,6 +36,7 @@ class TestEthics:
         terms = Dictionary.get_terms_from_ami_xml(TEST_DICT)
         assert terms is not None
         assert len(terms) == 7
+        print(terms)
 
     def test_ethics_corpus(self):
         """- checks whether 

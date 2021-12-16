@@ -31,6 +31,8 @@ class Dictionary:
         for para in root.iter('entry'):
             terms.append(para.attrib["term"])
         return terms
+    
+    
 
     @classmethod
     def key_phrase_extraction(cls, section, dict_with_parsed_xml):

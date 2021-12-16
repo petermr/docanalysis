@@ -1,3 +1,4 @@
+from docanalysis.parse_sections import ParseSections
 import logging
 import spacy
 try:
@@ -16,7 +17,7 @@ class GetEntities:
 
         for paragraph in dict_with_parsed_xml:
             doc = nlp(dict_with_parsed_xml[paragraph]['sentence'])
-            entities, labels, position_end, position_start = self.make_required_lists()
+            entities, labels, position_end, position_start = ParseSections.make_required_lists()
             for ent in doc.ents:
                 self.add_parsed_entities_to_lists(
                     entities, labels, position_end, position_start, ent)
