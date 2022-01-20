@@ -12,6 +12,7 @@ import subprocess
 import scispacy
 import json
 import re
+import yake
 try:
     nlp = spacy.load('en_core_web_sm')
 except OSError:
@@ -238,6 +239,9 @@ metadata_dictionary = {}
 
 
 def querying_pygetpapers_sectioning(query, hits, output_directory, using_terms=False, terms_txt=None):
+    # calling pygetpapers and ami-section
+    # borrowed from original docanalysis
+    # uses subprocess instead of os to run them on cmd
     """queries pygetpapers for specified query. Downloads XML, and sections papers using ami section
     Args:
         query (str): query to pygetpapers
@@ -266,6 +270,9 @@ def get_metadata_json(output_directory):
 
 
 def get_PMCIDS(metadata_dictionary=metadata_dictionary):
+    # gets PMCDIDs from metadata_JSON of individual papers.
+    #  We can get the PMCID from the path if necessary
+
     metadata_dictionary["PMCIDS"] = []
     for metadata in metadata_dictionary["metadata_json"]:
         with open(metadata, encoding='utf-8') as f:
@@ -279,13 +286,14 @@ def get_PMCIDS(metadata_dictionary=metadata_dictionary):
 
 
 def parse_xml(output_directory, section, metadata_dictionary=metadata_dictionary):
+    # gets the text from XML. Clubs all the paragraphs in the section into one. 
     metadata_dictionary[f"{section}"] = []
     for pmc in metadata_dictionary["PMCIDS"]:
         paragraphs = []
-        test_glob = glob.glob(os.path.join(os.getcwd(), output_directory,
+        section_glob = glob.glob(os.path.join(os.getcwd(), output_directory,
                                            pmc, 'sections', '**', f'*{section}*', '**', '*.xml'),
                               recursive=True)
-        for result in test_glob:
+        for result in section_glob:
             tree = ET.parse(result)
             root = tree.getroot()
             xmlstr = ET.tostring(root, encoding='utf-8', method='xml')
@@ -299,6 +307,9 @@ def parse_xml(output_directory, section, metadata_dictionary=metadata_dictionary
 
 
 def get_abstract(metadata_dictionary=metadata_dictionary):
+    # gets abstracts from the metadata json.
+    # We might want to get the abstract from the fulltext,
+    # since the format of the metadata JSON has changed from time to time.
     TAG_RE = re.compile(r"<[^>]+>")
     metadata_dictionary["abstract"] = []
     for metadata in metadata_dictionary["metadata_json"]:
@@ -314,6 +325,9 @@ def get_abstract(metadata_dictionary=metadata_dictionary):
 
 
 def get_keywords(metadata_dictionary=metadata_dictionary):
+    # gets abstracts from the metadata json.
+    # We might want to get the abstract from the fulltext,
+    # since the format of the metadata JSON has changed from time to time.
     metadata_dictionary["keywords"] = []
     for metadata in metadata_dictionary["metadata_json"]:
         with open(metadata, encoding='utf-8') as f:
@@ -327,6 +341,7 @@ def get_keywords(metadata_dictionary=metadata_dictionary):
 
 
 def key_phrase_extraction(section, metadata_dictionary=metadata_dictionary):
+    # extracts keyphrases from the blob of texts of section specified for each paper using YAKE 
     metadata_dictionary["yake_keywords"] = []
     for text in metadata_dictionary[f"{section}"]:
         custom_kw_extractor = yake.KeywordExtractor(
@@ -354,12 +369,14 @@ def get_organism(section,label_interested= 'TAXON', metadata_dictionary=metadata
 
 
 def convert_to_csv(path='keywords_results_yake_organism_pmcid_tps_cam_ter_c.csv', metadata_dictionary=metadata_dictionary):
+     # method borrowed from original docanalysis
     df = pd.DataFrame(metadata_dictionary)
     df.to_csv(path, encoding='utf-8', line_terminator='\r\n')
     logging.info(f'writing the keywords to {path}')
 
 
 def convert_to_json(path='ethics_statement_2000.json', metadata_dictionary = metadata_dictionary):
+    # converts the python dictionary containing output into a JSON file
     json_file = json.dumps(metadata_dictionary)
     f = open(path,"w", encoding='ascii')
     f.write(json_file)
@@ -368,6 +385,8 @@ def convert_to_json(path='ethics_statement_2000.json', metadata_dictionary = met
 
 
 def look_for_a_word(section, search_for="TPS", metadata_dictionary=metadata_dictionary):
+    # chops the paragraph corresponding to a section into list of words
+    # looks for word strings which contains "search_for" (string) and retrives them
     metadata_dictionary[f"{search_for}_match"] = []
     for text in metadata_dictionary[f"{section}"]:
         words = text.split(" ")
@@ -377,6 +396,8 @@ def look_for_a_word(section, search_for="TPS", metadata_dictionary=metadata_dict
 
 
 def look_for_next_word(section, search_for=["number:", "no.", "No.", "number" ], metadata_dictionary=metadata_dictionary):
+    # chops the paragraph corresponding to a section into list of words
+    # gets the word next to the matched string.
     metadata_dictionary[f"{search_for}_match"] = []
     for text in metadata_dictionary[f"{section}"]:
         words = text.split(" ")
@@ -391,6 +412,7 @@ def look_for_next_word(section, search_for=["number:", "no.", "No.", "number" ],
 
 
 def add_if_file_contains_terms(section, metadata_dictionary=metadata_dictionary, terms=['iNaturalist']):
+    # method borrowed from original docanalysis
     metadata_dictionary["terms"] = []
     for term in terms:
         for text in metadata_dictionary[f"{section}"]:
@@ -401,7 +423,7 @@ def add_if_file_contains_terms(section, metadata_dictionary=metadata_dictionary,
     logging.info(f'looking for term matches in {section}')
 
 
-
+# calling all the functions
 CPROJECT = os.path.join(os.path.expanduser('~'), 'ethics_statement_2000_generic')
 SECTION= 'ethic'
 #querying_pygetpapers_sectioning("inaturalist",'500',CPROJECT)
@@ -418,3 +440,9 @@ look_for_next_word(SECTION)
 add_if_file_contains_terms(SECTION)
 convert_to_csv(f'ethics_{SECTION}2000.csv')
 convert_to_json()
+
+# -------end of code section from metadata_analysis.py 
+
+#TODO intergrate metadata_analyis.py to original docanalysis; 
+#TODO decide on functions we need from metadata_analysis.py 
+#TODO write methods to create ami-dictionaries from extracted entites and keywords
