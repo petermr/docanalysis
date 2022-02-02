@@ -5,6 +5,8 @@ import docanalysis
 import configargparse
 import coloredlogs
 from time import gmtime, strftime
+from tqdm import tqdm
+from functools import partialmethod
 
 class Docanalysis:
 
