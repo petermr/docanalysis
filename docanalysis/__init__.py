@@ -1,1 +1,1 @@
-from docanalysis.extract_entities import DocAnalysis
+pass

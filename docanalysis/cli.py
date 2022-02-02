@@ -7,13 +7,14 @@ import coloredlogs
 from time import gmtime, strftime
 from tqdm import tqdm
 from functools import partialmethod
+from docanalysis.entity_extraction import EntityExtraction
 
 class Docanalysis:
 
     def __init__(self):
         """This function makes all the constants"""
-        #add all the docanalysis functions here so that we can use them later
-        pass
+        self.entity_extraction = EntityExtraction()
+        self.version="0.0.1"
 
     def handle_logger_creation(self, args):
         """[summary]
@@ -59,7 +60,7 @@ class Docanalysis:
         parser.add_argument(
             "-q",
             "--query",
-            default=False,
+            default=None,
             type=str,
             help="query to pygetpapers",
         )
@@ -67,14 +68,13 @@ class Docanalysis:
             "-k",
             "--hits",
             type=str,
-            default=False,
+            default=None,
             help="numbers of papers to download from pygetpapers",
         )
 
         parser.add_argument(
             "--project_name",
             type=str,
-            default=False,
             help="name of CProject folder",
             default=os.path.join(os.getcwd(), default_path),
         )
@@ -86,7 +86,7 @@ class Docanalysis:
         parser.add_argument(
             "--entity_extraction",
             default=False,
-            type=str,
+            nargs='+',
             help="extracts specified entities chosen from a list of entities (CARDINAL, DATE, EVENT, FAC, GPE, LANGUAGE, LAW, LOC, MONEY, NORP, ORDINAL, ORG, PERCENT, PERSON, PRODUCT, QUANTITY, TIME, WORK_OF_ART, GGP, SO, TAXON, CHEBI, GO, CL)",
         )
         parser.add_argument(
@@ -101,7 +101,19 @@ class Docanalysis:
             type=str,
             help="makes separate dictionaries from keyphrases and entities extracted. Merges duplicate entries into one",
         )
-       
+        parser.add_argument(
+            "-d",
+            "--dictionary",
+            default=False,
+            type=str,
+            help="Ami Dictionary to extract keywords from",
+        )
+        parser.add_argument(
+            "-o",
+            "--output",
+            default="entities.csv",
+            help="Output CSV file",
+        )
         parser.add_argument(
             "-l",
             "--loglevel",
@@ -116,6 +128,8 @@ class Docanalysis:
             type=str,
             help="[All] save log to specified file in output directory as well as printing to terminal",
         )
+
+
         if len(sys.argv) == 1:
             parser.print_help(sys.stderr)
             sys.exit()
@@ -124,7 +138,9 @@ class Docanalysis:
             if vars(args)[arg] == "False":
                 vars(args)[arg] = False
         self.handle_logger_creation(args)
-
+        self.entity_extraction.extract_entities_from_papers(args.project_name,args.dictionary,query=args.query,hits=args.hits,
+                                     make_project=args.run_pygetpapers, install_ami=False, removefalse=True, create_csv=True,
+                                     csv_name=args.output, labels_to_get=args.entity_extraction)
 
 
 

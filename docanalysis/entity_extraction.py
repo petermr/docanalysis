@@ -10,10 +10,8 @@ from tqdm import tqdm
 import xml.etree.ElementTree as ET
 from nltk import tokenize
 import subprocess
-import scispacy
 import json
 import re
-import yake
 try:
     nlp = spacy.load('en_core_web_sm')
 except OSError:
@@ -22,7 +20,7 @@ except OSError:
     nlp = spacy.load('en_core_web_sm')
 
 
-class DocAnalysis:
+class EntityExtraction:
     """ """
 
     def __init__(self):
@@ -247,7 +245,7 @@ class DocAnalysis:
             f.write(string_to_put)
 
 if __name__=="__main__":
-    Docanalysis= DocAnalysis()
-    Docanalysis.extract_entities_from_papers("D:\\main_projects\\repositories\\docanalysis\\corpus\\e_cancer_clinical_trial_50", "D:\\main_projects\\repositories\\docanalysis\\ethics_dictionary\\ethics_key_phrases\\ethics_key_phrases.xml", query=None, hits=30,
+    Entity_Extraction= EntityExtraction()
+    Entity_Extraction.extract_entities_from_papers("D:\\main_projects\\repositories\\docanalysis\\corpus\\e_cancer_clinical_trial_50", "D:\\main_projects\\repositories\\docanalysis\\ethics_dictionary\\ethics_key_phrases\\ethics_key_phrases.xml", query=None, hits=30,
                                      make_project=False, install_ami=False, removefalse=True, create_csv=True,
                                      csv_name='entities.csv', labels_to_get=['GPE', 'ORG'])
