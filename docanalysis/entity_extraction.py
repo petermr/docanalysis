@@ -1,6 +1,4 @@
-from fileinput import filename
 import os
-import sys
 import logging
 from glob import glob
 import spacy
@@ -9,9 +7,7 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 import xml.etree.ElementTree as ET
 from nltk import tokenize
-import subprocess
-import json
-import re
+
 try:
     nlp = spacy.load('en_core_web_sm')
 except OSError:
@@ -29,30 +25,7 @@ class EntityExtraction:
 
     def extract_entities_from_papers(self, corpus_path, terms_xml_path, query=None, hits=30,
                                      make_project=False, install_ami=False, removefalse=True, create_csv=True,
-                                     csv_name='entities.csv', labels_to_get=['GPE', 'ORG']):
-        """[summary]
-
-        :param query: [description]
-        :type query: [type]
-        :param hits: [description]
-        :type hits: [type]
-        :param corpus_path: [description]
-        :type corpus_path: [type]
-        :param terms_xml_path: [description]
-        :type terms_xml_path: [type]
-        :param make_project: [description], defaults to False
-        :type make_project: bool, optional
-        :param install_ami: [description], defaults to False
-        :type install_ami: bool, optional
-        :param removefalse: [description], defaults to True
-        :type removefalse: bool, optional
-        :param create_csv: [description], defaults to True
-        :type create_csv: bool, optional
-        :param csv_name: [description], defaults to 'entities.csv'
-        :type csv_name: str, optional
-        :return: [description]
-        :rtype: [type]
-        """
+                                     csv_name='entities.csv', labels_to_get=['GPE', 'ORG'],make_ami_dict=False):
         self.labels_to_get = labels_to_get
         if make_project:
             if not query:
@@ -63,29 +36,24 @@ class EntityExtraction:
         if install_ami:
             logging.info(f"installing ami3 (check whether this is a good idea)")
             self.install_ami()
-
         logging.info(f"dict with parsed xml in {corpus_path}")
         dict_with_parsed_xml = self.make_dict_with_parsed_xml(corpus_path)
-        # print(f"dict_with_parsed_xml {dict_with_parsed_xml.keys()}")
-        # print(f"dict_with_parsed_xml {dict_with_parsed_xml[1]}")
-
         logging.info(f"getting terms from/to {terms_xml_path}")
-        # terms = self.get_terms_from_ami_xml(terms_xml_path)  # (1) fails - move later?
-
         logging.info(f"add parsed_sections to dict: {len(dict_with_parsed_xml)}")
         self.add_parsed_sections_to_dict(dict_with_parsed_xml)
         logging.info(f"added parsed_sections to dict: {len(dict_with_parsed_xml)}")
-
-        terms = self.get_terms_from_ami_xml(terms_xml_path)  # moved from (1)
-        self.add_if_file_contains_terms(
-            terms=terms, dict_with_parsed_xml=dict_with_parsed_xml)
-
-        if removefalse:
-            self.remove_statements_not_having_xmldict_terms_or_entities(
-                dict_with_parsed_xml=dict_with_parsed_xml)
+        if terms_xml_path:
+            terms = self.get_terms_from_ami_xml(terms_xml_path)
+            self.add_if_file_contains_terms(
+                terms=terms, dict_with_parsed_xml=dict_with_parsed_xml)
+            if removefalse:
+                self.remove_statements_not_having_xmldict_terms_or_entities(
+                    dict_with_parsed_xml=dict_with_parsed_xml)
         if create_csv:
             self.convert_dict_to_csv(
                 path=os.path.join(corpus_path, csv_name), dict_with_parsed_xml=dict_with_parsed_xml)
+        if make_ami_dict:
+            self.handle_ami_dict_creation(dict_with_parsed_xml,make_ami_dict)
         return dict_with_parsed_xml
 
     def create_project_files(self, QUERY, HITS, OUTPUT):
@@ -211,15 +179,6 @@ class EntityExtraction:
 
     @staticmethod
     def extract_particular_fields(dict_with_parsed_xml, field):
-        """[summary]
-
-        :param dict_with_parsed_xml: dictionary to extract entities from
-        :type dict_with_parsed_xml: dict
-        :param field: field name to extract from entities
-        :type field: string
-        :return: list containing entities
-        :rtype: list
-        """
         field_list = []
         for sentence in dict_with_parsed_xml:
             sentect_dict = dict_with_parsed_xml[sentence]
@@ -243,9 +202,11 @@ class EntityExtraction:
     def write_string_to_file(self,string_to_put,title):
         with open(f'{title}.xml',mode='w') as f:
             f.write(string_to_put)
-
-if __name__=="__main__":
-    Entity_Extraction= EntityExtraction()
-    Entity_Extraction.extract_entities_from_papers("D:\\main_projects\\repositories\\docanalysis\\corpus\\e_cancer_clinical_trial_50", "D:\\main_projects\\repositories\\docanalysis\\ethics_dictionary\\ethics_key_phrases\\ethics_key_phrases.xml", query=None, hits=30,
-                                     make_project=False, install_ami=False, removefalse=True, create_csv=True,
-                                     csv_name='entities.csv', labels_to_get=['GPE', 'ORG'])
+    
+    def handle_ami_dict_creation(self,result_dictionary,title):
+        list_of_entities=[]
+        for entry in result_dictionary:
+            if 'entities' in entry:
+                list_of_entities+=entry['entities']
+        xml_dict = self.make_ami_dict_from_list(list_of_entities,title)
+        self.write_string_to_file(xml_dict,f'{title}.xml')
