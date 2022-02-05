@@ -22,3 +22,4 @@ list_with_gpe = ethic_statement_creator.extract_particular_fields(
     dict_for_entities, 'GPE')
 with open('GPE.text', 'w') as f:
     f.write(str(list_with_gpe))
+

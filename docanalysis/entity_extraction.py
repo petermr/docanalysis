@@ -7,72 +7,92 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 import xml.etree.ElementTree as ET
 from nltk import tokenize
-
+from docanalysis.ami_sections import AMIAbsSection
+from pathlib import Path
+from pygetpapers import Pygetpapers
+from scispacy.abbreviation import AbbreviationDetector
+import subprocess
+from collections import Counter
 try:
-    nlp = spacy.load('en_core_web_sm')
+    nlp = spacy.load('en_core_sci_sm')
 except OSError:
     from spacy.cli import download
-    download('en_core_web_sm')
-    nlp = spacy.load('en_core_web_sm')
-
+    download('https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.4.0/en_core_sci_sm-0.4.0.tar.gz')
+    nlp = spacy.load('en_core_sci_sm')
+nlp.add_pipe("abbreviation_detector")
 
 class EntityExtraction:
     """ """
 
     def __init__(self):
-        self.labels_to_get = []
         logging.basicConfig(level=logging.INFO)
 
     def extract_entities_from_papers(self, corpus_path, terms_xml_path, query=None, hits=30,
-                                     make_project=False, install_ami=False, removefalse=True, create_csv=True,
-                                     csv_name='entities.csv', labels_to_get=['GPE', 'ORG'],make_ami_dict=False):
-        self.labels_to_get = labels_to_get
-        if make_project:
+                                     run_pygetpapers=False, run_sectioning=False, removefalse=True, create_csv=True,
+                                     csv_name='entities.csv', make_ami_dict=False):
+        path=os.path.abspath(corpus_path)
+        if run_pygetpapers:
             if not query:
                 logging.warning('Please provide query as parameter')
                 return
             logging.info(f"making project/searching {query} for {hits} hits into {corpus_path}")
-            self.create_project_files(query, hits, corpus_path)
-        if install_ami:
-            logging.info(f"installing ami3 (check whether this is a good idea)")
-            self.install_ami()
+            self.run_pygetpapers(query, hits, path)
+        self.all_paragraphs = glob(os.path.join(
+            path, '**', 'sections', '**', '[1_9]_p.xml'), recursive=True)
+        if len(self.all_paragraphs) == 0 and not run_sectioning:
+            logging.error("No sections found... Exciting")
+            return
+        if os.path.isdir(path):
+            if run_sectioning:
+                self.run_ami_section(path)
+                self.all_paragraphs = glob(os.path.join(
+                path, '**', 'sections', '**', '[1_9]_p.xml'), recursive=True)
+        else:
+            logging.error("Corpus doesn't exist")
+            return
+
         logging.info(f"dict with parsed xml in {corpus_path}")
         dict_with_parsed_xml = self.make_dict_with_parsed_xml(corpus_path)
         logging.info(f"getting terms from/to {terms_xml_path}")
         logging.info(f"add parsed_sections to dict: {len(dict_with_parsed_xml)}")
         self.add_parsed_sections_to_dict(dict_with_parsed_xml)
         logging.info(f"added parsed_sections to dict: {len(dict_with_parsed_xml)}")
+        self.remove_statements_not_having_xmldict_entities(
+                    dict_with_parsed_xml=dict_with_parsed_xml)
         if terms_xml_path:
             terms = self.get_terms_from_ami_xml(terms_xml_path)
             self.add_if_file_contains_terms(
                 terms=terms, dict_with_parsed_xml=dict_with_parsed_xml)
             if removefalse:
-                self.remove_statements_not_having_xmldict_terms_or_entities(
+                self.remove_statements_not_having_xmldict_terms(
                     dict_with_parsed_xml=dict_with_parsed_xml)
         if create_csv:
             self.convert_dict_to_csv(
-                path=os.path.join(corpus_path, csv_name), dict_with_parsed_xml=dict_with_parsed_xml)
+                path=os.path.join(path, csv_name), dict_with_parsed_xml=dict_with_parsed_xml)
         if make_ami_dict:
-            self.handle_ami_dict_creation(dict_with_parsed_xml,make_ami_dict)
+            ami_dict_path = os.path.join(path,make_ami_dict)
+            self.handle_ami_dict_creation(dict_with_parsed_xml,ami_dict_path)
         return dict_with_parsed_xml
+    
+    def run_pygetpapers(self,QUERY, HITS, OUTPUT):
+        pygetpapers_call=Pygetpapers()
+        pygetpapers_call.run_command(query=QUERY,limit=HITS,output=OUTPUT,xml=True)
 
-    def create_project_files(self, QUERY, HITS, OUTPUT):
-        os.system(f'pygetpapers -q "{QUERY}" -k {HITS} -o {OUTPUT} -x')
-        os.system(f"ami -p {OUTPUT} section")
+    def run_ami_section(self, path):
+        file_list= glob(os.path.join(
+            path, '**','fulltext.xml'), recursive=True)
+        for paper in file_list:
+            outdir = Path(Path(paper).parent, "sections")
+            AMIAbsSection.make_xml_sections(paper, outdir, True)
 
-    def install_ami(self):
-        os.system("git clone https://github.com/petermr/ami3.git")
-        os.system("cd ami3")
-        os.system("mvn install -Dmaven.test.skip=true")
-
+    
     def make_dict_with_parsed_xml(self, output):
 
         dict_with_parsed_xml = {}
-        all_paragraphs = glob(os.path.join(
-            output, '*', 'sections', '**', '[1_9]_p.xml'), recursive=True)
+        
         counter = 1
-        logging.info(f"starting  tokenization on {len(all_paragraphs)} paragraphs")
-        for section_path in tqdm(all_paragraphs):
+        logging.info(f"starting  tokenization on {len(self.all_paragraphs)} paragraphs")
+        for section_path in tqdm(self.all_paragraphs):
             paragraph_path = section_path
             paragraph_text = self.read_text_from_path(paragraph_path)
             sentences = tokenize.sent_tokenize(paragraph_text)
@@ -103,12 +123,17 @@ class EntityExtraction:
 
         for paragraph in dict_with_parsed_xml:
             doc = nlp(dict_with_parsed_xml[paragraph]['sentence'])
-            entities, labels, position_end, position_start = self.make_required_lists()
+            entities, labels, position_end, position_start,abbreviations,abbreviations_longform,abbreviation_start,abbreviation_end = self.make_required_lists()
+            for abrv in doc._.abbreviations:
+                abbreviations.append(abrv)
+                abbreviations_longform.append(abrv._.long_form)
+                abbreviation_start.append(abrv.start)
+                abbreviation_end.append(abrv.end)
             for ent in doc.ents:
                 self.add_parsed_entities_to_lists(
                     entities, labels, position_end, position_start, ent)
             self.add_lists_to_dict(dict_with_parsed_xml[paragraph], entities, labels, position_end,
-                                   position_start)
+                                   position_start,abbreviations,abbreviations_longform,abbreviation_start,abbreviation_end)
 
     def add_if_file_contains_terms(self, terms, dict_with_parsed_xml):
 
@@ -131,26 +156,33 @@ class EntityExtraction:
         return terms
 
     def make_required_lists(self):
-
+        abbreviations=[]
+        abbreviations_longform=[]
+        abbreviation_start=[]
+        abbreviation_end=[]
         entities = []
         labels = []
         position_start = []
         position_end = []
-        return entities, labels, position_end, position_start
+        return entities, labels, position_end, position_start,abbreviations,abbreviations_longform,abbreviation_start,abbreviation_end
 
-    def add_lists_to_dict(self, dict_for_sentence, entities, labels, position_end, position_start):
+    def add_lists_to_dict(self, dict_for_sentence, entities, labels, position_end,
+                                   position_start,abbreviations,abbreviations_longform,abbreviation_start,abbreviation_end):
 
         dict_for_sentence['entities'] = entities
         dict_for_sentence['labels'] = labels
         dict_for_sentence['position_start'] = position_start
         dict_for_sentence['position_end'] = position_end
+        dict_for_sentence['abbreviations']= abbreviations
+        dict_for_sentence['abbreviations_longform']= abbreviations_longform
+        dict_for_sentence['abbreviation_start']= abbreviation_start
+        dict_for_sentence['abbreviation_end']= abbreviation_end
 
     def add_parsed_entities_to_lists(self, entities, labels, position_end, position_start, ent=None):
-        if ent.label_ in self.labels_to_get:
-            entities.append(ent)
-            labels.append(ent.label_)
-            position_start.append(ent.start_char)
-            position_end.append(ent.end_char)
+        entities.append(ent)
+        labels.append(ent.label_)
+        position_start.append(ent.start_char)
+        position_end.append(ent.end_char)
 
     def convert_dict_to_csv(self, path, dict_with_parsed_xml):
 
@@ -167,11 +199,21 @@ class EntityExtraction:
         df.to_csv(path, encoding='utf-8', line_terminator='\r\n')
         logging.info(f"wrote output to {path}")
 
-    def remove_statements_not_having_xmldict_terms_or_entities(self, dict_with_parsed_xml):
+    def remove_statements_not_having_xmldict_terms(self, dict_with_parsed_xml):
         statement_to_pop = []
         for statement in dict_with_parsed_xml:
             sentect_dict = dict_with_parsed_xml[statement]
-            if len(sentect_dict['has_terms']) == 0 or len(sentect_dict['entities']) == 0:
+            if len(sentect_dict['has_terms']) == 0 :
+                statement_to_pop.append(statement)
+
+        for term in statement_to_pop:
+            dict_with_parsed_xml.pop(term)
+    
+    def remove_statements_not_having_xmldict_entities(self, dict_with_parsed_xml):
+        statement_to_pop = []
+        for statement in dict_with_parsed_xml:
+            sentect_dict = dict_with_parsed_xml[statement]
+            if len(sentect_dict['entities']) == 0:
                 statement_to_pop.append(statement)
 
         for term in statement_to_pop:
@@ -192,21 +234,24 @@ class EntityExtraction:
         xml_string=f'''<?xml version="1.0" encoding="UTF-8"?>
                             <dictionary title="{title}">
                     '''
-        for term in list_of_terms:
+        dict_of_entities_with_count = dict(Counter(list_of_terms))
+        for term in dict_of_entities_with_count:
             xml_string+=f'''
-                        <entry term="{term}"/>
+                        <entry term="{term}" count="{dict_of_entities_with_count[term]}"/>
             '''
         xml_string+="</dictionary>"
         return xml_string
     
     def write_string_to_file(self,string_to_put,title):
-        with open(f'{title}.xml',mode='w') as f:
+        with open(title,mode='w', encoding='utf-8') as f:
             f.write(string_to_put)
     
     def handle_ami_dict_creation(self,result_dictionary,title):
         list_of_entities=[]
         for entry in result_dictionary:
-            if 'entities' in entry:
-                list_of_entities+=entry['entities']
+            if 'entities' in result_dictionary[entry]:
+                list_of_entities+=result_dictionary[entry]['entities']
+            
         xml_dict = self.make_ami_dict_from_list(list_of_entities,title)
         self.write_string_to_file(xml_dict,f'{title}.xml')
+        logging.info("Wrote ami dict")
