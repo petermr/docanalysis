@@ -24,7 +24,7 @@ requirements = ['https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.
 
 setup(
     name='docanalysis',
-    version="0.0.4",
+    version="0.0.5",
     description='extract structured information from ethics paragraphs',
     long_description_content_type='text/markdown',
     long_description=readme,

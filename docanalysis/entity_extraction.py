@@ -232,13 +232,11 @@ class EntityExtraction:
 
     def make_ami_dict_from_list(self,list_of_terms,title):
         xml_string=f'''<?xml version="1.0" encoding="UTF-8"?>
-                            <dictionary title="{title}">
+                            <dictionary title="{title}">     
                     '''
         dict_of_entities_with_count = dict(Counter(list_of_terms))
         for term in dict_of_entities_with_count:
-            xml_string+=f'''
-                        <entry term="{term}" count="{dict_of_entities_with_count[term]}"/>
-            '''
+            xml_string+=f'''<entry term="{term}" count="{dict_of_entities_with_count[term]}"/>'''
         xml_string+="</dictionary>"
         return xml_string
     
