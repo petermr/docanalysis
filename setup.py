@@ -11,7 +11,7 @@ import os
 with open('README.md') as readme_file:
     readme = readme_file.read()
 requirements = ['pygetpapers', 'pandas', 'spacy', 'numpy',
-                'matplotlib', 'tqdm', 'beautifulsoup4']
+                'matplotlib', 'tqdm', 'beautifulsoup4','nltk']
 
 setup(
     name='docanalysis',
@@ -22,9 +22,9 @@ setup(
     author_email='ayush@science.org.in',
     url='https://github.com/petermr/docanalysis',
     packages=[
-        'extract_entities',
+        'entity_extraction',
     ],
-    package_dir={'extract_entities':
+    package_dir={'entity_extraction':
                  'docanalysis'},
     include_package_data=True,
     install_requires=requirements,

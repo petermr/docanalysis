@@ -13,7 +13,7 @@ class Docanalysis:
     def __init__(self):
         """This function makes all the constants"""
         self.entity_extraction = EntityExtraction()
-        self.version="0.0.1"
+        self.version="0.0.3"
 
     def handle_logger_creation(self, args):
         """[summary]
