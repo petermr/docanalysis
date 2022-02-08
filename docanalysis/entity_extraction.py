@@ -12,11 +12,18 @@ from pathlib import Path
 from pygetpapers import Pygetpapers
 from scispacy.abbreviation import AbbreviationDetector
 from collections import Counter
+import pip
+
+def install(package):
+    if hasattr(pip, 'main'):
+        pip.main(['install', package])
+    else:
+        pip._internal.main(['install', package])
+
 try:
     nlp = spacy.load('en_core_sci_sm')
 except OSError:
-    from spacy.cli import download
-    download('https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.4.0/en_core_sci_sm-0.4.0.tar.gz')
+    install('https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.4.0/en_core_sci_sm-0.4.0.tar.gz')
     nlp = spacy.load('en_core_sci_sm')
 nlp.add_pipe("abbreviation_detector")
 
