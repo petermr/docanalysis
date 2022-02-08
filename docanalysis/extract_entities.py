@@ -1,25 +1,25 @@
-from fileinput import filename
-import os
-import sys
-import logging
-from glob import glob
-import spacy
-import pandas as pd
-from bs4 import BeautifulSoup
-from tqdm import tqdm
-import xml.etree.ElementTree as ET
-from nltk import tokenize
-import subprocess
-import scispacy
 import json
+import logging
+import os
 import re
+import xml.etree.ElementTree as ET
+from fileinput import filename
+from glob import glob
+
+import pandas as pd
+import spacy
 import yake
+from bs4 import BeautifulSoup
+from nltk import tokenize
+from tqdm import tqdm
+
 try:
-    nlp = spacy.load('en_core_web_sm')
+    nlp = spacy.load("en_core_web_sm")
 except OSError:
     from spacy.cli import download
-    download('en_core_web_sm')
-    nlp = spacy.load('en_core_web_sm')
+
+    download("en_core_web_sm")
+    nlp = spacy.load("en_core_web_sm")
 
 
 class DocAnalysis:
@@ -29,9 +29,19 @@ class DocAnalysis:
         self.labels_to_get = []
         logging.basicConfig(level=logging.INFO)
 
-    def extract_entities_from_papers(self, corpus_path, terms_xml_path, query=None, hits=30,
-                                     make_project=False, install_ami=False, removefalse=True, create_csv=True,
-                                     csv_name='entities.csv', labels_to_get=['GPE', 'ORG']):
+    def extract_entities_from_papers(
+        self,
+        corpus_path,
+        terms_xml_path,
+        query=None,
+        hits=30,
+        make_project=False,
+        install_ami=False,
+        removefalse=True,
+        create_csv=True,
+        csv_name="entities.csv",
+        labels_to_get=["GPE", "ORG"],
+    ):
         """[summary]
 
         :param query: [description]
@@ -58,9 +68,11 @@ class DocAnalysis:
         self.labels_to_get = labels_to_get
         if make_project:
             if not query:
-                logging.warning('Please provide query as parameter')
+                logging.warning("Please provide query as parameter")
                 return
-            logging.info(f"making project/searching {query} for {hits} hits into {corpus_path}")
+            logging.info(
+                f"making project/searching {query} for {hits} hits into {corpus_path}"
+            )
             self.create_project_files(query, hits, corpus_path)
         if install_ami:
             logging.info(f"installing ami3 (check whether this is a good idea)")
@@ -80,14 +92,18 @@ class DocAnalysis:
 
         terms = self.get_terms_from_ami_xml(terms_xml_path)  # moved from (1)
         self.add_if_file_contains_terms(
-            terms=terms, dict_with_parsed_xml=dict_with_parsed_xml)
+            terms=terms, dict_with_parsed_xml=dict_with_parsed_xml
+        )
 
         if removefalse:
             self.remove_statements_not_having_xmldict_terms_or_entities(
-                dict_with_parsed_xml=dict_with_parsed_xml)
+                dict_with_parsed_xml=dict_with_parsed_xml
+            )
         if create_csv:
             self.convert_dict_to_csv(
-                path=os.path.join(corpus_path, csv_name), dict_with_parsed_xml=dict_with_parsed_xml)
+                path=os.path.join(corpus_path, csv_name),
+                dict_with_parsed_xml=dict_with_parsed_xml,
+            )
         return dict_with_parsed_xml
 
     def create_project_files(self, QUERY, HITS, OUTPUT):
@@ -102,8 +118,9 @@ class DocAnalysis:
     def make_dict_with_parsed_xml(self, output):
 
         dict_with_parsed_xml = {}
-        all_paragraphs = glob(os.path.join(
-            output, '*', 'sections', '**', '[1_9]_p.xml'), recursive=True)
+        all_paragraphs = glob(
+            os.path.join(output, "*", "sections", "**", "[1_9]_p.xml"), recursive=True
+        )
         counter = 1
         logging.info(f"starting  tokenization on {len(all_paragraphs)} paragraphs")
         for section_path in tqdm(all_paragraphs):
@@ -124,11 +141,10 @@ class DocAnalysis:
         tree = ET.parse(paragraph_path)
         root = tree.getroot()
         try:
-            xmlstr = ET.tostring(root, encoding='utf8', method='xml')
-            soup = BeautifulSoup(xmlstr, features='lxml')
+            xmlstr = ET.tostring(root, encoding="utf8", method="xml")
+            soup = BeautifulSoup(xmlstr, features="lxml")
             text = soup.get_text(separator="")
-            paragraph_text = text.replace(
-                '\n', '')
+            paragraph_text = text.replace("\n", "")
         except:
             paragraph_text = "empty"
         return paragraph_text
@@ -136,31 +152,36 @@ class DocAnalysis:
     def add_parsed_sections_to_dict(self, dict_with_parsed_xml):
 
         for paragraph in dict_with_parsed_xml:
-            doc = nlp(dict_with_parsed_xml[paragraph]['sentence'])
+            doc = nlp(dict_with_parsed_xml[paragraph]["sentence"])
             entities, labels, position_end, position_start = self.make_required_lists()
             for ent in doc.ents:
                 self.add_parsed_entities_to_lists(
-                    entities, labels, position_end, position_start, ent)
-            self.add_lists_to_dict(dict_with_parsed_xml[paragraph], entities, labels, position_end,
-                                   position_start)
+                    entities, labels, position_end, position_start, ent
+                )
+            self.add_lists_to_dict(
+                dict_with_parsed_xml[paragraph],
+                entities,
+                labels,
+                position_end,
+                position_start,
+            )
 
     def add_if_file_contains_terms(self, terms, dict_with_parsed_xml):
 
         for statement in dict_with_parsed_xml:
             dict_for_sentence = dict_with_parsed_xml[statement]
-            dict_for_sentence['has_terms'] = []
+            dict_for_sentence["has_terms"] = []
             for term in terms:
-                if term.lower().strip() in dict_for_sentence['sentence'].lower():
-                    dict_for_sentence['has_terms'].append(term)
-            dict_for_sentence['weight'] = len(
-                dict_for_sentence['has_terms'])
+                if term.lower().strip() in dict_for_sentence["sentence"].lower():
+                    dict_for_sentence["has_terms"].append(term)
+            dict_for_sentence["weight"] = len(dict_for_sentence["has_terms"])
 
     def get_terms_from_ami_xml(self, xml_path):
 
         tree = ET.parse(xml_path)
         root = tree.getroot()
         terms = []
-        for para in root.iter('entry'):
+        for para in root.iter("entry"):
             terms.append(para.attrib["term"])
         return terms
 
@@ -172,14 +193,18 @@ class DocAnalysis:
         position_end = []
         return entities, labels, position_end, position_start
 
-    def add_lists_to_dict(self, dict_for_sentence, entities, labels, position_end, position_start):
+    def add_lists_to_dict(
+        self, dict_for_sentence, entities, labels, position_end, position_start
+    ):
 
-        dict_for_sentence['entities'] = entities
-        dict_for_sentence['labels'] = labels
-        dict_for_sentence['position_start'] = position_start
-        dict_for_sentence['position_end'] = position_end
+        dict_for_sentence["entities"] = entities
+        dict_for_sentence["labels"] = labels
+        dict_for_sentence["position_start"] = position_start
+        dict_for_sentence["position_end"] = position_end
 
-    def add_parsed_entities_to_lists(self, entities, labels, position_end, position_start, ent=None):
+    def add_parsed_entities_to_lists(
+        self, entities, labels, position_end, position_start, ent=None
+    ):
         if ent.label_ in self.labels_to_get:
             entities.append(ent)
             labels.append(ent.label_)
@@ -192,20 +217,23 @@ class DocAnalysis:
         df = df.T
         for col in df:
             try:
-                df[col] = df[col].astype(str).str.replace(
-                    "[", "").str.replace("]", "")
-                df[col] = df[col].astype(str).str.replace(
-                    "'", "").str.replace("'", "")
+                df[col] = df[col].astype(str).str.replace("[", "").str.replace("]", "")
+                df[col] = df[col].astype(str).str.replace("'", "").str.replace("'", "")
             except:
                 pass
-        df.to_csv(path, encoding='utf-8', line_terminator='\r\n')
+        df.to_csv(path, encoding="utf-8", line_terminator="\r\n")
         logging.info(f"wrote output to {path}")
 
-    def remove_statements_not_having_xmldict_terms_or_entities(self, dict_with_parsed_xml):
+    def remove_statements_not_having_xmldict_terms_or_entities(
+        self, dict_with_parsed_xml
+    ):
         statement_to_pop = []
         for statement in dict_with_parsed_xml:
             sentect_dict = dict_with_parsed_xml[statement]
-            if len(sentect_dict['has_terms']) == 0 or len(sentect_dict['entities']) == 0:
+            if (
+                len(sentect_dict["has_terms"]) == 0
+                or len(sentect_dict["entities"]) == 0
+            ):
                 statement_to_pop.append(statement)
 
         for term in statement_to_pop:
@@ -225,38 +253,44 @@ class DocAnalysis:
         field_list = []
         for sentence in dict_with_parsed_xml:
             sentect_dict = dict_with_parsed_xml[sentence]
-            for entity, label in zip(sentect_dict['entities'], sentect_dict['labels']):
+            for entity, label in zip(sentect_dict["entities"], sentect_dict["labels"]):
                 if label == field:
                     if entity not in field_list:
                         field_list.append(entity)
         return field_list
 
-    def make_ami_dict_from_list(self,list_of_terms,title):
-        xml_string=f'''<?xml version="1.0" encoding="UTF-8"?>
+    def make_ami_dict_from_list(self, list_of_terms, title):
+        xml_string = f"""<?xml version="1.0" encoding="UTF-8"?>
                             <dictionary title="{title}">
-                    '''
+                    """
         for term in list_of_terms:
-            xml_string+=f'''
+            xml_string += f"""
                         <entry term="{term}"/>
-            '''
-        xml_string+="</dictionary>"
+            """
+        xml_string += "</dictionary>"
         return xml_string
-    
-    def write_string_to_file(self,string_to_put,title):
-        with open(f'{title}.xml',mode='w') as f:
+
+    def write_string_to_file(self, string_to_put, title):
+        with open(f"{title}.xml", mode="w") as f:
             f.write(string_to_put)
 
-# -------this section comes from metadata_analysis.py 
+
+# -------this section comes from metadata_analysis.py
 # (https://github.com/petermr/crops/blob/main/metadata_analysis/metadata_analysis.py)
 
 metadata_dictionary = {}
 
+
 def get_metadata_json(output_directory):
     WORKING_DIRECTORY = os.getcwd()
-    glob_results = glob.glob(os.path.join(WORKING_DIRECTORY,
-                                          output_directory, "*", 'eupmc_result.json'))
+    glob_results = glob.glob(
+        os.path.join(WORKING_DIRECTORY, output_directory, "*", "eupmc_result.json")
+    )
     metadata_dictionary["metadata_json"] = glob_results
-    logging.info(f'metadata found for {len(metadata_dictionary["metadata_json"])} papers')
+    logging.info(
+        f'metadata found for {len(metadata_dictionary["metadata_json"])} papers'
+    )
+
 
 def get_PMCIDS(metadata_dictionary=metadata_dictionary):
     # gets PMCDIDs from metadata_JSON of individual papers.
@@ -264,34 +298,45 @@ def get_PMCIDS(metadata_dictionary=metadata_dictionary):
 
     metadata_dictionary["PMCIDS"] = []
     for metadata in metadata_dictionary["metadata_json"]:
-        with open(metadata, encoding='utf-8') as f:
+        with open(metadata, encoding="utf-8") as f:
             metadata_in_json = json.load(f)
             try:
-                metadata_dictionary["PMCIDS"].append(
-                    metadata_in_json["full"]["pmcid"])
+                metadata_dictionary["PMCIDS"].append(metadata_in_json["full"]["pmcid"])
             except KeyError:
-                metadata_dictionary["PMCIDS"].append('NaN')
-    logging.info('getting PMCIDs')
+                metadata_dictionary["PMCIDS"].append("NaN")
+    logging.info("getting PMCIDs")
+
 
 def parse_xml(output_directory, section, metadata_dictionary=metadata_dictionary):
-    # gets the text from XML. Clubs all the paragraphs in the section into one. 
+    # gets the text from XML. Clubs all the paragraphs in the section into one.
     metadata_dictionary[f"{section}"] = []
     for pmc in metadata_dictionary["PMCIDS"]:
         paragraphs = []
-        section_glob = glob.glob(os.path.join(os.getcwd(), output_directory,
-                                           pmc, 'sections', '**', f'*{section}*', '**', '*.xml'),
-                              recursive=True)
+        section_glob = glob.glob(
+            os.path.join(
+                os.getcwd(),
+                output_directory,
+                pmc,
+                "sections",
+                "**",
+                f"*{section}*",
+                "**",
+                "*.xml",
+            ),
+            recursive=True,
+        )
         for result in section_glob:
             tree = ET.parse(result)
             root = tree.getroot()
-            xmlstr = ET.tostring(root, encoding='utf-8', method='xml')
-            soup = BeautifulSoup(xmlstr, features='lxml')
+            xmlstr = ET.tostring(root, encoding="utf-8", method="xml")
+            soup = BeautifulSoup(xmlstr, features="lxml")
             text = soup.get_text(separator="")
-            text = text.replace('\n', '')
+            text = text.replace("\n", "")
             paragraphs.append(text)
-        concated_paragraph = ' '.join(paragraphs)
+        concated_paragraph = " ".join(paragraphs)
         metadata_dictionary[f"{section}"].append(concated_paragraph)
     logging.info(f"parsing {section} section")
+
 
 def get_abstract(metadata_dictionary=metadata_dictionary):
     # gets abstracts from the metadata json.
@@ -300,14 +345,14 @@ def get_abstract(metadata_dictionary=metadata_dictionary):
     TAG_RE = re.compile(r"<[^>]+>")
     metadata_dictionary["abstract"] = []
     for metadata in metadata_dictionary["metadata_json"]:
-        with open(metadata, encoding='utf-8') as f:
+        with open(metadata, encoding="utf-8") as f:
             metadata_in_json = json.load(f)
             try:
                 raw_abstract = metadata_in_json["full"]["abstractText"]
-                abstract = TAG_RE.sub(' ', raw_abstract)
+                abstract = TAG_RE.sub(" ", raw_abstract)
                 metadata_dictionary["abstract"].append(abstract)
             except KeyError:
-                metadata_dictionary["abstract"].append('NaN')
+                metadata_dictionary["abstract"].append("NaN")
     logging.info("getting the abstracts")
 
 
@@ -317,32 +362,36 @@ def get_keywords(metadata_dictionary=metadata_dictionary):
     # since the format of the metadata JSON has changed from time to time.
     metadata_dictionary["keywords"] = []
     for metadata in metadata_dictionary["metadata_json"]:
-        with open(metadata, encoding='utf-8') as f:
+        with open(metadata, encoding="utf-8") as f:
             metadata_in_json = json.load(f)
             try:
                 metadata_dictionary["keywords"].append(
-                    metadata_in_json["full"]["keywordList"]["keyword"])
+                    metadata_in_json["full"]["keywordList"]["keyword"]
+                )
             except KeyError:
                 metadata_dictionary["keywords"].append([])
     logging.info("getting the keywords from metadata")
 
 
 def key_phrase_extraction(section, metadata_dictionary=metadata_dictionary):
-    # extracts keyphrases from the blob of texts of section specified for each paper using YAKE 
+    # extracts keyphrases from the blob of texts of section specified for each paper using YAKE
     metadata_dictionary["yake_keywords"] = []
     for text in metadata_dictionary[f"{section}"]:
         custom_kw_extractor = yake.KeywordExtractor(
-            lan='en', n=2, top=10, features=None)
+            lan="en", n=2, top=10, features=None
+        )
         keywords = custom_kw_extractor.extract_keywords(text)
         keywords_list = []
         for kw in keywords:
             keywords_list.append(kw[0])
         metadata_dictionary["yake_keywords"].append(keywords_list)
-    logging.info(f'extracted key phrases from {section}')
+    logging.info(f"extracted key phrases from {section}")
 
 
-def get_organism(section,label_interested= 'TAXON', metadata_dictionary=metadata_dictionary):
-    #nlp = spacy.load("en_ner_bionlp13cg_md")
+def get_organism(
+    section, label_interested="TAXON", metadata_dictionary=metadata_dictionary
+):
+    # nlp = spacy.load("en_ner_bionlp13cg_md")
     nlp = spacy.load("en_core_sci_sm")
     metadata_dictionary["entities"] = []
     for sci_text in metadata_dictionary[f"{section}"]:
@@ -352,23 +401,28 @@ def get_organism(section,label_interested= 'TAXON', metadata_dictionary=metadata
             if ent.label_ == label_interested:
                 entity.append(ent.text)
         metadata_dictionary["entities"].append(entity)
-    logging.info(F"NER using SciSpacy - looking for {label_interested}")
+    logging.info(f"NER using SciSpacy - looking for {label_interested}")
 
 
-def convert_to_csv(path='keywords_results_yake_organism_pmcid_tps_cam_ter_c.csv', metadata_dictionary=metadata_dictionary):
-     # method borrowed from original docanalysis
+def convert_to_csv(
+    path="keywords_results_yake_organism_pmcid_tps_cam_ter_c.csv",
+    metadata_dictionary=metadata_dictionary,
+):
+    # method borrowed from original docanalysis
     df = pd.DataFrame(metadata_dictionary)
-    df.to_csv(path, encoding='utf-8', line_terminator='\r\n')
-    logging.info(f'writing the keywords to {path}')
+    df.to_csv(path, encoding="utf-8", line_terminator="\r\n")
+    logging.info(f"writing the keywords to {path}")
 
 
-def convert_to_json(path='ethics_statement_2000.json', metadata_dictionary = metadata_dictionary):
+def convert_to_json(
+    path="ethics_statement_2000.json", metadata_dictionary=metadata_dictionary
+):
     # converts the python dictionary containing output into a JSON file
     json_file = json.dumps(metadata_dictionary)
-    f = open(path,"w", encoding='ascii')
+    f = open(path, "w", encoding="ascii")
     f.write(json_file)
     f.close()
-    logging.info(f'writing the dictionary to {path}')
+    logging.info(f"writing the dictionary to {path}")
 
 
 def look_for_a_word(section, search_for="TPS", metadata_dictionary=metadata_dictionary):
@@ -377,12 +431,16 @@ def look_for_a_word(section, search_for="TPS", metadata_dictionary=metadata_dict
     metadata_dictionary[f"{search_for}_match"] = []
     for text in metadata_dictionary[f"{section}"]:
         words = text.split(" ")
-        match_list = ([s for s in words if f"{search_for}" in s])
-        metadata_dictionary[f"{search_for}_match"] .append(match_list)
+        match_list = [s for s in words if f"{search_for}" in s]
+        metadata_dictionary[f"{search_for}_match"].append(match_list)
     logging.info(f"looking for {search_for} in {section}")
 
 
-def look_for_next_word(section, search_for=["number:", "no.", "No.", "number" ], metadata_dictionary=metadata_dictionary):
+def look_for_next_word(
+    section,
+    search_for=["number:", "no.", "No.", "number"],
+    metadata_dictionary=metadata_dictionary,
+):
     # chops the paragraph corresponding to a section into list of words
     # gets the word next to the matched string.
     metadata_dictionary[f"{search_for}_match"] = []
@@ -390,7 +448,9 @@ def look_for_next_word(section, search_for=["number:", "no.", "No.", "number" ],
         words = text.split(" ")
         words = iter(words)
         try:
-            match_list = ([next(words) for s in words if any(xs in s for xs in search_for)])
+            match_list = [
+                next(words) for s in words if any(xs in s for xs in search_for)
+            ]
             metadata_dictionary[f"{search_for}_match"].append(match_list)
         except StopIteration:
             metadata_dictionary[f"{search_for}_match"].append([])
@@ -398,7 +458,9 @@ def look_for_next_word(section, search_for=["number:", "no.", "No.", "number" ],
     logging.info(f"looking for {search_for} in {section}")
 
 
-def add_if_file_contains_terms(section, metadata_dictionary=metadata_dictionary, terms=['iNaturalist']):
+def add_if_file_contains_terms(
+    section, metadata_dictionary=metadata_dictionary, terms=["iNaturalist"]
+):
     # method borrowed from original docanalysis
     metadata_dictionary["terms"] = []
     for term in terms:
@@ -406,30 +468,30 @@ def add_if_file_contains_terms(section, metadata_dictionary=metadata_dictionary,
             if term.lower() in text.lower():
                 metadata_dictionary["terms"].append(term)
             else:
-                metadata_dictionary["terms"].append('NaN')
-    logging.info(f'looking for term matches in {section}')
+                metadata_dictionary["terms"].append("NaN")
+    logging.info(f"looking for term matches in {section}")
 
 
 # calling all the functions
-CPROJECT = os.path.join(os.path.expanduser('~'), 'ethics_statement_2000_generic')
-SECTION= 'ethic'
-#querying_pygetpapers_sectioning("inaturalist",'500',CPROJECT)
+CPROJECT = os.path.join(os.path.expanduser("~"), "ethics_statement_2000_generic")
+SECTION = "ethic"
+# querying_pygetpapers_sectioning("inaturalist",'500',CPROJECT)
 get_metadata_json(CPROJECT)
 get_PMCIDS()
 parse_xml(CPROJECT, SECTION)
 get_abstract()
 get_keywords()
 key_phrase_extraction(SECTION)
-#get_organism(SECTION)
+# get_organism(SECTION)
 look_for_next_word(SECTION)
-#look_for_next_word(SECTION, search_for="C.")
-#look_for_next_word(SECTION, search_for='Citrus')
+# look_for_next_word(SECTION, search_for="C.")
+# look_for_next_word(SECTION, search_for='Citrus')
 add_if_file_contains_terms(SECTION)
-convert_to_csv(f'ethics_{SECTION}2000.csv')
+convert_to_csv(f"ethics_{SECTION}2000.csv")
 convert_to_json()
 
-# -------end of code section from metadata_analysis.py 
+# -------end of code section from metadata_analysis.py
 
-#TODO intergrate metadata_analyis.py to original docanalysis; 
-#TODO decide on functions we need from metadata_analysis.py 
-#TODO write methods to create ami-dictionaries from extracted entites and keywords
+# TODO intergrate metadata_analyis.py to original docanalysis;
+# TODO decide on functions we need from metadata_analysis.py
+# TODO write methods to create ami-dictionaries from extracted entites and keywords
