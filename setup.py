@@ -22,9 +22,9 @@ setup(
     author_email='ayush@science.org.in',
     url='https://github.com/petermr/docanalysis',
     packages=[
-        'entity_extraction',
+        'pygetpapers',
     ],
-    package_dir={'entity_extraction':
+    package_dir={'docanalysis':
                  'docanalysis'},
     include_package_data=True,
     install_requires=requirements,
