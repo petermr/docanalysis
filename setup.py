@@ -29,7 +29,7 @@ setup(
     long_description_content_type='text/markdown',
     long_description=readme,
     author='Ayush Garg, Shweata N. Hegde',
-    author_email='ayush@science.org.in',
+    author_email='ayush@science.org.in, shweata.hegde@gmail.com',
     url='https://github.com/petermr/docanalysis',
     packages=[
         'docanalysis',

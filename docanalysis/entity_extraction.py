@@ -11,7 +11,6 @@ from docanalysis.ami_sections import AMIAbsSection
 from pathlib import Path
 from pygetpapers import Pygetpapers
 from scispacy.abbreviation import AbbreviationDetector
-import subprocess
 from collections import Counter
 try:
     nlp = spacy.load('en_core_sci_sm')
@@ -38,15 +37,16 @@ class EntityExtraction:
             logging.info(f"making project/searching {query} for {hits} hits into {corpus_path}")
             self.run_pygetpapers(query, hits, path)
         self.all_paragraphs = glob(os.path.join(
-            path, '**', 'sections', '**', '[1_9]_p.xml'), recursive=True)
+            path, '**', 'sections', '**', '*.xml'), recursive=True)
+        print(path)
         if len(self.all_paragraphs) == 0 and not run_sectioning:
-            logging.error("No sections found... Exciting")
+            logging.error("No sections found... Exiting")
             return
         if os.path.isdir(path):
             if run_sectioning:
                 self.run_ami_section(path)
                 self.all_paragraphs = glob(os.path.join(
-                path, '**', 'sections', '**', '[1_9]_p.xml'), recursive=True)
+                path, '**', 'sections', '**', '*.xml'), recursive=True)
         else:
             logging.error("Corpus doesn't exist")
             return
@@ -107,9 +107,9 @@ class EntityExtraction:
         return dict_with_parsed_xml
 
     def read_text_from_path(self, paragraph_path):
-        tree = ET.parse(paragraph_path)
-        root = tree.getroot()
         try:
+            tree = ET.parse(paragraph_path)
+            root = tree.getroot()
             xmlstr = ET.tostring(root, encoding='utf8', method='xml')
             soup = BeautifulSoup(xmlstr, features='lxml')
             text = soup.get_text(separator="")
@@ -117,6 +117,7 @@ class EntityExtraction:
                 '\n', '')
         except:
             paragraph_text = "empty"
+            logging.error(f"cannot parse {paragraph_path}")
         return paragraph_text
 
     def add_parsed_sections_to_dict(self, dict_with_parsed_xml):
