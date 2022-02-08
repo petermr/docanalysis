@@ -2,14 +2,11 @@ import json
 import logging
 import os
 import re
-import subprocess
-import sys
 import xml.etree.ElementTree as ET
 from fileinput import filename
 from glob import glob
 
 import pandas as pd
-import scispacy
 import spacy
 import yake
 from bs4 import BeautifulSoup

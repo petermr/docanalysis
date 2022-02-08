@@ -32,6 +32,7 @@ setup(
     package_dir={"docanalysis": "docanalysis"},
     include_package_data=True,
     install_requires=requirements,
+    extras={"dev": ["pytest", "pytest-cov"]},
     license="Apache License",
     zip_safe=False,
     keywords=["research automation"],
