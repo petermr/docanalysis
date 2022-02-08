@@ -48,7 +48,7 @@ Parameters: CORPUS_PATH: path to an existing corpus (CProject)
             labels_to_get: SpaCy recognizes Named-Entites and labels them. You can choose for lables you are interested by providing it as a list. For all available labels, check out the Tools Used section. 
 ```
 ## How to run?
-We have created `demo.py` where you can run the package. 
+We have created `demo.py`  in the `examples` folder where you can run the package. 
 
 ```
 import os
@@ -74,12 +74,12 @@ with open('GPE.text', 'w') as f:
     f.write(str(list_with_gpe))
 ```
 To break this down, 
-|Variable snippet      |What is it?     |
-|----------------------|----------------|
-|`essential oil AND chemical composition` |Query to `pygetpapers` (EPMC default)|
-|`100`                 |number of hits  |
-|stem_cell_research_300|Output directory|
-|"ethics_dictionary", "ethics_key_phrases", "ethics_key_phrases.xml"     |dictionary path |
+| Variable snippet                                                    | What is it?                           |
+| ------------------------------------------------------------------- | ------------------------------------- |
+| `essential oil AND chemical composition`                            | Query to `pygetpapers` (EPMC default) |
+| `100`                                                               | number of hits                        |
+| stem_cell_research_300                                              | Output directory                      |
+| "ethics_dictionary", "ethics_key_phrases", "ethics_key_phrases.xml" | dictionary path                       |
 
 ## What is a dictionary
 

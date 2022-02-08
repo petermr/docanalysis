@@ -1,12 +1,9 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
-import configparser
-import os
+
 
 with open('README.md') as readme_file:
     readme = readme_file.read()
@@ -22,7 +19,7 @@ setup(
     author_email='ayush@science.org.in',
     url='https://github.com/petermr/docanalysis',
     packages=[
-        'pygetpapers',
+        'docanalysis',
     ],
     package_dir={'docanalysis':
                  'docanalysis'},
@@ -30,7 +27,7 @@ setup(
     install_requires=requirements,
     license='Apache License',
     zip_safe=False,
-    keywords='research automation',
+    keywords=['research automation'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
