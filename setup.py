@@ -10,6 +10,7 @@ import os
 
 with open('README.md', encoding='utf-8') as readme_file:
     readme = readme_file.read()
+    
 requirements = ['scispacy','beautifulsoup4==4.10.0', 'braceexpand==0.1.7', 'coloredlogs==15.0.1', 'ConfigArgParse==1.5.3', 'lxml==4.7.1', 'nltk==3.6.7','pandas==1.3.4','py4ami==0.0.16',
 'pygetpapers==1.1.2',
 'pytest==6.2.5',
