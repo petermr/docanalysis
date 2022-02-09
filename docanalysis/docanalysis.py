@@ -13,7 +13,7 @@ class Docanalysis:
     def __init__(self):
         """This function makes all the constants"""
         self.entity_extraction = EntityExtraction()
-        self.version="0.0.3"
+        self.version="0.0.7"
 
     def handle_logger_creation(self, args):
         """[summary]
@@ -55,7 +55,12 @@ class Docanalysis:
             action="store_true",
             help="queries EuropePMC via pygetpapers",
         )
-
+        parser.add_argument(
+            "--run_sectioning",
+            default=False,
+            action="store_true",
+            help="make sections",
+        )
         parser.add_argument(
             "-q",
             "--query",
@@ -77,34 +82,23 @@ class Docanalysis:
             help="name of CProject folder",
             default=os.path.join(os.getcwd(), default_path),
         )
-        # parser.add_argument(
-        #     "--section",
-        #     type=str,
-        #     help="section of paper from which you want to extract information (entities and/or key phrases)",
-        # )
-        parser.add_argument(
-            "--entity_extraction",
-            default=False,
-            nargs='+',
-            help="extracts specified entities chosen from a list of entities (CARDINAL, DATE, EVENT, FAC, GPE, LANGUAGE, LAW, LOC, MONEY, NORP, ORDINAL, ORG, PERCENT, PERSON, PRODUCT, QUANTITY, TIME, WORK_OF_ART, GGP, SO, TAXON, CHEBI, GO, CL)",
-        )
         parser.add_argument(
             "-d",
             "--dictionary",
             default=False,
             type=str,
-            help="Ami Dictionary to extract keywords from",
+            help="Ami Dictionary to tag sentences and support supervised entity extraction",
         )
         parser.add_argument(
             "-o",
             "--output",
             default="entities.csv",
-            help="Output CSV file",
+            help="Output CSV file [default=entities.csv]",
         )
         parser.add_argument(
             "--make_ami_dict",
             default=False,
-            help="Title for ami dict",
+            help="if provided will make ami dict with given title",
         )
         parser.add_argument(
             "-l",
@@ -131,8 +125,8 @@ class Docanalysis:
                 vars(args)[arg] = False
         self.handle_logger_creation(args)
         self.entity_extraction.extract_entities_from_papers(args.project_name,args.dictionary,query=args.query,hits=args.hits,
-                                     make_project=args.run_pygetpapers, install_ami=False, removefalse=True, create_csv=True,
-                                     csv_name=args.output, labels_to_get=args.entity_extraction,make_ami_dict=args.make_ami_dict)
+                                     run_pygetpapers=args.run_pygetpapers, run_sectioning= args.run_sectioning, removefalse=True, create_csv=True,
+                                     csv_name=args.output,make_ami_dict=args.make_ami_dict)
 
 
 

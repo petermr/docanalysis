@@ -8,21 +8,31 @@ except ImportError:
 import configparser
 import os
 
-with open('README.md') as readme_file:
+with open('README.md', encoding='utf-8') as readme_file:
     readme = readme_file.read()
-requirements = ['pygetpapers', 'pandas', 'spacy', 'numpy',
-                'matplotlib', 'tqdm', 'beautifulsoup4','nltk']
+    
+requirements = ['scispacy','beautifulsoup4==4.10.0', 'braceexpand==0.1.7', 'coloredlogs==15.0.1', 'ConfigArgParse==1.5.3', 'lxml==4.7.1', 'nltk==3.6.7','pandas==1.3.4','py4ami==0.0.16',
+'pygetpapers==1.1.2',
+'pytest==6.2.5',
+'scispacy==0.4.0',
+'setuptools==60.3.1',
+'spacy==3.0.7',
+'tkinterweb==3.10.7',
+'tqdm==4.62.3',
+'yake==0.4.8',
+]
 
 setup(
     name='docanalysis',
-    version="0.0.3",
+    version="0.0.7",
     description='extract structured information from ethics paragraphs',
+    long_description_content_type='text/markdown',
     long_description=readme,
     author='Ayush Garg, Shweata N. Hegde',
-    author_email='ayush@science.org.in',
+    author_email='ayush@science.org.in, shweata.hegde@gmail.com',
     url='https://github.com/petermr/docanalysis',
     packages=[
-        'pygetpapers',
+        'docanalysis',
     ],
     package_dir={'docanalysis':
                  'docanalysis'},
@@ -44,4 +54,10 @@ setup(
         'Programming Language :: Python :: 3.9',
 
     ],
+    entry_points={
+        'console_scripts': [
+            'docanalysis=docanalysis.docanalysis:main',
+        ],
+    },
+   
 )
