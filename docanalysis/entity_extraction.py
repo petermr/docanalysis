@@ -13,6 +13,7 @@ from pygetpapers import Pygetpapers
 from scispacy.abbreviation import AbbreviationDetector
 from collections import Counter
 import pip
+from lxml import etree
 
 def install(package):
     if hasattr(pip, 'main'):
@@ -75,7 +76,7 @@ class EntityExtraction:
                     dict_with_parsed_xml=dict_with_parsed_xml)
         if create_csv:
             self.convert_dict_to_csv(
-                path=os.path.join(path, csv_name), dict_with_parsed_xml=dict_with_parsed_xml)
+                path=os.path.join(path, f'{csv_name}.csv'), dict_with_parsed_xml=dict_with_parsed_xml)
         if make_ami_dict:
             ami_dict_path = os.path.join(path,make_ami_dict)
             self.handle_ami_dict_creation(dict_with_parsed_xml,ami_dict_path)
@@ -121,7 +122,7 @@ class EntityExtraction:
             soup = BeautifulSoup(xmlstr, features='lxml')
             text = soup.get_text(separator="")
             paragraph_text = text.replace(
-                '\n', '')
+                '\n', ' ')
         except:
             paragraph_text = "empty"
             logging.error(f"cannot parse {paragraph_path}")
@@ -238,15 +239,17 @@ class EntityExtraction:
                         field_list.append(entity)
         return field_list
 
-    def make_ami_dict_from_list(self,list_of_terms,title):
-        xml_string=f'''<?xml version="1.0" encoding="UTF-8"?>
-                            <dictionary title="{title}">     
-                    '''
-        dict_of_entities_with_count = dict(Counter(list_of_terms))
-        for term in dict_of_entities_with_count:
-            xml_string+=f'''<entry term="{term}" count="{dict_of_entities_with_count[term]}"/>'''
-        xml_string+="</dictionary>"
-        return xml_string
+    def make_ami_dict_from_list(self,list_of_terms_with_count,title):
+        dictionary_element=  etree.Element("dictionary")
+        dictionary_element.attrib['title']=title
+        for term in list_of_terms_with_count:
+            try:
+                entry_element=etree.SubElement(dictionary_element,"entry")
+                entry_element.attrib['term']=term[0]
+                entry_element.attrib['count']=str(term[1])
+            except Exception as e:
+                logging.error(f"Couldn't add {term} to amidict")
+        return etree.tostring(dictionary_element, pretty_print=True).decode('utf-8')
     
     def write_string_to_file(self,string_to_put,title):
         with open(title,mode='w', encoding='utf-8') as f:
@@ -256,8 +259,11 @@ class EntityExtraction:
         list_of_entities=[]
         for entry in result_dictionary:
             if 'entities' in result_dictionary[entry]:
-                list_of_entities+=result_dictionary[entry]['entities']
-            
-        xml_dict = self.make_ami_dict_from_list(list_of_entities,title)
+                entity = result_dictionary[entry]['entities']
+                list_of_entity_strings  = [i.text for i in entity]
+                list_of_entities.extend(list_of_entity_strings)
+        dict_of_entities_with_count = Counter(list_of_entities)
+        list_of_terms_with_count= dict_of_entities_with_count.most_common()
+        xml_dict = self.make_ami_dict_from_list(list_of_terms_with_count,title)
         self.write_string_to_file(xml_dict,f'{title}.xml')
         logging.info("Wrote ami dict")
