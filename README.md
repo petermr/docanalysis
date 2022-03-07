@@ -1,6 +1,6 @@
 # docanalysis
 Unsupervised entity extraction from sections of papers that have defined boilerplates. Examples of such sections include - Ethics Statements, Funders, Acknowledgments, and so on. 
-\
+
 ## Purpose
 ### Primary Purpose
 - Extracting Ethics Committees and other entities related to Ethics Statements from papers
@@ -12,6 +12,7 @@ The use case can go beyond Ethics Statements. `docanalysis` is a general package
 
 Sections like Acknowledgements, Data Availability Statements, etc., all have a fairly generic sentence structure. All you have to do is create an `ami` dictionary that contains boilerplates of the section of your interest. You can, then, use `docanalysis` to extract entities. Check this section [dictionaries](https://github.com/petermr/docanalysis#What is-a-dictionary) which outlines steps for creating custom dictionaries. In case of acknowledgements or funding, you might be interested in the players involved. Or you might have a use-case which we might have never thought of!
 ## Installation 
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 `pip install docanalysis`
@@ -26,6 +27,15 @@ Sections like Acknowledgements, Data Availability Statements, etc., all have a f
     python setup.py install
     ```
 =======
+||||||| merged common ancestors
+<<<<<<<<< Temporary merge branch 1
+=======
+
+
+`pip install docanalysis`
+
+=======
+>>>>>>> 4b82f6e54f7277a8d43919a3912cb38044253812
 - Create a Virtual Environment
 - `pip install docanalysis`
 - `docanalysis --help`
@@ -52,7 +62,25 @@ optional arguments:
   -f LOGFILE, --logfile LOGFILE
                         [All] save log to specified file in output directory as well as printing to terminal
 ```
+<<<<<<< HEAD
 >>>>>>> main
+||||||| merged common ancestors
+||||||||| 93727d4
+- Git clone the repository
+    ```
+    git clone https://github.com/petermr/docanalysis.git
+    ```
+- Run `setup.py` from inside the repository directory
+    ```
+    python setup.py install
+    ```
+=========
+
+`pip install docanalysis`
+
+>>>>>>>>> Temporary merge branch 2
+=======
+>>>>>>> 4b82f6e54f7277a8d43919a3912cb38044253812
 
 ## Tools Used and their purpose
 - [`pygetpapers`](https://github.com/petermr/pygetpapers) - scrape repositories to download papers of interest
