@@ -12,6 +12,11 @@ The use case can go beyond Ethics Statements. `docanalysis` is a general package
 
 Sections like Acknowledgements, Data Availability Statements, etc., all have a fairly generic sentence structure. All you have to do is create an `ami` dictionary that contains boilerplates of the section of your interest. You can, then, use `docanalysis` to extract entities. Check this section [dictionaries](https://github.com/petermr/docanalysis#What is-a-dictionary) which outlines steps for creating custom dictionaries. In case of acknowledgements or funding, you might be interested in the players involved. Or you might have a use-case which we might have never thought of!
 ## Installation 
+
+
+`pip install docanalysis`
+
+=======
 - Create a Virtual Environment
 - `pip install docanalysis`
 - `docanalysis --help`

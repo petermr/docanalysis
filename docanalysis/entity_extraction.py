@@ -22,9 +22,9 @@ def install(package):
         pip._internal.main(['install', package])
 
 try:
-    nlp = spacy.load('en_core_sci_sm')
+    nlp = spacy.load('en_ner_bc5cdr_md')
 except OSError:
-    install('https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.4.0/en_core_sci_sm-0.4.0.tar.gz')
+    install('https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.4.0/en_ner_bc5cdr_md-0.4.0.tar.gz')
     nlp = spacy.load('en_core_sci_sm')
 nlp.add_pipe("abbreviation_detector")
 
@@ -120,7 +120,7 @@ class EntityExtraction:
             root = tree.getroot()
             xmlstr = ET.tostring(root, encoding='utf8', method='xml')
             soup = BeautifulSoup(xmlstr, features='lxml')
-            text = soup.get_text(separator="")
+            text = soup.get_text(separator=" ")
             paragraph_text = text.replace(
                 '\n', ' ')
         except:
