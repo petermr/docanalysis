@@ -1,3 +1,5 @@
+# Credits: Peter Murray-Rust, py4ami (https://github.com/petermr/pyami/blob/main/py4ami/xml_lib.py)
+
 from pathlib import Path
 import os
 from lxml import etree as LXET

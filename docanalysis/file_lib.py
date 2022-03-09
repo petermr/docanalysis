@@ -1,3 +1,5 @@
+# Credits: Peter Murray-Rust, py4ami (https://github.com/petermr/pyami/blob/main/py4ami/file_lib.py)
+
 """classes and methods to support path operations
 
 """

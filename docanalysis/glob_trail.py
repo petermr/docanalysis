@@ -18,6 +18,7 @@ RES = ['*result*/*/*_title.xml', '*result*/*/*_p.xml'] # not sure if we should u
 TAB = ['*table*.xml']
 TIL = ['*article-meta/*title-group.xml']
 
+# glob
 path = os.getcwd()
 cproj = 'corpus/asp_nat_products'
 LIST_SEC = [TIL, KEY]
@@ -25,3 +26,5 @@ for SEC in LIST_SEC:
     for opt in SEC:
         glob_list=glob(os.path.join(path, cproj, '**', 'sections', '**', f'{opt}'), recursive=True)
         pprint(glob_list)
+
+# Section list comes from: https://github.com/petermr/pyami/blob/main/py4ami/resources/section_templates.json
