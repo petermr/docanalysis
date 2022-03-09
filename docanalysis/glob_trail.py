@@ -19,8 +19,9 @@ TAB = ['*table*.xml']
 TIL = ['*article-meta/*title-group.xml']
 
 path = os.getcwd()
+cproj = 'corpus/asp_nat_products'
 LIST_SEC = [TIL, KEY]
 for SEC in LIST_SEC:
     for opt in SEC:
-        glob_list=glob(os.path.join(path,'glob_trial_terpenes', '**', 'sections', '**', f'{opt}'), recursive=True)
+        glob_list=glob(os.path.join(path, cproj, '**', 'sections', '**', f'{opt}'), recursive=True)
         pprint(glob_list)
