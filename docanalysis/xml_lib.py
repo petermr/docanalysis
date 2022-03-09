@@ -1,5 +1,3 @@
-# Credits: Peter Murray-Rust, py4ami (https://github.com/petermr/pyami/blob/main/py4ami/xml_lib.py)
-
 from pathlib import Path
 import os
 from lxml import etree as LXET
@@ -543,3 +541,5 @@ else:
     #    print("running file_lib main anyway")
     #    main()
     pass
+
+# Credits: Peter Murray-Rust, py4ami (https://github.com/petermr/pyami/blob/main/py4ami/file_lib.py)
