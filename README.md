@@ -3,6 +3,8 @@
  
 ### Set up `venv`
 We recommend you set up a virtual environment before installing and running `docanalysis`
+
+Windows
 ```
 mkdir docanalysis_demo
 cd docanalysis_demo
@@ -54,23 +56,23 @@ optional arguments:
 
 #### Download open papers via `pygetpapers`
 ```
-docanalysis --run_pygetpapers -q "XANES AND EXAFS AND XRD" -k 10 --project_name xanes_exafs_xrd_3
+docanalysis --run_pygetpapers -q "terpene" -k 10 --project_name terpene_10
 ```
 #### Section the papers
 ```
-docanalysis --project_name xanes_exafs_xrd_3 --run_sectioning
+docanalysis --project_name terpene_10 --run_sectioning
 ```
 #### Extract entities
 ```
-docanalysis --project_name xanes_exafs_xrd_3 --output entities_202202019 --make_ami_dict entities_20220209
+docanalysis --project_name terpene_10 --output entities_202202019 --make_ami_dict entities_20220209
 ```
 #### Create dictionary
 ```
-docanalysis --project_name xanes_exafs_xrd_3 --output entities_202202019 --make_ami_dict entities_20220209
+docanalysis --project_name terpene_10 --output entities_202202019 --make_ami_dict entities_20220209
 ```
 #### All at one go!
 ```
-docanalysis --run_pygetpapers -q "XANES AND EXAFS AND XRD" -k 10 --project_name xanes_exafs_xrd_3 --run_sectioning --output entities_202202019 --make_ami_dict entities_20220209 
+docanalysis --run_pygetpapers -q "terpene" -k 10 --project_name terpene_10 --run_sectioning --output entities_202202019 --make_ami_dict entities_20220209 
 ```
 ### Tools used
 - [`pygetpapers`](https://github.com/petermr/pygetpapers) - scrape open repositories to download papers of interest
