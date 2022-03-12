@@ -1,3 +1,4 @@
+from distutils.log import error
 import os
 import logging
 from glob import glob
@@ -25,7 +26,7 @@ try:
     nlp = spacy.load('en_ner_bc5cdr_md')
 except OSError:
     install('https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.4.0/en_ner_bc5cdr_md-0.4.0.tar.gz')
-    nlp = spacy.load('en_core_sci_sm')
+    nlp = spacy.load('en_ner_bc5cdr_md')
 nlp.add_pipe("abbreviation_detector")
 
 class EntityExtraction:
@@ -108,10 +109,13 @@ class EntityExtraction:
     def get_glob_for_section(self,path,section_names):
 
         for section_name in section_names:
-            for section in self.sections[section_name]:
-                self.all_paragraphs+= glob(os.path.join(
-                path, '**', 'sections', '**', section), recursive=True)
-        
+            if section_name in self.sections[section_name]:
+                for section in self.sections[section_name]:
+                    self.all_paragraphs+= glob(os.path.join(
+                    path, '**', 'sections', '**', section), recursive=True)
+            else:
+                logging.error("Section not supported.")
+            
         return self.all_paragraphs
 
 
@@ -154,11 +158,7 @@ class EntityExtraction:
         for paragraph in tqdm(dict_with_parsed_xml):
             doc = nlp(dict_with_parsed_xml[paragraph]['sentence'])
             entities, labels, position_end, position_start,abbreviations,abbreviations_longform,abbreviation_start,abbreviation_end = self.make_required_lists()
-            for abrv in doc._.abbreviations:
-                abbreviations.append(abrv)
-                abbreviations_longform.append(abrv._.long_form)
-                abbreviation_start.append(abrv.start)
-                abbreviation_end.append(abrv.end)
+            self._get_abbreviations(doc, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end)
             for ent in doc.ents:
                 if (ent.label_ in entities_names) or (entities_names==['ALL']):
                     self.add_parsed_entities_to_lists(
@@ -166,6 +166,13 @@ class EntityExtraction:
             print(entities)
             self.add_lists_to_dict(dict_with_parsed_xml[paragraph], entities, labels, position_end,
                                    position_start,abbreviations,abbreviations_longform,abbreviation_start,abbreviation_end)
+
+    def _get_abbreviations(self, doc, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end):
+        for abrv in doc._.abbreviations:
+            abbreviations.append(abrv)
+            abbreviations_longform.append(abrv._.long_form)
+            abbreviation_start.append(abrv.start)
+            abbreviation_end.append(abrv.end)
 
     def add_if_file_contains_terms(self, terms, dict_with_parsed_xml):
 
