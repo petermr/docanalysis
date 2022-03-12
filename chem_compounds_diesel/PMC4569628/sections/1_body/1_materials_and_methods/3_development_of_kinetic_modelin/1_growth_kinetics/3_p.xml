@@ -1,0 +1,11 @@
+<p xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ali="http://www.niso.org/schemas/ali/1.0/">The logistic model leads to a lag phase, an initial exponential growth rate and stationary cell concentration, which is described as,<disp-formula id="Equ2"><label>2</label><alternatives><tex-math id="M5">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$x= \frac{{x_{0} {\text{e}}^{{kt}} }}{{{\raise0.7ex\hbox{${1 - x_{ 0} }$} \!\mathord{\left/ {\vphantom {{1 - x_{ 0} } {x_{\text{S}} (1 - e^{kt} )}}}\right.\kern-0pt} \!\lower0.7ex\hbox{${x_{\text{S}} (1 - {\rm e}^{kt} )}$}}}}$$\end{document}</tex-math><mml:math id="M6" display="block"><mml:mrow><mml:mi>x</mml:mi><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:msub><mml:mi>x</mml:mi><mml:mn>0</mml:mn></mml:msub><mml:msup><mml:mrow><mml:mtext>e</mml:mtext></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mi>t</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mrow><mml:mpadded><mml:mrow><mml:mn>1</mml:mn><mml:mo>-</mml:mo><mml:msub><mml:mi>x</mml:mi><mml:mn>0</mml:mn></mml:msub></mml:mrow></mml:mpadded><mml:mspace width="-0.166667em"/><mml:mrow><mml:mfenced close="" open="/" separators=""><mml:mrow/></mml:mfenced><mml:mspace width="0.0pt"/></mml:mrow><mml:mspace width="-0.166667em"/><mml:mpadded><mml:mrow><mml:msub><mml:mi>x</mml:mi><mml:mtext>S</mml:mtext></mml:msub><mml:mrow><mml:mo stretchy="false">(</mml:mo><mml:mn>1</mml:mn><mml:mo>-</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="normal">e</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mi>t</mml:mi></mml:mrow></mml:msup><mml:mo stretchy="false">)</mml:mo></mml:mrow></mml:mrow></mml:mpadded></mml:mrow></mml:mfrac></mml:mrow></mml:math><graphic xlink:href="13205_2014_264_Article_Equ2.gif" position="anchor"/></alternatives></disp-formula>
+</p>

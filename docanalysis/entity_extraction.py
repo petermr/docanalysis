@@ -34,7 +34,7 @@ class EntityExtraction:
     def __init__(self):
         logging.basicConfig(level=logging.INFO)
 
-    def extract_entities_from_papers(self, corpus_path, terms_xml_path, query=None, hits=30,
+    def extract_entities_from_papers(self, corpus_path, terms_xml_path, section,query=None, hits=30,
                                      run_pygetpapers=False, run_sectioning=False, removefalse=True, create_csv=True,
                                      csv_name='entities.csv', make_ami_dict=False):
         path=os.path.abspath(corpus_path)
@@ -46,7 +46,6 @@ class EntityExtraction:
             self.run_pygetpapers(query, hits, path)
         self.all_paragraphs = glob(os.path.join(
             path, '**', 'sections', '**', '*.xml'), recursive=True)
-        print(path)
         if len(self.all_paragraphs) == 0 and not run_sectioning:
             logging.error("No sections found... Exiting")
             return
@@ -120,7 +119,7 @@ class EntityExtraction:
             root = tree.getroot()
             xmlstr = ET.tostring(root, encoding='utf8', method='xml')
             soup = BeautifulSoup(xmlstr, features='lxml')
-            text = soup.get_text(separator="")
+            text = soup.get_text(separator=" ")
             paragraph_text = text.replace(
                 '\n', ' ')
         except:

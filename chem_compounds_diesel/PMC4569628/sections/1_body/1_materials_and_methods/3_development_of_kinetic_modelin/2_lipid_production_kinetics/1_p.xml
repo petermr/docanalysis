@@ -1,0 +1,40 @@
+<p xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ali="http://www.niso.org/schemas/ali/1.0/">A typical, widely used and unstructured kinetic model for product formation is the Leudeking-Piret model (<xref ref-type="bibr" rid="CR17">1959</xref>), contributed to both growth and nongrowth-associated phenomena for product formation and the equation is given as,<disp-formula id="Equ3"><label>3</label><alternatives><tex-math id="M7">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$r_{\text{fp}} = \alpha \, r_{\text{fx}} + \, \beta {\text{x}}$$\end{document}</tex-math><mml:math id="M8" display="block"><mml:mrow><mml:msub><mml:mi>r</mml:mi><mml:mtext>fp</mml:mtext></mml:msub><mml:mo>=</mml:mo><mml:mi mathvariant="italic">&#945;</mml:mi><mml:mspace width="0.166667em"/><mml:msub><mml:mi>r</mml:mi><mml:mtext>fx</mml:mtext></mml:msub><mml:mo>+</mml:mo><mml:mspace width="0.166667em"/><mml:mi mathvariant="italic">&#946;</mml:mi><mml:mtext>x</mml:mtext></mml:mrow></mml:math><graphic xlink:href="13205_2014_264_Article_Equ3.gif" position="anchor"/></alternatives></disp-formula>where <italic>r</italic>
+<sub>fp</sub> is the rate of product formation, <italic>r</italic>
+<sub>fx</sub> is the rate of biomass formation and <italic>&#945;</italic> and <italic>&#946;</italic> are the kinetic constants of the Luedeking&#8211;Piret model. This two-parameter expression has proven extremely useful and versatile in fitting product formation data from different fermentations. This is an expected kinetic form when the product is the result of energy-yielding metabolism. According to this model, the product formation rate depends linearly on the growth rate and the cell concentration,<disp-formula id="Equ4"><label>4</label><alternatives><tex-math id="M9">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$\frac{dp}{dt} = \alpha \frac{dx}{dt} + \beta x$$\end{document}</tex-math><mml:math id="M10" display="block"><mml:mrow><mml:mfrac><mml:mrow><mml:mi>d</mml:mi><mml:mi>p</mml:mi></mml:mrow><mml:mrow><mml:mi>d</mml:mi><mml:mi>t</mml:mi></mml:mrow></mml:mfrac><mml:mo>=</mml:mo><mml:mi mathvariant="italic">&#945;</mml:mi><mml:mfrac><mml:mrow><mml:mi>d</mml:mi><mml:mi>x</mml:mi></mml:mrow><mml:mrow><mml:mi>d</mml:mi><mml:mi>t</mml:mi></mml:mrow></mml:mfrac><mml:mo>+</mml:mo><mml:mi mathvariant="italic">&#946;</mml:mi><mml:mi>x</mml:mi></mml:mrow></mml:math><graphic xlink:href="13205_2014_264_Article_Equ4.gif" position="anchor"/></alternatives></disp-formula>where <inline-formula id="IEq2"><alternatives><tex-math id="M11">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$\left( \frac{dp}{dt} \right)$$\end{document}</tex-math><mml:math id="M12"><mml:mfenced close=")" open="(" separators=""><mml:mfrac><mml:mrow><mml:mi>d</mml:mi><mml:mi>p</mml:mi></mml:mrow><mml:mrow><mml:mi>d</mml:mi><mml:mi>t</mml:mi></mml:mrow></mml:mfrac></mml:mfenced></mml:math><inline-graphic xlink:href="13205_2014_264_Article_IEq2.gif"/></alternatives></inline-formula> is the lipid production rate, <italic>&#945;</italic> the lipid formation coefficient and <italic>&#946;</italic> a nongrowth correlation coefficient. The Luedeking&#8211;Piret kinetic parameters, <italic>&#945;</italic> and <italic>&#946;</italic>, depend on and vary with the fermentation dynamics. The kinetic constant <italic>&#946;</italic> can be evaluated from the stationary phase of batch culture, which implies<disp-formula id="Equ5"><label>5</label><alternatives><tex-math id="M13">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$\beta = \frac{{\left( \frac{dp}{dt} \right){\text{stationary\,phase}}}}{{x_{\text{s}} }}$$\end{document}</tex-math><mml:math id="M14" display="block"><mml:mrow><mml:mi mathvariant="italic">&#946;</mml:mi><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:mfenced close=")" open="(" separators=""><mml:mfrac><mml:mrow><mml:mi>d</mml:mi><mml:mi>p</mml:mi></mml:mrow><mml:mrow><mml:mi>d</mml:mi><mml:mi>t</mml:mi></mml:mrow></mml:mfrac></mml:mfenced><mml:mtext>stationary\,phase</mml:mtext></mml:mrow><mml:msub><mml:mi>x</mml:mi><mml:mtext>s</mml:mtext></mml:msub></mml:mfrac></mml:mrow></mml:math><graphic xlink:href="13205_2014_264_Article_Equ5.gif" position="anchor"/></alternatives></disp-formula>where <italic>x</italic>
+<sub>s</sub> is the cell concentration at the stationary phase.</p>

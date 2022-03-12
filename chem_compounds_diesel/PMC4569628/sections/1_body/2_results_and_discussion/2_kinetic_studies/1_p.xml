@@ -1,0 +1,25 @@
+<p xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ali="http://www.niso.org/schemas/ali/1.0/">The kinetics of cell growth and lipid production by microalgae <italic>C. salina</italic> and <italic>N. oculata</italic>, grown in normal conditions and nitrogen-depleted conditions, were analyzed and simulated with respect to the obtained experimental values. Logistic equation and Luedeking&#8211;Piret model were found to fit the growth and product formation kinetics, respectively. The kinetic modeling comprises two steps, namely evaluation of parameters of logistic (<italic>k</italic>) and Luedeking&#8211;Piret models (<italic>&#945;</italic>, <italic>&#946;</italic>) and simulation of theoretical biomass and product concentration from the kinetic parameters and initial conditions. The evaluated constants are reported in Table&#160;<xref rid="Tab1" ref-type="table">1</xref>.<table-wrap id="Tab1"><label>Table&#160;1</label><caption><p>Parameters of logistic and Luedeking&#8211;Piret models</p></caption><table frame="hsides" rules="groups"><thead><tr><th align="left" rowspan="3">Organism</th><th align="left" colspan="2">Logistic model</th><th align="left" colspan="3">Luedeking&#8211;Piret model</th></tr><tr><th align="left" colspan="2">Cell growth</th><th align="left" colspan="3">Product formation</th></tr><tr><th align="left">
+<italic>K</italic> (h<sup>&#8722;1</sup>)</th><th align="left">
+<italic>R</italic>
+<sup>2</sup>
+</th><th align="left">
+<italic>&#945;</italic>
+</th><th align="left">
+<italic>&#946;</italic>
+</th><th align="left">Error &#160;%</th></tr></thead><tbody><tr><td align="left">
+<italic>C. salina, N</italic>
+<sup>+</sup>
+</td><td char="." align="char">0.4441</td><td char="." align="char">0.992</td><td char="." align="char">0.125</td><td char="." align="char">0.002</td><td char="." align="char">4.59</td></tr><tr><td align="left">
+<italic>C. salina, N</italic>
+<sup>&#8722;</sup>
+</td><td char="." align="char">0.3786</td><td char="." align="char">0.9843</td><td char="." align="char">0.164</td><td char="." align="char">0.0024</td><td char="." align="char">2.58</td></tr><tr><td align="left">
+<italic>N. oculata, N</italic>
+<sup>+</sup>
+</td><td char="." align="char">0.447</td><td char="." align="char">0.9878</td><td char="." align="char">0.151</td><td char="." align="char">0.0006</td><td char="." align="char">5.33</td></tr><tr><td align="left">
+<italic>N. oculata, N</italic>
+<sup>&#8722;</sup>
+</td><td char="." align="char">0.4053</td><td char="." align="char">0.9961</td><td char="." align="char">0.211</td><td char="." align="char">0.001</td><td char="." align="char">4.66</td></tr></tbody></table><table-wrap-foot><p>
+<italic>N</italic>
+<sup><italic>+</italic></sup> nitrogen-repleted growth, <italic>N</italic>
+<sup><italic>&#8722;</italic></sup> nitrogen-depleted growth</p></table-wrap-foot></table-wrap>
+</p>

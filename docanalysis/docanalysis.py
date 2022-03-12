@@ -114,6 +114,12 @@ class Docanalysis:
             type=str,
             help="[All] save log to specified file in output directory as well as printing to terminal",
         )
+        parser.add_argument(
+            "--section",
+            default="ALL",
+            type=str,
+            help="Which section to do the search for in the papers. (eg. ABS, MET etc. see (---) )",
+        )
 
 
         if len(sys.argv) == 1:
@@ -126,7 +132,7 @@ class Docanalysis:
         self.handle_logger_creation(args)
         self.entity_extraction.extract_entities_from_papers(args.project_name,args.dictionary,query=args.query,hits=args.hits,
                                      run_pygetpapers=args.run_pygetpapers, run_sectioning= args.run_sectioning, removefalse=True, create_csv=True,
-                                     csv_name=args.output,make_ami_dict=args.make_ami_dict)
+                                     csv_name=args.output,make_ami_dict=args.make_ami_dict,section=args.section)
 
 
 
