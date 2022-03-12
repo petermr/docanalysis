@@ -115,6 +115,12 @@ class Docanalysis:
             help="[All] save log to specified file in output directory as well as printing to terminal",
         )
 
+        parser.add_argument(
+            "--section",
+            default="ALL",
+            type=str,
+            help="Which section to get",
+        )
 
         if len(sys.argv) == 1:
             parser.print_help(sys.stderr)
@@ -124,7 +130,7 @@ class Docanalysis:
             if vars(args)[arg] == "False":
                 vars(args)[arg] = False
         self.handle_logger_creation(args)
-        self.entity_extraction.extract_entities_from_papers(args.project_name,args.dictionary,query=args.query,hits=args.hits,
+        self.entity_extraction.extract_entities_from_papers(args.project_name,args.dictionary,section=args.section,query=args.query,hits=args.hits,
                                      run_pygetpapers=args.run_pygetpapers, run_sectioning= args.run_sectioning, removefalse=True, create_csv=True,
                                      csv_name=args.output,make_ami_dict=args.make_ami_dict)
 

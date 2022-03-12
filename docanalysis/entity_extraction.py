@@ -33,8 +33,24 @@ class EntityExtraction:
 
     def __init__(self):
         logging.basicConfig(level=logging.INFO)
+        self.sections= {"ABS":['*abstract.xml'],
+        "ALL":['*.xml'],
+        "ACK": ['*ack.xml'],
+        "AFF": ['*aff.xml'],
+        "AUT": ['*contrib-group.xml'],
+        "CON": ['*conclusion*/*.xml'],
+        "DIS": ['*discussion*/**/*_title.xml', '*discussion*/**/*_p.xml'], # might bring unwanted sections like tables, fig. captions etc. Maybe get only title and paragraphs?
+        "ETH": ['*ethic*/*.xml'],
+        "FIG": ['*fig*.xml'],
+        "INT": ['*introduction*/*.xml', '*background*/*.xml'],
+        "KEY": ['*kwd-group.xml'],
+        "MET": ['*method*/*.xml', '*material*/*.xml'] ,# also gets us supplementary material. Not sure how to exclude them
+        "RES": ['*result*/*/*_title.xml', '*result*/*/*_p.xml'], # not sure if we should use recursive globbing or not. 
+        "TAB": ['*table*.xml'],
+        "TIL": ['*article-meta/*title-group.xml'],}
+        self.all_paragraphs=[]
 
-    def extract_entities_from_papers(self, corpus_path, terms_xml_path, query=None, hits=30,
+    def extract_entities_from_papers(self, corpus_path, terms_xml_path, section,query=None, hits=30,
                                      run_pygetpapers=False, run_sectioning=False, removefalse=True, create_csv=True,
                                      csv_name='entities.csv', make_ami_dict=False):
         path=os.path.abspath(corpus_path)
@@ -44,21 +60,16 @@ class EntityExtraction:
                 return
             logging.info(f"making project/searching {query} for {hits} hits into {corpus_path}")
             self.run_pygetpapers(query, hits, path)
-        self.all_paragraphs = glob(os.path.join(
-            path, '**', 'sections', '**', '*.xml'), recursive=True)
-        print(path)
-        if len(self.all_paragraphs) == 0 and not run_sectioning:
-            logging.error("No sections found... Exiting")
-            return
         if os.path.isdir(path):
             if run_sectioning:
                 self.run_ami_section(path)
-                self.all_paragraphs = glob(os.path.join(
-                path, '**', 'sections', '**', '*.xml'), recursive=True)
         else:
             logging.error("Corpus doesn't exist")
             return
-
+        self.all_paragraphs = self.get_glob_for_section(path,section)
+        if len(self.all_paragraphs) == 0 and not run_sectioning:
+            logging.error("No sections found... Exiting")
+            return
         logging.info(f"dict with parsed xml in {corpus_path}")
         dict_with_parsed_xml = self.make_dict_with_parsed_xml(corpus_path)
         logging.info(f"getting terms from/to {terms_xml_path}")
@@ -94,6 +105,18 @@ class EntityExtraction:
             AMIAbsSection.make_xml_sections(paper, outdir, True)
 
     
+    def get_glob_for_section(self,path,section_name):
+        if len(self.sections[section_name]>1):
+            for section in self.sections[section_name]:
+                self.all_paragraphs+= glob(os.path.join(
+                path, '**', 'sections', '**', section), recursive=True)
+        else:
+            self.all_paragraphs+= glob(os.path.join(
+                path, '**', 'sections', '**', self.sections[section_name]), recursive=True)
+        
+        return self.all_paragraphs
+
+
     def make_dict_with_parsed_xml(self, output):
 
         dict_with_parsed_xml = {}
