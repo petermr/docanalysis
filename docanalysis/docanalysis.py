@@ -117,15 +117,19 @@ class Docanalysis:
 
         parser.add_argument(
             "--section",
-            default="ALL",
-            nargs='+',
+            default=['ALL'],
+            action='store', 
+            dest='section',
+            type=str, 
+            nargs='*', 
             help="Which section to get",
         )
 
         parser.add_argument(
             "--entities",
-            default="ALL",
-            nargs='+',
+            default=['ALL'],
+            action='store', dest='entities',
+                    type=str, nargs='*', 
             help="Which entities to get. Default(ALL)",
         )
 

@@ -106,6 +106,7 @@ class EntityExtraction:
 
     
     def get_glob_for_section(self,path,section_names):
+
         for section_name in section_names:
             for section in self.sections[section_name]:
                 self.all_paragraphs+= glob(os.path.join(
@@ -148,7 +149,7 @@ class EntityExtraction:
             logging.error(f"cannot parse {paragraph_path}")
         return paragraph_text
 
-    def run_spacy_over_sections(self, dict_with_parsed_xml,entities):
+    def run_spacy_over_sections(self, dict_with_parsed_xml,entities_names):
 
         for paragraph in tqdm(dict_with_parsed_xml):
             doc = nlp(dict_with_parsed_xml[paragraph]['sentence'])
@@ -159,9 +160,10 @@ class EntityExtraction:
                 abbreviation_start.append(abrv.start)
                 abbreviation_end.append(abrv.end)
             for ent in doc.ents:
-                if ent.label_ in entities or entities==["ALL"]:
+                if (ent.label_ in entities_names) or (entities_names==['ALL']):
                     self.add_parsed_entities_to_lists(
                         entities, labels, position_end, position_start, ent)
+            print(entities)
             self.add_lists_to_dict(dict_with_parsed_xml[paragraph], entities, labels, position_end,
                                    position_start,abbreviations,abbreviations_longform,abbreviation_start,abbreviation_end)
 
