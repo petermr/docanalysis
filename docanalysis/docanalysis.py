@@ -123,7 +123,7 @@ class Docanalysis:
         )
 
         parser.add_argument(
-            "--terms",
+            "--entities",
             default="ALL",
             nargs='+',
             help="Which entities to get. Default(ALL)",
@@ -137,7 +137,7 @@ class Docanalysis:
             if vars(args)[arg] == "False":
                 vars(args)[arg] = False
         self.handle_logger_creation(args)
-        self.entity_extraction.extract_entities_from_papers(args.project_name,args.dictionary,section=args.section,terms=args.terms,query=args.query,hits=args.hits,
+        self.entity_extraction.extract_entities_from_papers(args.project_name,args.dictionary,section=args.section,entities=args.entities,query=args.query,hits=args.hits,
                                      run_pygetpapers=args.run_pygetpapers, run_sectioning= args.run_sectioning, removefalse=True, create_csv=True,
                                      csv_name=args.output,make_ami_dict=args.make_ami_dict)
 

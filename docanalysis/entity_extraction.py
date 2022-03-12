@@ -50,7 +50,7 @@ class EntityExtraction:
         "TIL": ['*article-meta/*title-group.xml'],}
         self.all_paragraphs=[]
 
-    def extract_entities_from_papers(self, corpus_path, terms_xml_path, section,terms,query=None, hits=30,
+    def extract_entities_from_papers(self, corpus_path, terms_xml_path, section,entities,query=None, hits=30,
                                      run_pygetpapers=False, run_sectioning=False, removefalse=True, create_csv=True,
                                      csv_name='entities.csv', make_ami_dict=False):
         path=os.path.abspath(corpus_path)
@@ -74,7 +74,7 @@ class EntityExtraction:
         dict_with_parsed_xml = self.make_dict_with_parsed_xml(corpus_path)
         logging.info(f"getting terms from/to {terms_xml_path}")
         logging.info(f"add parsed_sections to dict: {len(dict_with_parsed_xml)}")
-        self.run_spacy_over_sections(dict_with_parsed_xml,terms)
+        self.run_spacy_over_sections(dict_with_parsed_xml,entities)
         logging.info(f"added parsed_sections to dict: {len(dict_with_parsed_xml)}")
         self.remove_statements_not_having_xmldict_entities(
                     dict_with_parsed_xml=dict_with_parsed_xml)
@@ -147,7 +147,7 @@ class EntityExtraction:
             logging.error(f"cannot parse {paragraph_path}")
         return paragraph_text
 
-    def run_spacy_over_sections(self, dict_with_parsed_xml,terms):
+    def run_spacy_over_sections(self, dict_with_parsed_xml,entities):
 
         for paragraph in dict_with_parsed_xml:
             doc = nlp(dict_with_parsed_xml[paragraph]['sentence'])
@@ -158,7 +158,7 @@ class EntityExtraction:
                 abbreviation_start.append(abrv.start)
                 abbreviation_end.append(abrv.end)
             for ent in doc.ents:
-                if ent.label_ in terms:
+                if ent.label_ in entities or entities=="ALL":
                     self.add_parsed_entities_to_lists(
                         entities, labels, position_end, position_start, ent)
             self.add_lists_to_dict(dict_with_parsed_xml[paragraph], entities, labels, position_end,
