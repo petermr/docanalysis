@@ -50,7 +50,7 @@ class EntityExtraction:
         "TIL": ['*article-meta/*title-group.xml'],}
         self.all_paragraphs=[]
 
-    def extract_entities_from_papers(self, corpus_path, terms_xml_path, section,entities,query=None, hits=30,
+    def extract_entities_from_papers(self, corpus_path, terms_xml_path, sections,entities,query=None, hits=30,
                                      run_pygetpapers=False, run_sectioning=False, removefalse=True, create_csv=True,
                                      csv_name='entities.csv', make_ami_dict=False):
         path=os.path.abspath(corpus_path)
@@ -66,7 +66,7 @@ class EntityExtraction:
         else:
             logging.error("Corpus doesn't exist")
             return
-        self.all_paragraphs = self.get_glob_for_section(path,section)
+        self.all_paragraphs = self.get_glob_for_section(path,sections)
         if len(self.all_paragraphs) == 0 and not run_sectioning:
             logging.error("No sections found... Exiting")
             return
@@ -105,10 +105,11 @@ class EntityExtraction:
             AMIAbsSection.make_xml_sections(paper, outdir, True)
 
     
-    def get_glob_for_section(self,path,section_name):
-        for section in self.sections[section_name]:
-            self.all_paragraphs+= glob(os.path.join(
-            path, '**', 'sections', '**', section), recursive=True)
+    def get_glob_for_section(self,path,section_names):
+        for section_name in section_names:
+            for section in self.sections[section_name]:
+                self.all_paragraphs+= glob(os.path.join(
+                path, '**', 'sections', '**', section), recursive=True)
         
         return self.all_paragraphs
 
@@ -149,7 +150,7 @@ class EntityExtraction:
 
     def run_spacy_over_sections(self, dict_with_parsed_xml,entities):
 
-        for paragraph in dict_with_parsed_xml:
+        for paragraph in tqdm(dict_with_parsed_xml):
             doc = nlp(dict_with_parsed_xml[paragraph]['sentence'])
             entities, labels, position_end, position_start,abbreviations,abbreviations_longform,abbreviation_start,abbreviation_end = self.make_required_lists()
             for abrv in doc._.abbreviations:
@@ -158,7 +159,7 @@ class EntityExtraction:
                 abbreviation_start.append(abrv.start)
                 abbreviation_end.append(abrv.end)
             for ent in doc.ents:
-                if ent.label_ in entities or entities=="ALL":
+                if ent.label_ in entities or entities==["ALL"]:
                     self.add_parsed_entities_to_lists(
                         entities, labels, position_end, position_start, ent)
             self.add_lists_to_dict(dict_with_parsed_xml[paragraph], entities, labels, position_end,
