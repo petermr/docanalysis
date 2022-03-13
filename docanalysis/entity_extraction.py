@@ -68,8 +68,9 @@ class EntityExtraction:
             logging.error("Corpus doesn't exist")
             return
         self.all_paragraphs = self.get_glob_for_section(path,sections)
+        print(self.all_paragraphs)
         if len(self.all_paragraphs) == 0 and not run_sectioning:
-            logging.error("No sections found... Exiting")
+            logging.error("No sections found... section the papers")
             return
         logging.info(f"dict with parsed xml in {corpus_path}")
         dict_with_parsed_xml = self.make_dict_with_parsed_xml(corpus_path)
@@ -109,7 +110,8 @@ class EntityExtraction:
     def get_glob_for_section(self,path,section_names):
 
         for section_name in section_names:
-            if section_name in self.sections[section_name]:
+            if section_name in self.sections.keys():
+                print(self.sections[section_name])
                 for section in self.sections[section_name]:
                     self.all_paragraphs+= glob(os.path.join(
                     path, '**', 'sections', '**', section), recursive=True)
