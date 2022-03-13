@@ -19,12 +19,11 @@ requirements = ['scispacy','beautifulsoup4==4.10.0', 'braceexpand==0.1.7', 'colo
 'spacy==3.0.7',
 'tkinterweb==3.10.7',
 'tqdm==4.62.3',
-'yake==0.4.8',
 ]
 
 setup(
     name='docanalysis',
-    version="0.0.7",
+    version="0.0.8",
     description='extract structured information from ethics paragraphs',
     long_description_content_type='text/markdown',
     long_description=readme,

@@ -11,23 +11,18 @@ from nltk import tokenize
 from docanalysis.ami_sections import AMIAbsSection
 from pathlib import Path
 from pygetpapers import Pygetpapers
-from scispacy.abbreviation import AbbreviationDetector
 from collections import Counter
 import pip
 from lxml import etree
-
+from pygetpapers.download_tools import DownloadTools
+import pandas
 def install(package):
     if hasattr(pip, 'main'):
         pip.main(['install', package])
     else:
         pip._internal.main(['install', package])
 
-try:
-    nlp = spacy.load('en_ner_bc5cdr_md')
-except OSError:
-    install('https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.4.0/en_ner_bc5cdr_md-0.4.0.tar.gz')
-    nlp = spacy.load('en_ner_bc5cdr_md')
-nlp.add_pipe("abbreviation_detector")
+
 
 class EntityExtraction:
     """ """
@@ -49,50 +44,74 @@ class EntityExtraction:
         "RES": ['*result*/*/*_title.xml', '*result*/*/*_p.xml'], # not sure if we should use recursive globbing or not. 
         "TAB": ['*table*.xml'],
         "TIL": ['*article-meta/*title-group.xml'],}
-        self.all_paragraphs=[]
+        self.all_paragraphs={}
+        self.sentence_dictionary={}
+        self.spacy_model='spacy'
+        self.nlp = None
+
+    def switch_spacy_versions(self,spacy_type):
+        logging.info(f'Loading {spacy_type}')
+        if spacy_type=="scispacy":
+            from scispacy.abbreviation import AbbreviationDetector
+            try:
+                self.nlp = spacy.load('en_ner_bc5cdr_md')
+            except OSError:
+                install('https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.4.0/en_ner_bc5cdr_md-0.4.0.tar.gz')
+                self.nlp = spacy.load('en_ner_bc5cdr_md')
+            self.nlp.add_pipe("abbreviation_detector")
+        elif spacy_type=="spacy":
+            try:
+                self.nlp = spacy.load('en_core_web_sm')
+            except OSError:
+                from spacy.cli import download
+                download('en_core_web_sm')
+                self.nlp = spacy.load('en_core_web_sm')
+
+    def dictionary_to_html(self,html_path):
+        logging.info("Saving html")
+        download_tools=DownloadTools()
+        df = pandas.DataFrame.from_dict(self.sentence_dictionary)
+        download_tools.make_html_from_dataframe(df,html_path)
 
     def extract_entities_from_papers(self, corpus_path, terms_xml_path, sections,entities,query=None, hits=30,
                                      run_pygetpapers=False, run_sectioning=False, removefalse=True, create_csv=True,
-                                     csv_name='entities.csv', make_ami_dict=False):
-        path=os.path.abspath(corpus_path)
+                                     csv_name='entities.csv', make_ami_dict=False,spacy_model='spacy',html_path=False):
+        self.spacy_model=spacy_model                             
+        corpus_path=os.path.abspath(corpus_path)
         if run_pygetpapers:
             if not query:
                 logging.warning('Please provide query as parameter')
                 return
             logging.info(f"making project/searching {query} for {hits} hits into {corpus_path}")
-            self.run_pygetpapers(query, hits, path)
-        if os.path.isdir(path):
+            self.run_pygetpapers(query, hits, corpus_path)
+        if os.path.isdir(corpus_path):
             if run_sectioning:
-                self.run_ami_section(path)
+                self.run_ami_section(corpus_path)
         else:
             logging.error("Corpus doesn't exist")
             return
-        self.all_paragraphs = self.get_glob_for_section(path,sections)
-        if len(self.all_paragraphs) == 0 and not run_sectioning:
-            logging.error("No sections found... Exiting")
-            return
-        logging.info(f"dict with parsed xml in {corpus_path}")
-        dict_with_parsed_xml = self.make_dict_with_parsed_xml(corpus_path)
+        self.all_paragraphs = self.get_glob_for_section(corpus_path,sections)
+        self.make_dict_with_parsed_xml()
         logging.info(f"getting terms from/to {terms_xml_path}")
-        logging.info(f"add parsed_sections to dict: {len(dict_with_parsed_xml)}")
-        self.run_spacy_over_sections(dict_with_parsed_xml,entities)
-        logging.info(f"added parsed_sections to dict: {len(dict_with_parsed_xml)}")
+        self.run_spacy_over_sections(self.sentence_dictionary,entities)
         self.remove_statements_not_having_xmldict_entities(
-                    dict_with_parsed_xml=dict_with_parsed_xml)
+                    dict_with_parsed_xml=self.sentence_dictionary)
         if terms_xml_path:
             terms = self.get_terms_from_ami_xml(terms_xml_path)
             self.add_if_file_contains_terms(
-                terms=terms, dict_with_parsed_xml=dict_with_parsed_xml)
+                terms=terms, dict_with_parsed_xml=self.sentence_dictionary)
             if removefalse:
                 self.remove_statements_not_having_xmldict_terms(
-                    dict_with_parsed_xml=dict_with_parsed_xml)
+                    dict_with_parsed_xml=self.sentence_dictionary)
         if create_csv:
             self.convert_dict_to_csv(
-                path=os.path.join(path, f'{csv_name}.csv'), dict_with_parsed_xml=dict_with_parsed_xml)
+                path=os.path.join(corpus_path, f'{csv_name}'), dict_with_parsed_xml=self.sentence_dictionary)
         if make_ami_dict:
-            ami_dict_path = os.path.join(path,make_ami_dict)
-            self.handle_ami_dict_creation(dict_with_parsed_xml,ami_dict_path)
-        return dict_with_parsed_xml
+            ami_dict_path = os.path.join(corpus_path,make_ami_dict)
+            self.handle_ami_dict_creation(self.sentence_dictionary,ami_dict_path)
+        if html_path:
+            self.dictionary_to_html(os.path.join(corpus_path,html_path))
+        return self.sentence_dictionary
     
     def run_pygetpapers(self,QUERY, HITS, OUTPUT):
         pygetpapers_call=Pygetpapers()
@@ -109,9 +128,10 @@ class EntityExtraction:
     def get_glob_for_section(self,path,section_names):
 
         for section_name in section_names:
-            if section_name in self.sections[section_name]:
+            if section_name in self.sections.keys():
+                self.all_paragraphs[section_name]=[]
                 for section in self.sections[section_name]:
-                    self.all_paragraphs+= glob(os.path.join(
+                    self.all_paragraphs[section_name]+= glob(os.path.join(
                     path, '**', 'sections', '**', section), recursive=True)
             else:
                 logging.error("Section not supported.")
@@ -119,25 +139,27 @@ class EntityExtraction:
         return self.all_paragraphs
 
 
-    def make_dict_with_parsed_xml(self, output):
+    def make_dict_with_parsed_xml(self):
 
-        dict_with_parsed_xml = {}
+        self.sentence_dictionary = {}
         
         counter = 1
         logging.info(f"starting  tokenization on {len(self.all_paragraphs)} paragraphs")
-        for section_path in tqdm(self.all_paragraphs):
-            paragraph_path = section_path
-            paragraph_text = self.read_text_from_path(paragraph_path)
-            sentences = tokenize.sent_tokenize(paragraph_text)
-            for sentence in sentences:
-                dict_with_parsed_xml[counter] = {}
-                dict_for_sentences = dict_with_parsed_xml[counter]
-                dict_for_sentences["file_path"] = section_path
-                dict_for_sentences["paragraph"] = paragraph_text
-                dict_for_sentences["sentence"] = sentence
-                counter += 1
-        logging.info(f"Found {len(dict_with_parsed_xml)} sentences")
-        return dict_with_parsed_xml
+        for section in self.all_paragraphs:
+            for section_path in tqdm(self.all_paragraphs[section]):
+                paragraph_path = section_path
+                paragraph_text = self.read_text_from_path(paragraph_path)
+                sentences = tokenize.sent_tokenize(paragraph_text)
+                for sentence in sentences:
+                    self.sentence_dictionary[counter] = {}
+                    dict_for_sentences = self.sentence_dictionary[counter]
+                    dict_for_sentences["file_path"] = section_path
+                    dict_for_sentences["paragraph"] = paragraph_text
+                    dict_for_sentences["sentence"] = sentence
+                    dict_for_sentences["section"] = section
+                    counter += 1
+        logging.info(f"Found {len(self.sentence_dictionary)} sentences")
+        return self.sentence_dictionary
 
     def read_text_from_path(self, paragraph_path):
         try:
@@ -154,18 +176,21 @@ class EntityExtraction:
         return paragraph_text
 
     def run_spacy_over_sections(self, dict_with_parsed_xml,entities_names):
-
+        self.switch_spacy_versions(self.spacy_model)
         for paragraph in tqdm(dict_with_parsed_xml):
-            doc = nlp(dict_with_parsed_xml[paragraph]['sentence'])
+            doc = self.nlp(dict_with_parsed_xml[paragraph]['sentence'])
             entities, labels, position_end, position_start,abbreviations,abbreviations_longform,abbreviation_start,abbreviation_end = self.make_required_lists()
-            self._get_abbreviations(doc, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end)
-            for ent in doc.ents:
-                if (ent.label_ in entities_names) or (entities_names==['ALL']):
-                    self.add_parsed_entities_to_lists(
-                        entities, labels, position_end, position_start, ent)
-            print(entities)
+            if self.spacy_model=="scispacy":
+                self._get_abbreviations(doc, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end)
+            self._get_entities(entities_names, doc, entities, labels, position_end, position_start)
             self.add_lists_to_dict(dict_with_parsed_xml[paragraph], entities, labels, position_end,
                                    position_start,abbreviations,abbreviations_longform,abbreviation_start,abbreviation_end)
+
+    def _get_entities(self, entities_names, doc, entities, labels, position_end, position_start):
+        for ent in doc.ents:
+            if (ent.label_ in entities_names) or (entities_names==['ALL']):
+                self.add_parsed_entities_to_lists(
+                        entities, labels, position_end, position_start, ent)
 
     def _get_abbreviations(self, doc, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end):
         for abrv in doc._.abbreviations:
