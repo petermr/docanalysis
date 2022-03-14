@@ -15,7 +15,7 @@ from collections import Counter
 import pip
 from lxml import etree
 from pygetpapers.download_tools import DownloadTools
-import pandas
+from urllib.request import urlopen
 def install(package):
     if hasattr(pip, 'main'):
         pip.main(['install', package])
@@ -44,6 +44,21 @@ class EntityExtraction:
         "RES": ['*result*/*/*_title.xml', '*result*/*/*_p.xml'], # not sure if we should use recursive globbing or not. 
         "TAB": ['*table*.xml'],
         "TIL": ['*article-meta/*title-group.xml'],}
+
+        self.dict_of_ami_dict = {
+        'EO_ACTIVITY': 'https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/activity/eo_activity.xml',
+        'EO_COMPOUND': 'https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/compound/eo_compound.xml',
+        'EO_ANALYSIS': 'https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/analysis/eo_analysis_method.xml',
+        'EO_EXTRACTION': 'https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/extraction/eo_extraction.xml',
+        'EO_PLANT': 'https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/plant/eo_plant.xml',
+        'PLANT_GENUS': 'https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/plant_genus/plant_genus.xml',
+        'EO_PLANT_PART': 'https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/plant_part/plant_part.xml',
+        'EO_TARGET': 'https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/target/eo_target_organism.xml',
+        'COUNTRY': 'https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/country/country.xml',
+        'DISEASE':'https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/disease/disease.xml',
+        'ORGANIZATION': 'https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/organization/organization.xml',
+        'DRUG': 'https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/drug/drug.xml',}
+
         self.all_paragraphs={}
         self.sentence_dictionary={}
         self.spacy_model='spacy'
@@ -70,7 +85,7 @@ class EntityExtraction:
     def dictionary_to_html(self,html_path):
         logging.info("Saving html")
         download_tools=DownloadTools()
-        df = pandas.DataFrame.from_dict(self.sentence_dictionary)
+        df = pd.DataFrame.from_dict(self.sentence_dictionary)
         download_tools.make_html_from_dataframe(df,html_path)
 
     def extract_entities_from_papers(self, corpus_path, terms_xml_path, sections,entities,query=None, hits=30,
@@ -98,6 +113,7 @@ class EntityExtraction:
                     dict_with_parsed_xml=self.sentence_dictionary)
         if terms_xml_path:
             terms = self.get_terms_from_ami_xml(terms_xml_path)
+            print(terms)
             self.add_if_file_contains_terms(
                 terms=terms, dict_with_parsed_xml=self.sentence_dictionary)
             if removefalse:
@@ -211,8 +227,10 @@ class EntityExtraction:
                 dict_for_sentence['has_terms'])
 
     def get_terms_from_ami_xml(self, xml_path):
-
-        tree = ET.parse(xml_path)
+        if xml_path in self.dict_of_ami_dict.keys():
+            tree = ET.parse(urlopen(self.dict_of_ami_dict[xml_path]))
+        else:
+            tree = ET.parse(xml_path)
         root = tree.getroot()
         terms = []
         for para in root.iter('entry'):
