@@ -147,6 +147,13 @@ class Docanalysis:
             help="Saves output in html format to given path",
         )
 
+        parser.add_argument(
+            "--synonymns",
+            default=False,
+            type=str,
+            help="Searches the corpus/sections with synonymns from ami-dict",
+        )
+
         if len(sys.argv) == 1:
             parser.print_help(sys.stderr)
             sys.exit()
@@ -157,7 +164,7 @@ class Docanalysis:
         self.handle_logger_creation(args)
         self.entity_extraction.extract_entities_from_papers(args.project_name,args.dictionary,sections=args.section,entities=args.entities,query=args.query,hits=args.hits,
                                      run_pygetpapers=args.run_pygetpapers, run_sectioning= args.run_sectioning, removefalse=True, create_csv=True,
-                                     csv_name=args.output,make_ami_dict=args.make_ami_dict,spacy_model=args.spacy_model,html_path=args.html)
+                                     csv_name=args.output,make_ami_dict=args.make_ami_dict,spacy_model=args.spacy_model,html_path=args.html, synonymns=args.synonymns)
 
 
 

@@ -90,7 +90,7 @@ class EntityExtraction:
 
     def extract_entities_from_papers(self, corpus_path, terms_xml_path, sections,entities,query=None, hits=30,
                                      run_pygetpapers=False, run_sectioning=False, removefalse=True, create_csv=True,
-                                     csv_name='entities.csv', make_ami_dict=False,spacy_model='spacy',html_path=False):
+                                     csv_name='entities.csv', make_ami_dict=False,spacy_model='spacy',html_path=False, synonymns=False):
         self.spacy_model=spacy_model                             
         corpus_path=os.path.abspath(corpus_path)
         if run_pygetpapers:
@@ -107,18 +107,21 @@ class EntityExtraction:
             return
         self.all_paragraphs = self.get_glob_for_section(corpus_path,sections)
         self.make_dict_with_parsed_xml()
-        logging.info(f"getting terms from/to {terms_xml_path}")
         self.run_spacy_over_sections(self.sentence_dictionary,entities)
         self.remove_statements_not_having_xmldict_entities(
                     dict_with_parsed_xml=self.sentence_dictionary)
+        logging.info(f"getting terms from {terms_xml_path}")
         if terms_xml_path:
             terms = self.get_terms_from_ami_xml(terms_xml_path)
-            print(terms)
             self.add_if_file_contains_terms(
                 terms=terms, dict_with_parsed_xml=self.sentence_dictionary)
             if removefalse:
                 self.remove_statements_not_having_xmldict_terms(
                     dict_with_parsed_xml=self.sentence_dictionary)
+        if synonymns:
+            synonymns_list = self.get_terms_from_ami_xml(terms_xml_path)
+            self.add_if_file_contains_terms(
+                terms=synonymns_list, dict_with_parsed_xml=self.sentence_dictionary, searching='synonymns')
         if create_csv:
             self.convert_dict_to_csv(
                 path=os.path.join(corpus_path, f'{csv_name}'), dict_with_parsed_xml=self.sentence_dictionary)
@@ -215,16 +218,16 @@ class EntityExtraction:
             abbreviation_start.append(abrv.start)
             abbreviation_end.append(abrv.end)
 
-    def add_if_file_contains_terms(self, terms, dict_with_parsed_xml):
+    def add_if_file_contains_terms(self, terms, dict_with_parsed_xml, searching='terms'):
 
         for statement in dict_with_parsed_xml:
             dict_for_sentence = dict_with_parsed_xml[statement]
-            dict_for_sentence['has_terms'] = []
+            dict_for_sentence[f'has_{searching}'] = []
             for term in terms:
                 if term.lower().strip() in dict_for_sentence['sentence'].lower():
                     dict_for_sentence['has_terms'].append(term)
             dict_for_sentence['weight'] = len(
-                dict_for_sentence['has_terms'])
+                dict_for_sentence[f'has_{searching}'])
 
     def get_terms_from_ami_xml(self, xml_path):
         if xml_path in self.dict_of_ami_dict.keys():
@@ -236,6 +239,14 @@ class EntityExtraction:
         for para in root.iter('entry'):
             terms.append(para.attrib["term"])
         return terms
+
+    def get__synonyms_from_ami_xml(self, xml_path):
+        tree = ET.parse(urlopen(self.dict_of_ami_dictdict_of_ami_dict[xml_path]))
+        root = tree.getroot()
+        synonyms = []
+        for synonym in (root.findall("./entry/synonym")):
+            synonyms.append(synonym.text)
+        return synonyms
 
     def make_required_lists(self):
         abbreviations=[]
@@ -281,11 +292,11 @@ class EntityExtraction:
         df.to_csv(path, encoding='utf-8', line_terminator='\r\n')
         logging.info(f"wrote output to {path}")
 
-    def remove_statements_not_having_xmldict_terms(self, dict_with_parsed_xml):
+    def remove_statements_not_having_xmldict_terms(self, dict_with_parsed_xml, searching='terms'):
         statement_to_pop = []
         for statement in dict_with_parsed_xml:
             sentect_dict = dict_with_parsed_xml[statement]
-            if len(sentect_dict['has_terms']) == 0 :
+            if len(sentect_dict[f'has_{searching}']) == 0 :
                 statement_to_pop.append(statement)
 
         for term in statement_to_pop:
