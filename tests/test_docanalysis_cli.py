@@ -7,32 +7,26 @@
 import pytest
 from pathlib import Path
 import os
-import subprocess
 
 DOCANALYSIS_TOP = Path(__file__).parent.parent
-EXISTING_CPROJECT = Path(DOCANALYSIS_TOP, 'stem_cell_research_300')
+#EXISTING_CPROJECT = Path(DOCANALYSIS_TOP, 'stem_cell_research_300')
+PMC_TEXT_FILE = Path(DOCANALYSIS_TOP, 'resources', 'test_pmc.text')
 DICT_DIRECTORY = Path(DOCANALYSIS_TOP, 'ethics_dictionary')
 TEST_DICT = Path(DICT_DIRECTORY, 'ethics_demo', 'ethics_demo.xml')
 TEMP_CPROJECT = Path(DOCANALYSIS_TOP, 'test_ethics_20')
-HITS = 20
 
 class TestDocanalysis:
 
-    def test_cproject_exists(self):
-        """asserts whether CProject directory exists
-        """
-        assert DOCANALYSIS_TOP.exists(), f"checking whether {DOCANALYSIS_TOP} exists"
-
-    def test_pygetpapers_runs(self):
+    def test_pygetpapers(self):
         """- checks whether 
             - the corpus directory exists or not
             - the number of PMC * folders is equal to the hits specified
             - fulltext xml exists in each PMC folder or not
         """
-        os.system(f'docanalysis --run_pygetpapers --query ethics statement --hits {HITS} --project_name {TEMP_CPROJECT}')
-        assert TEMP_CPROJECT.exists(), f"repository {TEMP_CPROJECT} must exist"
-        assert len(list(TEMP_CPROJECT.glob('PMC*/'))) == HITS
-        assert len(list(TEMP_CPROJECT.glob('PMC*/fulltext.xml'))) == HITS
+        os.system(f'docanalysis --run_pygetpapers --terms {TEST_DICT} --project_name {TEMP_CPROJECT}')
+        assert TEMP_CPROJECT.exists(), f"checking whether {TEMP_CPROJECT} exists"
+        assert len(list(TEMP_CPROJECT.glob('PMC*/'))) == 3
+        assert len(list(TEMP_CPROJECT.glob('PMC*/fulltext.xml'))) == 3
 
     def test_section_exists(self):
         """checkers whether
@@ -41,8 +35,8 @@ class TestDocanalysis:
         # not sure if this is the right way of testing whether papers are sectioned    
         """
 
-        f'docanalysis --project_name {TEMP_CPROJECT} --section'
-        assert len(list(TEMP_CPROJECT.glob('PMC*/sections/'))) == HITS
+        f'docanalysis --project_name {TEMP_CPROJECT} --run_sectioning'
+        assert len(list(TEMP_CPROJECT.glob('PMC*/sections/'))) == 3
         for PMC in TEMP_CPROJECT.glob('**/'):
             for section in PMC.glob('sections/'):
                 assert section.name.exists()
@@ -55,19 +49,12 @@ class TestDocanalysis:
     def test_csv_output_creation(self):
         """checks whether the csv output is created or not
         """
-        os.system(f'docanalysis --project_name {TEMP_CPROJECT} --dictionary {TEST_DICT} --entity_extraction --key_phrase_extraction')
-        assert Path(TEMP_CPROJECT, 'entities_keyphrases.csv').exists, 'checking if the output is created'
-
-    def test_subprocess(self):
-        subprocess.run(f'pygetpapers --help', capture_output=True, text=True).stdout
+        os.system(f'docanalysis --project_name {TEMP_CPROJECT} --dictionary {TEST_DICT} --output')
+        assert Path(TEMP_CPROJECT, 'entities.csv').exists, 'checking if the output is created'
 
     def test_dict_creation_entites(self):
-        os.system(f'docanalysis --project_name {TEMP_CPROJECT} --dictionary {TEST_DICT} --entity_extraction --key_phrase_extraction --make_dictionary entities')
+        os.system(f'docanalysis --project_name {TEMP_CPROJECT} --dictionary {TEST_DICT} --output ----make_ami_dict entities.xml')
         assert Path(TEMP_CPROJECT, 'entities.xml').exists, 'checking if the entitty dictionary is created'
-
-    def test_dict_creation_entites(self):
-        os.system(f'docanalysis --project_name {TEMP_CPROJECT} --dictionary {TEST_DICT} --entity_extraction --key_phrase_extraction --make_dictionary keyphrases')
-        assert Path(TEMP_CPROJECT, 'keyphrase.xml').exists, 'checking if the keyphrase dictionary is created'
 
     def test_remove_dir():
         import shutil
