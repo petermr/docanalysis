@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dictionary title="ethics_committee_key_phrases">
+ <entry term="animal care and use committee of " name="animal care and use committee of " id="CM.ethics_committee_key_phrases.0"/>
+ <entry term="ethical committee of " name="ethical committee of " id="CM.ethics_committee_key_phrases.1"/>
+ <entry term="ethics committee of " name="ethics committee of " id="CM.ethics_committee_key_phrases.2"/>
+ <entry term="iacuc of " name="iacuc of " id="CM.ethics_committee_key_phrases.3"/>
+ <entry term="institutional animal care and use committee of " name="institutional animal care and use committee of " id="CM.ethics_committee_key_phrases.4"/>
+ <entry term="institutional review board of " name="institutional review board of " id="CM.ethics_committee_key_phrases.5"/>
+ <entry term="the irb of " name="the irb of " id="CM.ethics_committee_key_phrases.6"/>
+</dictionary>

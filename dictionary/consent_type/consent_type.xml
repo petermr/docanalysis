@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dictionary title="consent_type">
+ <entry term="competent consent" name="competent consent" id="CM.consent_type.0"/>
+ <entry term="informed consent" name="informed consent" wikipedia="informed consent" id="CM.consent_type.1"/>
+ <entry term="verbal consent" name="verbal consent" id="CM.consent_type.2"/>
+ <entry term="video consent " name="video consent " id="CM.consent_type.3"/>
+ <entry term="voluntary consent" name="voluntary consent" id="CM.consent_type.4"/>
+ <entry term="written informed consent" name="written informed consent" id="CM.consent_type.5"/>
+</dictionary>

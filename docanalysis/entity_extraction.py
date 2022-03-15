@@ -122,6 +122,9 @@ class EntityExtraction:
             synonymns_list = self.get_synonyms_from_ami_xml(terms_xml_path)
             self.add_if_file_contains_terms(
                 terms=synonymns_list, dict_with_parsed_xml=self.sentence_dictionary, searching='synonymns')
+            if removefalse:
+                self.remove_statements_not_having_xmldict_terms(
+                    dict_with_parsed_xml=self.sentence_dictionary)
         if create_csv:
             self.convert_dict_to_csv(
                 path=os.path.join(corpus_path, f'{csv_name}'), dict_with_parsed_xml=self.sentence_dictionary)
@@ -241,7 +244,11 @@ class EntityExtraction:
         return terms
 
     def get_synonyms_from_ami_xml(self, xml_path):
-        tree = ET.parse(urlopen(self.dict_of_ami_dict[xml_path]))
+        if xml_path in self.dict_of_ami_dict.keys():
+            tree = ET.parse(urlopen(self.dict_of_ami_dict[xml_path]))
+        else:
+            tree = ET.parse(xml_path)
+        root = tree.getroot()
         root = tree.getroot()
         synonyms = []
         for synonym in (root.findall("./entry/synonym")):

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dictionary title="features_ack">
+ <entry term="also thank" name="also thank" id="CM.features_ack.0"/>
+ <entry term="appreciated" name="appreciated" wikipedia="appreciated" id="CM.features_ack.1"/>
+ <entry term="author would like" name="author would like" id="CM.features_ack.2"/>
+ <entry term="authors acknowledge" name="authors acknowledge" id="CM.features_ack.3"/>
+ <entry term="authors express" name="authors express" id="CM.features_ack.4"/>
+ <entry term="authors extend" name="authors extend" id="CM.features_ack.5"/>
+ <entry term="authors gratefully acknowledge" name="authors gratefully acknowledge" id="CM.features_ack.6"/>
+ <entry term="authors sincerely thank" name="authors sincerely thank" id="CM.features_ack.7"/>
+ <entry term="authors thank" name="authors thank" id="CM.features_ack.8"/>
+ <entry term="contribution" name="contribution" wikipedia="contribution" id="CM.features_ack.9"/>
+ <entry term="facilities provided" name="facilities provided" id="CM.features_ack.10"/>
+ <entry term="fellowship" name="fellowship" wikipedia="fellowship" id="CM.features_ack.11"/>
+ <entry term="financial contribution" name="financial contribution" id="CM.features_ack.12"/>
+ <entry term="financial support" name="financial support" wikipedia="financial support" id="CM.features_ack.13"/>
+ <entry term="for providing" name="for providing" id="CM.features_ack.14"/>
+ <entry term="funds" name="funds" wikipedia="funds" id="CM.features_ack.15"/>
+ <entry term="grateful" name="grateful" wikipedia="grateful" id="CM.features_ack.16"/>
+ <entry term="helpful comments" name="helpful comments" id="CM.features_ack.17"/>
+ <entry term="helpful suggestions" name="helpful suggestions" id="CM.features_ack.18"/>
+ <entry term="kind support" name="kind support" id="CM.features_ack.19"/>
+ <entry term="necessary facilities" name="necessary facilities" id="CM.features_ack.20"/>
+ <entry term="provided funding" name="provided funding" id="CM.features_ack.21"/>
+ <entry term="providing constant support" name="providing constant support" id="CM.features_ack.22"/>
+ <entry term="providing facilities" name="providing facilities" id="CM.features_ack.23"/>
+ <entry term="reliable care" name="reliable care" id="CM.features_ack.24"/>
+ <entry term="research support" name="research support" id="CM.features_ack.25"/>
+ <entry term="scientific support" name="scientific support" id="CM.features_ack.26"/>
+ <entry term="sincere thanks" name="sincere thanks" id="CM.features_ack.27"/>
+ <entry term="special thanks" name="special thanks" id="CM.features_ack.28"/>
+ <entry term="support provided" name="support provided" id="CM.features_ack.29"/>
+ <entry term="technical assistance" name="technical assistance" wikipedia="technical assistance" id="CM.features_ack.30"/>
+ <entry term="technical support" name="technical support" wikipedia="technical support" id="CM.features_ack.31"/>
+ <entry term="valuable comments" name="valuable comments" id="CM.features_ack.32"/>
+</dictionary>
