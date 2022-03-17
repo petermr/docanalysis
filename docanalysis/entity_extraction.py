@@ -83,34 +83,35 @@ class EntityExtraction:
                 self.nlp = spacy.load('en_core_web_sm')
 
     def dictionary_to_html(self,html_path):
-        logging.info("Saving html")
+        logging.info(f"saving output: {html_path}")
         download_tools=DownloadTools()
         df = pd.DataFrame.from_dict(self.sentence_dictionary)
         download_tools.make_html_from_dataframe(df,html_path)
 
-    def extract_entities_from_papers(self, corpus_path, terms_xml_path, sections,entities,query=None, hits=30,
-                                     run_pygetpapers=False, run_sectioning=False, removefalse=True, create_csv=True,
-                                     csv_name='entities.csv', make_ami_dict=False,spacy_model='spacy',html_path=False, synonymns=False):
+    def extract_entities_from_papers(self, corpus_path, terms_xml_path, search_section,entities,query=None, hits=30,
+                                     run_pygetpapers=False, make_section=False, removefalse=True, create_csv=True,
+                                     csv_name='entities.csv', make_ami_dict=False,spacy_model='spacy',html_path=False, synonyms=False):
         self.spacy_model=spacy_model                             
         corpus_path=os.path.abspath(corpus_path)
         if run_pygetpapers:
             if not query:
-                logging.warning('Please provide query as parameter')
+                logging.warning("please provide query (like 'terpene', 'essential oils') as parameter")
                 return
-            logging.info(f"making project/searching {query} for {hits} hits into {corpus_path}")
             self.run_pygetpapers(query, hits, corpus_path)
         if os.path.isdir(corpus_path):
-            if run_sectioning:
+            if make_section:
                 self.run_ami_section(corpus_path)
         else:
-            logging.error("Corpus doesn't exist")
+            logging.error("CProject doesn't exist")
             return
-        self.all_paragraphs = self.get_glob_for_section(corpus_path,sections)
+        if len(glob(os.path.join(corpus_path, '**', 'sections'))) ==len(glob(os.path.join(corpus_path, 'PMC*'))):
+            self.all_paragraphs = self.get_glob_for_section(corpus_path,search_section)
+        else:
+            logging.error('section papers using --run_sectioning before search')
         self.make_dict_with_parsed_xml()
         self.run_spacy_over_sections(self.sentence_dictionary,entities)
         self.remove_statements_not_having_xmldict_entities(
                     dict_with_parsed_xml=self.sentence_dictionary)
-        logging.info(f"getting terms from {terms_xml_path}")
         if terms_xml_path:
             terms = self.get_terms_from_ami_xml(terms_xml_path)
             self.add_if_file_contains_terms(
@@ -118,10 +119,10 @@ class EntityExtraction:
             if removefalse:
                 self.remove_statements_not_having_xmldict_terms(
                     dict_with_parsed_xml=self.sentence_dictionary)
-        if synonymns:
-            synonymns_list = self.get_synonyms_from_ami_xml(terms_xml_path)
+        if synonyms:
+            synonyms_list = self.get_synonyms_from_ami_xml(terms_xml_path)
             self.add_if_file_contains_terms(
-                terms=synonymns_list, dict_with_parsed_xml=self.sentence_dictionary, searching='synonymns')
+                terms=synonyms_list, dict_with_parsed_xml=self.sentence_dictionary, searching='synonyms')
             if removefalse:
                 self.remove_statements_not_having_xmldict_terms(
                     dict_with_parsed_xml=self.sentence_dictionary)
@@ -138,6 +139,7 @@ class EntityExtraction:
     def run_pygetpapers(self,QUERY, HITS, OUTPUT):
         pygetpapers_call=Pygetpapers()
         pygetpapers_call.run_command(query=QUERY,limit=HITS,output=OUTPUT,xml=True)
+        logging.info(f"making CProject {OUTPUT} with {HITS} papers on {QUERY}")
 
     def run_ami_section(self, path):
         file_list= glob(os.path.join(
@@ -148,7 +150,6 @@ class EntityExtraction:
 
     
     def get_glob_for_section(self,path,section_names):
-
         for section_name in section_names:
             if section_name in self.sections.keys():
                 self.all_paragraphs[section_name]=[]
@@ -156,8 +157,7 @@ class EntityExtraction:
                     self.all_paragraphs[section_name]+= glob(os.path.join(
                     path, '**', 'sections', '**', section), recursive=True)
             else:
-                logging.error("Section not supported.")
-            
+                logging.error("please make sure that you have selected only the supported sections: ACK, AFF, AUT, CON, DIS, ETH, FIG, INT, KEY, MET, RES, TAB, TIL")
         return self.all_paragraphs
 
 
@@ -166,7 +166,6 @@ class EntityExtraction:
         self.sentence_dictionary = {}
         
         counter = 1
-        logging.info(f"starting  tokenization on {len(self.all_paragraphs)} paragraphs")
         for section in self.all_paragraphs:
             for section_path in tqdm(self.all_paragraphs[section]):
                 paragraph_path = section_path
@@ -180,7 +179,7 @@ class EntityExtraction:
                     dict_for_sentences["sentence"] = sentence
                     dict_for_sentences["section"] = section
                     counter += 1
-        logging.info(f"Found {len(self.sentence_dictionary)} sentences")
+        logging.info(f"Found {len(self.sentence_dictionary)} sentences in the section(s).")
         return self.sentence_dictionary
 
     def read_text_from_path(self, paragraph_path):
@@ -229,13 +228,17 @@ class EntityExtraction:
             for term in terms:
                 if term.lower().strip() in dict_for_sentence['sentence'].lower():
                     dict_for_sentence[f'has_{searching}'].append(term)
-            dict_for_sentence['weight'] = len(
+            dict_for_sentence[f'weight_{searching}'] = len(
                 dict_for_sentence[f'has_{searching}'])
 
     def get_terms_from_ami_xml(self, xml_path):
         if xml_path in self.dict_of_ami_dict.keys():
+            logging.info(f"getting terms from {xml_path}")
             tree = ET.parse(urlopen(self.dict_of_ami_dict[xml_path]))
+        elif xml_path not in self.dict_of_ami_dict.keys():
+            logging.error(f'{xml_path} is not a supported dictionary. Choose from: EO_ACTIVITY, EO_COMPOUND, EO_EXTRACTION, EO_PLANT, EO_PLANT_PART, PLANT_GENUS,EO_TARGET, COUNTRY, DISEASE, DRUG, ORGANIZATION ')
         else:
+            logging.info(f"getting terms from {xml_path}")
             tree = ET.parse(xml_path)
         root = tree.getroot()
         terms = []
@@ -245,8 +248,12 @@ class EntityExtraction:
 
     def get_synonyms_from_ami_xml(self, xml_path):
         if xml_path in self.dict_of_ami_dict.keys():
+            logging.info(f"getting synonyms from {xml_path}")
             tree = ET.parse(urlopen(self.dict_of_ami_dict[xml_path]))
+        elif xml_path not in self.dict_of_ami_dict.keys():
+            logging.error(f'{xml_path} is not a supported dictionary. Choose from: EO_ACTIVITY, EO_COMPOUND, EO_EXTRACTION, EO_PLANT, EO_PLANT_PART, PLANT_GENUS,EO_TARGET, COUNTRY, DISEASE, DRUG, ORGANIZATION ')
         else:
+            logging.info(f"getting synonyms from {xml_path}")
             tree = ET.parse(xml_path)
         root = tree.getroot()
         root = tree.getroot()
@@ -357,4 +364,4 @@ class EntityExtraction:
         list_of_terms_with_count= dict_of_entities_with_count.most_common()
         xml_dict = self.make_ami_dict_from_list(list_of_terms_with_count,title)
         self.write_string_to_file(xml_dict,f'{title}.xml')
-        logging.info("Wrote ami dict")
+        logging.info("Wrote all the entities extracted to ami dict")

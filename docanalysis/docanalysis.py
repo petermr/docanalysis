@@ -46,40 +46,40 @@ class Docanalysis:
 
         default_path = strftime("%Y_%m_%d_%H_%M_%S", gmtime())
         parser = configargparse.ArgParser(
-            description=f"Welcome to Docanalysis version {version}. -h or --help for help",
+            description=f"Welcome to docanalysis version {version}. -h or --help for help",
             add_config_file_help=False,
         )
         parser.add_argument(
             "--run_pygetpapers",
             default=False,
             action="store_true",
-            help="queries EuropePMC via pygetpapers",
+            help="downloads papers from EuropePMC via pygetpapers",
         )
         parser.add_argument(
-            "--run_sectioning",
+            "--make_section",
             default=False,
             action="store_true",
-            help="make sections",
+            help="makes sections",
         )
         parser.add_argument(
             "-q",
             "--query",
             default=None,
             type=str,
-            help="query to pygetpapers",
+            help="provide query to pygetpapers",
         )
         parser.add_argument(
             "-k",
             "--hits",
             type=str,
             default=None,
-            help="numbers of papers to download from pygetpapers",
+            help="specify number of papers to download from pygetpapers",
         )
 
         parser.add_argument(
             "--project_name",
             type=str,
-            help="name of CProject folder",
+            help="provide CProject directory name",
             default=os.path.join(os.getcwd(), default_path),
         )
         parser.add_argument(
@@ -87,42 +87,27 @@ class Docanalysis:
             "--dictionary",
             default=False,
             type=str,
-            help="Ami Dictionary to tag sentences and support supervised entity extraction",
+            help="provide ami dictionary to annotate sentences or support supervised entity extraction",
         )
         parser.add_argument(
             "-o",
             "--output",
             default="entities.csv",
-            help="Output CSV file [default=entities.csv]",
+            help="outputs csv file [default=entities.csv]",
         )
         parser.add_argument(
             "--make_ami_dict",
             default=False,
-            help="if provided will make ami dict with given title",
+            help="provide title for ami-dict. Makes ami-dict of all extracted entities",
         )
         parser.add_argument(
-            "-l",
-            "--loglevel",
-            default="info",
-            help="[All] Provide logging level.  "
-            "Example --log warning <<info,warning,debug,error,critical>>, default='info'",
-        )
-        parser.add_argument(
-            "-f",
-            "--logfile",
-            default=False,
-            type=str,
-            help="[All] save log to specified file in output directory as well as printing to terminal",
-        )
-
-        parser.add_argument(
-            "--section",
+            "--search_section",
             default=['ALL'],
             action='store', 
             dest='section',
             type=str, 
             nargs='*', 
-            help="Which section to get",
+            help="provide section(s) to annotate. Choose from: ALL, ACK, AFF, AUT, CON, DIS, ETH, FIG, INT, KEY, MET, RES, TAB, TIL. Defaults to ALL",
         )
 
         parser.add_argument(
@@ -130,28 +115,46 @@ class Docanalysis:
             default=['ALL'],
             action='store', dest='entities',
                     type=str, nargs='*', 
-            help="Which entities to get. Default(ALL)",
+            help="provide entities to extract. Default(ALL). Choose from "
+            "SpaCy: CARDINAL, DATE, EVENT, FAC, GPE, LANGUAGE, LAW, LOC, MONEY, NORP, ORDINAL, ORG, PERCENT, PERSON, PRODUCT, QUANTITY, TIME, WORK_OF_ART; "
+            "SciSpaCy: CHEMICAL, DISEASE",
         )
 
         parser.add_argument(
             "--spacy_model",
             default="spacy",
             type=str,
-            help="Optional. (spacy, scispacy). Default(spacy)",
+            help="optional. Choose between spacy or scispacy models. Defaults to spacy",
         )
 
         parser.add_argument(
             "--html",
             default=False,
             type=str,
-            help="Saves output in html format to given path",
+            help="saves output in html format to given path",
         )
 
         parser.add_argument(
-            "--synonymns",
+            "--synonyms",
             default=False,
             type=str,
-            help="Searches the corpus/sections with synonymns from ami-dict",
+            help="searches the corpus/sections with synonymns from ami-dict",
+        )
+
+        parser.add_argument(
+            "-l",
+            "--loglevel",
+            default="info",
+            help="provide logging level. "
+            "Example --log warning <<info,warning,debug,error,critical>>, default='info'",
+        )
+
+        parser.add_argument(
+            "-f",
+            "--logfile",
+            default=False,
+            type=str,
+            help="saves log to specified file in output directory as well as printing to terminal",
         )
 
         if len(sys.argv) == 1:
@@ -162,9 +165,9 @@ class Docanalysis:
             if vars(args)[arg] == "False":
                 vars(args)[arg] = False
         self.handle_logger_creation(args)
-        self.entity_extraction.extract_entities_from_papers(args.project_name,args.dictionary,sections=args.section,entities=args.entities,query=args.query,hits=args.hits,
-                                     run_pygetpapers=args.run_pygetpapers, run_sectioning= args.run_sectioning, removefalse=True, create_csv=True,
-                                     csv_name=args.output,make_ami_dict=args.make_ami_dict,spacy_model=args.spacy_model,html_path=args.html, synonymns=args.synonymns)
+        self.entity_extraction.extract_entities_from_papers(args.project_name,args.dictionary,search_section=args.search_section,entities=args.entities,query=args.query,hits=args.hits,
+                                     run_pygetpapers=args.run_pygetpapers, make_section= args.make_section, removefalse=True, create_csv=True,
+                                     csv_name=args.output,make_ami_dict=args.make_ami_dict,spacy_model=args.spacy_model,html_path=args.html, synonyms=args.synonyms)
 
 
 
