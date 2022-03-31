@@ -104,7 +104,7 @@ class Docanalysis:
             "--search_section",
             default=['ALL'],
             action='store', 
-            dest='section',
+            dest='search_section',
             type=str, 
             nargs='*', 
             help="provide section(s) to annotate. Choose from: ALL, ACK, AFF, AUT, CON, DIS, ETH, FIG, INT, KEY, MET, RES, TAB, TIL. Defaults to ALL",
