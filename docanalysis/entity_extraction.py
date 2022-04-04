@@ -3,6 +3,7 @@ import os
 import logging
 from glob import glob
 import spacy
+from spacy import displacy
 import pandas as pd
 from bs4 import BeautifulSoup
 from tqdm import tqdm
@@ -84,14 +85,16 @@ class EntityExtraction:
                 self.nlp = spacy.load('en_core_web_sm')
 
     def dictionary_to_html(self,html_path):
+        list_of_docs=[]
+        for sentence in self.sentence_dictionary:
+            list_of_docs.append(self.sentence_dictionary[sentence]['doc'])
+        html= displacy.render(list_of_docs, style="ent", page=True,minify=True)
         logging.info(f"saving output: {html_path}")
-        download_tools=DownloadTools()
-        df = pd.DataFrame.from_dict(self.sentence_dictionary)
-        download_tools.make_html_from_dataframe(df,html_path)
+        self.write_string_to_file(html,html_path)
 
     def extract_entities_from_papers(self, corpus_path, terms_xml_path, search_section,entities,query=None, hits=30,
-                                     run_pygetpapers=False, make_section=False, removefalse=True, create_csv=True,
-                                     csv_name='entities.csv', make_ami_dict=False,spacy_model='spacy',html_path=False, synonyms=False):
+                                     run_pygetpapers=False, make_section=False, removefalse=True, 
+                                     csv_name=False, make_ami_dict=False,spacy_model=False,html_path=False, synonyms=False):
         self.spacy_model=spacy_model                             
         corpus_path=os.path.abspath(corpus_path)
         if run_pygetpapers:
@@ -105,36 +108,39 @@ class EntityExtraction:
         else:
             logging.error("CProject doesn't exist")
             return
-        if len(glob(os.path.join(corpus_path, '**', 'sections'))) ==len(glob(os.path.join(corpus_path, 'PMC*'))):
+        if len(glob(os.path.join(corpus_path, '**', 'sections')))>0:
             self.all_paragraphs = self.get_glob_for_section(corpus_path,search_section)
         else:
             logging.error('section papers using --run_sectioning before search')
-        self.make_dict_with_parsed_xml()
-        self.run_spacy_over_sections(self.sentence_dictionary,entities)
-        self.remove_statements_not_having_xmldict_entities(
-                    dict_with_parsed_xml=self.sentence_dictionary)
-        if terms_xml_path:
-            terms = self.get_terms_from_ami_xml(terms_xml_path)
-            self.add_if_file_contains_terms(
-                terms=terms, dict_with_parsed_xml=self.sentence_dictionary)
-            if removefalse:
-                self.remove_statements_not_having_xmldict_terms(
-                    dict_with_parsed_xml=self.sentence_dictionary)
-        if synonyms:
-            synonyms_list = self.get_synonyms_from_ami_xml(terms_xml_path)
-            self.add_if_file_contains_terms(
-                terms=synonyms_list, dict_with_parsed_xml=self.sentence_dictionary, searching='synonyms')
-            if removefalse:
-                self.remove_statements_not_having_xmldict_terms(
-                    dict_with_parsed_xml=self.sentence_dictionary)
-        if create_csv:
+        if spacy_model or csv_name or make_ami_dict:
+            self.make_dict_with_parsed_xml()
+        if spacy_model:
+            self.run_spacy_over_sections(self.sentence_dictionary,entities)
+            self.remove_statements_not_having_xmldict_entities(
+                        dict_with_parsed_xml=self.sentence_dictionary)
+            if terms_xml_path:
+                terms = self.get_terms_from_ami_xml(terms_xml_path)
+                self.add_if_file_contains_terms(
+                    terms=terms, dict_with_parsed_xml=self.sentence_dictionary)
+                if removefalse:
+                    self.remove_statements_not_having_xmldict_terms(
+                        dict_with_parsed_xml=self.sentence_dictionary)
+            if synonyms:
+                synonyms_list = self.get_synonyms_from_ami_xml(terms_xml_path)
+                self.add_if_file_contains_terms(
+                    terms=synonyms_list, dict_with_parsed_xml=self.sentence_dictionary, searching='synonyms')
+                if removefalse:
+                    self.remove_statements_not_having_xmldict_terms(
+                        dict_with_parsed_xml=self.sentence_dictionary)
+                if html_path:
+                    self.dictionary_to_html(os.path.join(corpus_path,html_path))
+        if csv_name:
             self.convert_dict_to_csv(
                 path=os.path.join(corpus_path, f'{csv_name}'), dict_with_parsed_xml=self.sentence_dictionary)
         if make_ami_dict:
             ami_dict_path = os.path.join(corpus_path,make_ami_dict)
             self.handle_ami_dict_creation(self.sentence_dictionary,ami_dict_path)
-        if html_path:
-            self.dictionary_to_html(os.path.join(corpus_path,html_path))
+        
         return self.sentence_dictionary
     
     def run_pygetpapers(self,QUERY, HITS, OUTPUT):
@@ -146,8 +152,14 @@ class EntityExtraction:
         file_list= glob(os.path.join(
             path, '**','fulltext.xml'), recursive=True)
         for paper in file_list:
-            outdir = Path(Path(paper).parent, "sections")
-            AMIAbsSection.make_xml_sections(paper, outdir, True)
+            xml_file=open(paper,'r')
+            xml_string=xml_file.read()
+            xml_file.close()
+            if len(xml_string)>0:
+                outdir = Path(Path(paper).parent, "sections")
+                AMIAbsSection.make_xml_sections(paper, outdir, True)
+            else:
+                logging.warning(f"{paper} is empty")
 
     
     def get_glob_for_section(self,path,section_names):
@@ -200,13 +212,15 @@ class EntityExtraction:
     def run_spacy_over_sections(self, dict_with_parsed_xml,entities_names):
         self.switch_spacy_versions(self.spacy_model)
         for paragraph in tqdm(dict_with_parsed_xml):
-            doc = self.nlp(dict_with_parsed_xml[paragraph]['sentence'])
-            entities, labels, position_end, position_start,abbreviations,abbreviations_longform,abbreviation_start,abbreviation_end = self.make_required_lists()
-            if self.spacy_model=="scispacy":
-                self._get_abbreviations(doc, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end)
-            self._get_entities(entities_names, doc, entities, labels, position_end, position_start)
-            self.add_lists_to_dict(dict_with_parsed_xml[paragraph], entities, labels, position_end,
-                                   position_start,abbreviations,abbreviations_longform,abbreviation_start,abbreviation_end)
+            if len(dict_with_parsed_xml[paragraph]['sentence'])>0:
+                doc = self.nlp(dict_with_parsed_xml[paragraph]['sentence'])
+                entities, labels, position_end, position_start,abbreviations,abbreviations_longform,abbreviation_start,abbreviation_end = self.make_required_lists()
+                if self.spacy_model=="scispacy":
+                    self._get_abbreviations(doc, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end)
+                self._get_entities(entities_names, doc, entities, labels, position_end, position_start)
+                self.add_lists_to_dict(dict_with_parsed_xml[paragraph], entities, labels, position_end,
+                                    position_start,abbreviations,abbreviations_longform,abbreviation_start,abbreviation_end)
+                dict_with_parsed_xml[paragraph]['doc'] = doc
 
     def _get_entities(self, entities_names, doc, entities, labels, position_end, position_start):
         for ent in doc.ents:
