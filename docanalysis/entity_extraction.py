@@ -57,7 +57,8 @@ class EntityExtraction:
         'COUNTRY': 'https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/country/country.xml',
         'DISEASE':'https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/disease/disease.xml',
         'ORGANIZATION': 'https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/organization/organization.xml',
-        'DRUG': 'https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/drug/drug.xml',}
+        'DRUG': 'https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/drug/drug.xml',
+        'TEST_TRACE': 'https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/test_trace/test_trace.xml' }
 
         self.all_paragraphs={}
         self.sentence_dictionary={}
