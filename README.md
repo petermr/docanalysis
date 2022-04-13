@@ -35,7 +35,7 @@ Refer the [official documentation](https://packaging.python.org/en/latest/guides
 ### Install `docanalysis`
 You can download `docanalysis` from PYPI via `pip`. 
 ```
-  pip install docanalysis
+  pip3 install docanalysis
 ```
 
 Download python from: [https://www.python.org/downloads/](https://www.python.org/downloads/) and select the option `Add Python to Path while installing`. Make sure `pip` is installed along with python. Check out [https://pip.pypa.io/en/stable/installing/](https://pip.pypa.io/en/stable/installing/) if you have difficulties installing pip.
