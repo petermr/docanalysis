@@ -118,13 +118,13 @@ class EntityExtraction:
             self.run_spacy_over_sections(self.sentence_dictionary,entities)
             self.remove_statements_not_having_xmldict_entities(
                         dict_with_parsed_xml=self.sentence_dictionary)
-            if terms_xml_path:
-                terms = self.get_terms_from_ami_xml(terms_xml_path)
-                self.add_if_file_contains_terms(
-                    terms=terms, dict_with_parsed_xml=self.sentence_dictionary)
-                if removefalse:
-                    self.remove_statements_not_having_xmldict_terms(
-                        dict_with_parsed_xml=self.sentence_dictionary)
+        if terms_xml_path:
+            terms = self.get_terms_from_ami_xml(terms_xml_path)
+            self.add_if_file_contains_terms(
+                terms=terms, dict_with_parsed_xml=self.sentence_dictionary)
+            if removefalse:
+                self.remove_statements_not_having_xmldict_terms(
+                    dict_with_parsed_xml=self.sentence_dictionary)
             if synonyms:
                 synonyms_list = self.get_synonyms_from_ami_xml(terms_xml_path)
                 self.add_if_file_contains_terms(
