@@ -250,16 +250,16 @@ class EntityExtraction:
         if xml_path in self.dict_of_ami_dict.keys():
             logging.info(f"getting terms from {xml_path}")
             tree = ET.parse(urlopen(self.dict_of_ami_dict[xml_path]))
-        elif xml_path not in self.dict_of_ami_dict.keys():
-            logging.error(f'{xml_path} is not a supported dictionary. Choose from: EO_ACTIVITY, EO_COMPOUND, EO_EXTRACTION, EO_PLANT, EO_PLANT_PART, PLANT_GENUS,EO_TARGET, COUNTRY, DISEASE, DRUG, ORGANIZATION ')
+        #elif xml_path not in self.dict_of_ami_dict.keys():
+        #    logging.error(f'{xml_path} is not a supported dictionary. Choose from: EO_ACTIVITY, EO_COMPOUND, EO_EXTRACTION, EO_PLANT, EO_PLANT_PART, PLANT_GENUS,EO_TARGET, COUNTRY, DISEASE, DRUG, ORGANIZATION ')
         else:
             logging.info(f"getting terms from {xml_path}")
             tree = ET.parse(xml_path)
-        root = tree.getroot()
-        terms = []
-        for para in root.iter('entry'):
-            terms.append(para.attrib["term"])
-        return terms
+            root = tree.getroot()
+            terms = []
+            for para in root.iter('entry'):
+                terms.append(para.attrib["term"])
+            return terms
 
     def get_synonyms_from_ami_xml(self, xml_path):
         if xml_path in self.dict_of_ami_dict.keys():

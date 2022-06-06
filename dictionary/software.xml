@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dictionary title="consent_type">
+ <entry term="ArcGIS" />
+ <entry term="ImageJ "/>
+ <entry term="Cytoscape" name="Cytoscape"/>
+ <entry term="MrBayes" name="MrBayes"/>
+ <entry term="GROMACS " name="GROMACS " id="CM.consent_type.4"/>
+</dictionary>
