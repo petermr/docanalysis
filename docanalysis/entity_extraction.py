@@ -14,6 +14,7 @@ from pathlib import Path
 from pygetpapers import Pygetpapers
 from collections import Counter
 import pip
+import json
 from lxml import etree
 from pygetpapers.download_tools import DownloadTools
 from urllib.request import urlopen
@@ -94,7 +95,7 @@ class EntityExtraction:
 
     def extract_entities_from_papers(self, corpus_path, terms_xml_path, search_section,entities,query=None, hits=30,
                                      run_pygetpapers=False, make_section=False, removefalse=True, 
-                                     csv_name=False, make_ami_dict=False,spacy_model=False,html_path=False, synonyms=False):
+                                     csv_name=False, make_ami_dict=False,spacy_model=False,html_path=False, synonyms=False, make_json=False):
         self.spacy_model=spacy_model                             
         corpus_path=os.path.abspath(corpus_path)
         if run_pygetpapers:
@@ -137,6 +138,8 @@ class EntityExtraction:
         if csv_name:
             self.convert_dict_to_csv(
                 path=os.path.join(corpus_path, f'{csv_name}'), dict_with_parsed_xml=self.sentence_dictionary)
+        if make_json:
+            self.convert_dict_to_json(path=os.path.join(corpus_path, f'{make_json}'), dict_with_parsed_xml=self.sentence_dictionary)
         if make_ami_dict:
             ami_dict_path = os.path.join(corpus_path,make_ami_dict)
             self.handle_ami_dict_creation(self.sentence_dictionary,ami_dict_path)
@@ -320,6 +323,11 @@ class EntityExtraction:
                 pass
         df.to_csv(path, encoding='utf-8', line_terminator='\r\n')
         logging.info(f"wrote output to {path}")
+
+    def convert_dict_to_json(self, path, dict_with_parsed_xml):
+        with open(path ,mode='w', encoding='utf-8') as f:
+             json.dump(dict_with_parsed_xml, f, indent = 4)
+
 
     def remove_statements_not_having_xmldict_terms(self, dict_with_parsed_xml, searching='terms'):
         statement_to_pop = []

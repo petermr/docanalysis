@@ -140,6 +140,12 @@ class Docanalysis:
             type=str,
             help="searches the corpus/sections with synonymns from ami-dict",
         )
+        parser.add_argument(
+            "--make_json",
+            default=False,
+            type=str,
+            help="output in json format",
+        )
 
         parser.add_argument(
             "-l",
@@ -167,7 +173,7 @@ class Docanalysis:
         self.handle_logger_creation(args)
         self.entity_extraction.extract_entities_from_papers(args.project_name,args.dictionary,search_section=args.search_section,entities=args.entities,query=args.query,hits=args.hits,
                                      run_pygetpapers=args.run_pygetpapers, make_section= args.make_section, removefalse=True,
-                                     csv_name=args.output,make_ami_dict=args.make_ami_dict,spacy_model=args.spacy_model,html_path=args.html, synonyms=args.synonyms)
+                                     csv_name=args.output,make_ami_dict=args.make_ami_dict,spacy_model=args.spacy_model,html_path=args.html, synonyms=args.synonyms, make_json=args.make_json)
 
 
 
