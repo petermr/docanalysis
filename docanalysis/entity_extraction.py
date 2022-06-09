@@ -4,6 +4,7 @@ import logging
 from glob import glob
 import spacy
 from spacy import displacy
+from spacy.matcher import PhraseMatcher
 import pandas as pd
 from bs4 import BeautifulSoup
 from tqdm import tqdm
@@ -15,7 +16,9 @@ from pygetpapers import Pygetpapers
 from collections import Counter
 import pip
 import json
+import re
 from lxml import etree
+import pyparsing as pp
 from pygetpapers.download_tools import DownloadTools
 from urllib.request import urlopen
 def install(package):
@@ -24,7 +27,7 @@ def install(package):
     else:
         pip._internal.main(['install', package])
 
-
+nlp_phrase = spacy.load("en_core_web_sm")
 
 class EntityExtraction:
     """ """
@@ -240,14 +243,48 @@ class EntityExtraction:
 
     def add_if_file_contains_terms(self, terms, dict_with_parsed_xml, searching='terms'):
 
-        for statement in dict_with_parsed_xml:
+        for statement in tqdm(dict_with_parsed_xml):
             dict_for_sentence = dict_with_parsed_xml[statement]
             dict_for_sentence[f'has_{searching}'] = []
-            for term in terms:
-                if term.lower().strip() in dict_for_sentence['sentence'].lower():
-                    dict_for_sentence[f'has_{searching}'].append(term)
-            dict_for_sentence[f'weight_{searching}'] = len(
-                dict_for_sentence[f'has_{searching}'])
+            term_list, frequency = self.is_phrase_in_using_regex(terms, dict_for_sentence['sentence'])
+            if term_list:
+                print(term_list)
+                dict_for_sentence[f'has_{searching}'].append(term_list)
+                dict_for_sentence[f'weight_{searching}'] = frequency
+        
+    def is_phrase_in(self, phrases, text):
+        token_list = []
+        text = text.lower()
+        for phrase in phrases: 
+            phrase.lower().strip()
+            rule = pp.ZeroOrMore(pp.Keyword(phrase))
+            for token, start, end in rule.scanString(text):
+                if token:
+                    token_list.append(token[0])
+            frequency = (len(token_list))
+        return token_list, frequency
+    
+    def spacy_phrase_match(self, terms, text):
+        match_list = []
+        matcher = PhraseMatcher(nlp_phrase.vocab)
+        patterns = [nlp_phrase.make_doc(text) for text in terms]
+        matcher.add("TerminologyList", patterns)
+        doc = nlp_phrase(text)
+        matches = matcher(doc)
+        for match_id, start, end in matches:
+            span = doc[start:end]
+            match_list.append(span.text)
+        frequency = len(match_list)
+        return match_list, frequency
+    
+    def is_phrase_in_using_regex(self, phrases, text):
+        match_list = []
+        for phrase in phrases:
+            if re.search(r"\b{}\b".format(phrase), text, re.IGNORECASE) is not None:
+                match_list.append(phrase)
+        frequency = len(match_list)
+        return match_list, frequency
+
 
     def get_terms_from_ami_xml(self, xml_path):
         if xml_path in self.dict_of_ami_dict.keys():
@@ -327,6 +364,8 @@ class EntityExtraction:
     def convert_dict_to_json(self, path, dict_with_parsed_xml):
         with open(path ,mode='w', encoding='utf-8') as f:
              json.dump(dict_with_parsed_xml, f, indent = 4)
+        logging.info(f"wrote JSON output to {path}")
+        
 
 
     def remove_statements_not_having_xmldict_terms(self, dict_with_parsed_xml, searching='terms'):
