@@ -27,7 +27,7 @@ def install(package):
     else:
         pip._internal.main(['install', package])
 
-nlp_phrase = spacy.load("en_core_web_sm")
+#nlp_phrase = spacy.load("en_core_web_sm")
 
 class EntityExtraction:
     """ """
@@ -263,19 +263,6 @@ class EntityExtraction:
                     token_list.append(token[0])
             frequency = (len(token_list))
         return token_list, frequency
-    
-    def spacy_phrase_match(self, terms, text):
-        match_list = []
-        matcher = PhraseMatcher(nlp_phrase.vocab)
-        patterns = [nlp_phrase.make_doc(text) for text in terms]
-        matcher.add("TerminologyList", patterns)
-        doc = nlp_phrase(text)
-        matches = matcher(doc)
-        for match_id, start, end in matches:
-            span = doc[start:end]
-            match_list.append(span.text)
-        frequency = len(match_list)
-        return match_list, frequency
     
     def is_phrase_in_using_regex(self, phrases, text):
         match_list = []
