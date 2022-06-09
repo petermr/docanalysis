@@ -265,9 +265,10 @@ class EntityExtraction:
         return token_list, frequency
     
     def is_phrase_in_using_regex(self, phrases, text):
+        # https://stackoverflow.com/questions/47681756/match-exact-phrase-within-a-string-in-python
         match_list = []
         for phrase in phrases:
-            if re.search(r"\b{}\b".format(phrase), text, re.IGNORECASE) is not None:
+            if re.search(r"\b{}\b".format(re.escape(phrase)), text, re.IGNORECASE) is not None:
                 match_list.append(phrase)
         frequency = len(match_list)
         return match_list, frequency
