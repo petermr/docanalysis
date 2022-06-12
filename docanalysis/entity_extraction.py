@@ -123,9 +123,9 @@ class EntityExtraction:
             self.remove_statements_not_having_xmldict_entities(
                         dict_with_parsed_xml=self.sentence_dictionary)
         if terms_xml_path:
-            terms = self.get_terms_from_ami_xml(terms_xml_path)
+            compiled_terms = self.get_terms_from_ami_xml(terms_xml_path)
             self.add_if_file_contains_terms(
-                terms=terms, dict_with_parsed_xml=self.sentence_dictionary)
+                compiled_terms=compiled_terms, dict_with_parsed_xml=self.sentence_dictionary)
             if removefalse:
                 self.remove_statements_not_having_xmldict_terms(
                     dict_with_parsed_xml=self.sentence_dictionary)
@@ -241,14 +241,13 @@ class EntityExtraction:
             abbreviation_start.append(abrv.start)
             abbreviation_end.append(abrv.end)
 
-    def add_if_file_contains_terms(self, terms, dict_with_parsed_xml, searching='terms'):
+    def add_if_file_contains_terms(self, compiled_terms, dict_with_parsed_xml, searching='terms'):
 
         for statement in tqdm(dict_with_parsed_xml):
             dict_for_sentence = dict_with_parsed_xml[statement]
             dict_for_sentence[f'has_{searching}'] = []
-            term_list, frequency = self.is_phrase_in_using_regex(terms, dict_for_sentence['sentence'])
+            term_list, frequency = self.search_sentence_with_compiled_terms(compiled_terms, dict_for_sentence['sentence'])
             if term_list:
-                print(term_list)
                 dict_for_sentence[f'has_{searching}'].append(term_list)
                 dict_for_sentence[f'weight_{searching}'] = frequency
         
@@ -264,30 +263,40 @@ class EntityExtraction:
             frequency = (len(token_list))
         return token_list, frequency
     
-    def is_phrase_in_using_regex(self, phrases, text):
+    def search_sentence_with_compiled_terms(self, compiled_terms, sentence):
         # https://stackoverflow.com/questions/47681756/match-exact-phrase-within-a-string-in-python
         match_list = []
-        for phrase in phrases:
-            if re.search(r"\b{}\b".format(re.escape(phrase)), text, re.IGNORECASE) is not None:
-                match_list.append(phrase)
-        frequency = len(match_list)
+        frequency = 0
+        for compiled_term in compiled_terms:
+            term_match = compiled_term.search(sentence, re.IGNORECASE)
+            if term_match is not None:
+                match_list.append(term_match.group())
+            frequency = len(match_list)
         return match_list, frequency
-
 
     def get_terms_from_ami_xml(self, xml_path):
         if xml_path in self.dict_of_ami_dict.keys():
             logging.info(f"getting terms from {xml_path}")
             tree = ET.parse(urlopen(self.dict_of_ami_dict[xml_path]))
-        #elif xml_path not in self.dict_of_ami_dict.keys():
-        #    logging.error(f'{xml_path} is not a supported dictionary. Choose from: EO_ACTIVITY, EO_COMPOUND, EO_EXTRACTION, EO_PLANT, EO_PLANT_PART, PLANT_GENUS,EO_TARGET, COUNTRY, DISEASE, DRUG, ORGANIZATION ')
+            root = tree.getroot()
+        elif xml_path not in self.dict_of_ami_dict.keys():
+            logging.error(f'{xml_path} is not a supported dictionary. Choose from: EO_ACTIVITY, EO_COMPOUND, EO_EXTRACTION, EO_PLANT, EO_PLANT_PART, PLANT_GENUS,EO_TARGET, COUNTRY, DISEASE, DRUG, ORGANIZATION ')
         else:
             logging.info(f"getting terms from {xml_path}")
             tree = ET.parse(xml_path)
             root = tree.getroot()
-            terms = []
-            for para in root.iter('entry'):
-                terms.append(para.attrib["term"])
-            return terms
+        compiled_terms = []
+        for para in root.iter('entry'):
+            term = (para.attrib["term"])
+            try: 
+                compiled_term = self.regex_compile(term)
+            except re.error:
+                print(f'cannot use term {term}')
+            compiled_terms.append(compiled_term)
+        return (compiled_terms)
+    
+    def regex_compile(self, term):
+        return re.compile(r'\b{}\b'.format(term))
 
     def get_synonyms_from_ami_xml(self, xml_path):
         if xml_path in self.dict_of_ami_dict.keys():
