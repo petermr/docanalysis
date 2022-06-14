@@ -48,7 +48,8 @@ class EntityExtraction:
         "MET": ['*method*/*.xml', '*material*/*.xml'] ,# also gets us supplementary material. Not sure how to exclude them
         "RES": ['*result*/*/*_title.xml', '*result*/*/*_p.xml'], # not sure if we should use recursive globbing or not. 
         "TAB": ['*table*.xml'],
-        "TIL": ['*article-meta/*title-group.xml'],}
+        "TIL": ['*article-meta/*title-group.xml'],
+        "HTML": ['*.html']}
 
         self.dict_of_ami_dict = {
         'EO_ACTIVITY': 'https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/activity/eo_activity.xml',
@@ -98,7 +99,7 @@ class EntityExtraction:
 
     def extract_entities_from_papers(self, corpus_path, terms_xml_path, search_section,entities,query=None, hits=30,
                                      run_pygetpapers=False, make_section=False, removefalse=True, 
-                                     csv_name=False, make_ami_dict=False,spacy_model=False,html_path=False, synonyms=False, make_json=False):
+                                     csv_name=False, make_ami_dict=False,spacy_model=False,html_path=False, synonyms=False, make_json=False, search_html=False):
         self.spacy_model=spacy_model                             
         corpus_path=os.path.abspath(corpus_path)
         if run_pygetpapers:
@@ -115,9 +116,12 @@ class EntityExtraction:
         if len(glob(os.path.join(corpus_path, '**', 'sections')))>0:
             self.all_paragraphs = self.get_glob_for_section(corpus_path,search_section)
         else:
-            logging.error('section papers using --run_sectioning before search')
+            logging.error('section papers using --make_sections before search')
         if spacy_model or csv_name or make_ami_dict:
-            self.make_dict_with_parsed_xml()
+            if search_html:
+                self.make_dict_with_parsed_html()
+            else:
+                self.make_dict_with_parsed_xml()
         if spacy_model:
             self.run_spacy_over_sections(self.sentence_dictionary,entities)
             self.remove_statements_not_having_xmldict_entities(
@@ -167,7 +171,7 @@ class EntityExtraction:
             else:
                 logging.warning(f"{paper} is empty")
 
-    
+
     def get_glob_for_section(self,path,section_names):
         for section_name in section_names:
             if section_name in self.sections.keys():
@@ -192,16 +196,39 @@ class EntityExtraction:
                 sentences = tokenize.sent_tokenize(paragraph_text)
                 for sentence in sentences:
                     self.sentence_dictionary[counter] = {}
-                    dict_for_sentences = self.sentence_dictionary[counter]
-                    dict_for_sentences["file_path"] = section_path
-                    dict_for_sentences["paragraph"] = paragraph_text
-                    dict_for_sentences["sentence"] = sentence
-                    dict_for_sentences["section"] = section
+                    self.make_dict_attributes(counter, section, section_path, paragraph_text, sentence)
                     counter += 1
         logging.info(f"Found {len(self.sentence_dictionary)} sentences in the section(s).")
         return self.sentence_dictionary
 
-    def read_text_from_path(self, paragraph_path):
+    def make_dict_with_parsed_html(self):
+
+        self.sentence_dictionary = {}
+        
+        counter = 1
+        for section in self.all_paragraphs:
+            for section_path in tqdm(self.all_paragraphs[section]):
+                paragraph_path = section_path
+                print(paragraph_path)
+                paragraph_text = self.read_text_from_html(paragraph_path)
+                print(paragraph_text)
+                sentences = tokenize.sent_tokenize(paragraph_text)
+                for sentence in sentences:
+                    self.sentence_dictionary[counter] = {}
+                    self.make_dict_attributes(counter, section, section_path, paragraph_text, sentence)
+                    counter += 1
+        logging.info(f"Found {len(self.sentence_dictionary)} sentences in the section(s) in html")
+        return self.sentence_dictionary
+
+
+    def make_dict_attributes(self, counter, section, section_path, paragraph_text, sentence):
+        dict_for_sentences = self.sentence_dictionary[counter]
+        dict_for_sentences["file_path"] = section_path
+        dict_for_sentences["paragraph"] = paragraph_text
+        dict_for_sentences["sentence"] = sentence
+        dict_for_sentences["section"] = section
+
+    def read_text_from_path(self, paragraph_path, search_html=False):
         try:
             tree = ET.parse(paragraph_path)
             root = tree.getroot()
@@ -214,6 +241,13 @@ class EntityExtraction:
             paragraph_text = "empty"
             logging.error(f"cannot parse {paragraph_path}")
         return paragraph_text
+    
+    def read_text_from_html(self,paragraph_path):
+        with open(paragraph_path, encoding="utf-8") as f:
+            content = f.read()
+            soup = BeautifulSoup(content, 'html.parser')
+            paragraph_text = soup.body.p.text
+            return paragraph_text
 
     def run_spacy_over_sections(self, dict_with_parsed_xml,entities_names):
         self.switch_spacy_versions(self.spacy_model)
@@ -246,10 +280,12 @@ class EntityExtraction:
         for statement in tqdm(dict_with_parsed_xml):
             dict_for_sentence = dict_with_parsed_xml[statement]
             dict_for_sentence[f'has_{searching}'] = []
-            term_list, frequency = self.search_sentence_with_compiled_terms(compiled_terms, dict_for_sentence['sentence'])
+            dict_for_sentence['span'] =[]
+            term_list, span_list, frequency = self.search_sentence_with_compiled_terms(compiled_terms, dict_for_sentence['sentence'])
             if term_list:
                 dict_for_sentence[f'has_{searching}'].append(term_list)
                 dict_for_sentence[f'weight_{searching}'] = frequency
+                dict_for_sentence['span'].append(span_list)
         
     def is_phrase_in(self, phrases, text):
         token_list = []
@@ -266,13 +302,15 @@ class EntityExtraction:
     def search_sentence_with_compiled_terms(self, compiled_terms, sentence):
         # https://stackoverflow.com/questions/47681756/match-exact-phrase-within-a-string-in-python
         match_list = []
+        span_list = []
         frequency = 0
         for compiled_term in compiled_terms:
             term_match = compiled_term.search(sentence, re.IGNORECASE)
             if term_match is not None:
                 match_list.append(term_match.group())
+                span_list.append(term_match.span())
             frequency = len(match_list)
-        return match_list, frequency
+        return match_list, span_list, frequency
 
     def get_terms_from_ami_xml(self, xml_path):
         if xml_path in self.dict_of_ami_dict.keys():
@@ -280,11 +318,12 @@ class EntityExtraction:
             tree = ET.parse(urlopen(self.dict_of_ami_dict[xml_path]))
             root = tree.getroot()
         elif xml_path not in self.dict_of_ami_dict.keys():
-            logging.error(f'{xml_path} is not a supported dictionary. Choose from: EO_ACTIVITY, EO_COMPOUND, EO_EXTRACTION, EO_PLANT, EO_PLANT_PART, PLANT_GENUS,EO_TARGET, COUNTRY, DISEASE, DRUG, ORGANIZATION ')
-        else:
-            logging.info(f"getting terms from {xml_path}")
             tree = ET.parse(xml_path)
             root = tree.getroot()
+            logging.info(f"getting terms from {xml_path}")
+        else:
+            logging.error(f'{xml_path} is not a supported dictionary. Choose from: EO_ACTIVITY, EO_COMPOUND, EO_EXTRACTION, EO_PLANT, EO_PLANT_PART, PLANT_GENUS,EO_TARGET, COUNTRY, DISEASE, DRUG, ORGANIZATION ')
+
         compiled_terms = []
         for para in root.iter('entry'):
             term = (para.attrib["term"])
@@ -293,7 +332,7 @@ class EntityExtraction:
             except re.error:
                 print(f'cannot use term {term}')
             compiled_terms.append(compiled_term)
-        return (compiled_terms)
+        return (set(compiled_terms))
     
     def regex_compile(self, term):
         return re.compile(r'\b{}\b'.format(term))
