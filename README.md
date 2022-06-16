@@ -1,41 +1,14 @@
 ## docanalysis 
  Ingests [CProjects](https://github.com/petermr/tigr2ess/blob/master/getpapers/TUTORIAL.md#cproject-and-ctrees) and carries out text-analysis of documents, including sectioning, NLP/text-mining, vocabulary generation. Uses [NLTK](https://www.nltk.org/) and other Python tools for many operations, and [spaCy](https://spacy.io/) or [scispaCy](https://allenai.github.io/scispacy/) for extraction and annotation of entities. Outputs summary data and word-dictionaries. 
- 
-### Set up `venv`
-We recommend you create a virtual environment (`venv`) before installing `docanalysis` and activate the `venv` every time you run `docanalysis`.
-
-#### Windows
-Creating a `venv`
-```
->> mkdir docanalysis_demo
->> cd docanalysis_demo
->> python -m venv venv
-```
-
-Activating `venv`
-```
->> venv\Scripts\activate.bat
-```
-
-#### MacOS
-Creating a `venv`
-```
->> mkdir docanalysis_demo
->> cd docanalysis_demo
->> python3 -m venv venv
-```
-
-Activating `venv`
-```
->> venv\Scripts\activate.bat
-```
-
-Refer the [official documentation](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) for more help. 
 
 ### Install `docanalysis`
 You can download `docanalysis` from PYPI via `pip`. 
 ```
-  pip3 install docanalysis
+  pip install docanalysis
+```
+If you are on a Mac
+```
+pip3 install docanalysis
 ```
 
 Download python from: [https://www.python.org/downloads/](https://www.python.org/downloads/) and select the option `Add Python to Path while installing`. Make sure `pip` is installed along with python. Check out [https://pip.pypa.io/en/stable/installing/](https://pip.pypa.io/en/stable/installing/) if you have difficulties installing pip.
@@ -147,7 +120,7 @@ C:\USERS\SHWEATA\DOCANALYSIS\TERPENE_10
 #### Section the papers
 INPUT
 ```
-docanalysis --project_name terpene_10 --run_sectioning
+docanalysis --project_name terpene_10 --make_section
 ```
 OUTPUT
 ```
@@ -241,4 +214,34 @@ docanalysis --run_pygetpapers -q "terpene" -k 10 --project_name terpene_10 --run
 -  [Shweata N. Hegde](https://github.com/ShweataNHegde/)
 -  [Daniel Mietchen](https://github.com/Daniel-Mietchen)
 -  [Peter Murray-Rust](https://github.com/petermr)
-### Research Idea
+
+### Set up `venv`
+We recommend you create a virtual environment (`venv`) before installing `docanalysis` and activate the `venv` every time you run `docanalysis`.
+
+#### Windows
+Creating a `venv`
+```
+>> mkdir docanalysis_demo
+>> cd docanalysis_demo
+>> python -m venv venv
+```
+
+Activating `venv`
+```
+>> venv\Scripts\activate.bat
+```
+
+#### MacOS
+Creating a `venv`
+```
+>> mkdir docanalysis_demo
+>> cd docanalysis_demo
+>> python3 -m venv venv
+```
+
+Activating `venv`
+```
+>> venv\Scripts\activate.bat
+```
+
+Refer the [official documentation](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) for more help. 
