@@ -35,7 +35,6 @@ class EntityExtraction:
     def __init__(self):
         logging.basicConfig(level=logging.INFO)
         self.sections= {"ABS":['*abstract.xml'],
-        "ALL":['*.xml'],
         "ACK": ['*ack.xml'],
         "AFF": ['*aff.xml'],
         "AUT": ['*contrib-group.xml'],
@@ -115,6 +114,8 @@ class EntityExtraction:
             return
         if search_html:
             search_sections = ['HTML',]
+        if search_sections == ['ALL',]:
+            search_sections= self.sections.keys()
         if len(glob(os.path.join(corpus_path, '**', 'sections')))>0:
             self.all_paragraphs = self.get_glob_for_section(corpus_path,search_sections)
         else:
@@ -245,7 +246,6 @@ class EntityExtraction:
                 self._get_entities(entities_names, doc, entities, labels, position_end, position_start)
                 self.add_lists_to_dict(dict_with_parsed_xml[paragraph], entities, labels, position_end,
                                     position_start,abbreviations,abbreviations_longform,abbreviation_start,abbreviation_end)
-                dict_with_parsed_xml[paragraph]['doc'] = doc
 
     def _get_entities(self, entities_names, doc, entities, labels, position_end, position_start):
         for ent in doc.ents:
@@ -362,7 +362,7 @@ class EntityExtraction:
         dict_for_sentence['abbreviation_end']= abbreviation_end
 
     def add_parsed_entities_to_lists(self, entities, labels, position_end, position_start, ent=None):
-        entities.append(ent)
+        entities.append(ent.text)
         labels.append(ent.label_)
         position_start.append(ent.start_char)
         position_end.append(ent.end_char)
