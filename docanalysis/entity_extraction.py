@@ -97,7 +97,7 @@ class EntityExtraction:
         logging.info(f"saving output: {html_path}")
         self.write_string_to_file(html,html_path)
 
-    def extract_entities_from_papers(self, corpus_path, terms_xml_path, search_section,entities,query=None, hits=30,
+    def extract_entities_from_papers(self, corpus_path, terms_xml_path, search_sections,entities,query=None, hits=30,
                                      run_pygetpapers=False, make_section=False, removefalse=True, 
                                      csv_name=False, make_ami_dict=False,spacy_model=False,html_path=False, synonyms=False, make_json=False, search_html=False):
         self.spacy_model=spacy_model                             
@@ -113,15 +113,17 @@ class EntityExtraction:
         else:
             logging.error("CProject doesn't exist")
             return
+        if search_html:
+            search_sections = ['HTML',]
         if len(glob(os.path.join(corpus_path, '**', 'sections')))>0:
-            self.all_paragraphs = self.get_glob_for_section(corpus_path,search_section)
+            self.all_paragraphs = self.get_glob_for_section(corpus_path,search_sections)
         else:
             logging.error('section papers using --make_sections before search')
         if spacy_model or csv_name or make_ami_dict:
             if search_html:
-                self.make_dict_with_parsed_html()
+                self.make_dict_with_parsed_document(document_type='html')
             else:
-                self.make_dict_with_parsed_xml()
+                self.make_dict_with_parsed_document()
         if spacy_model:
             self.run_spacy_over_sections(self.sentence_dictionary,entities)
             self.remove_statements_not_having_xmldict_entities(
@@ -184,7 +186,7 @@ class EntityExtraction:
         return self.all_paragraphs
 
 
-    def make_dict_with_parsed_xml(self):
+    def make_dict_with_parsed_document(self,document_type="xml"):
 
         self.sentence_dictionary = {}
         
@@ -192,7 +194,10 @@ class EntityExtraction:
         for section in self.all_paragraphs:
             for section_path in tqdm(self.all_paragraphs[section]):
                 paragraph_path = section_path
-                paragraph_text = self.read_text_from_path(paragraph_path)
+                if document_type == 'html':
+                    paragraph_text = self.read_text_from_html(paragraph_path)   
+                elif document_type == 'xml':
+                    paragraph_text = self.read_text_from_path(paragraph_path)
                 sentences = tokenize.sent_tokenize(paragraph_text)
                 for sentence in sentences:
                     self.sentence_dictionary[counter] = {}
@@ -200,26 +205,6 @@ class EntityExtraction:
                     counter += 1
         logging.info(f"Found {len(self.sentence_dictionary)} sentences in the section(s).")
         return self.sentence_dictionary
-
-    def make_dict_with_parsed_html(self):
-
-        self.sentence_dictionary = {}
-        
-        counter = 1
-        for section in self.all_paragraphs:
-            for section_path in tqdm(self.all_paragraphs[section]):
-                paragraph_path = section_path
-                print(paragraph_path)
-                paragraph_text = self.read_text_from_html(paragraph_path)
-                print(paragraph_text)
-                sentences = tokenize.sent_tokenize(paragraph_text)
-                for sentence in sentences:
-                    self.sentence_dictionary[counter] = {}
-                    self.make_dict_attributes(counter, section, section_path, paragraph_text, sentence)
-                    counter += 1
-        logging.info(f"Found {len(self.sentence_dictionary)} sentences in the section(s) in html")
-        return self.sentence_dictionary
-
 
     def make_dict_attributes(self, counter, section, section_path, paragraph_text, sentence):
         dict_for_sentences = self.sentence_dictionary[counter]
