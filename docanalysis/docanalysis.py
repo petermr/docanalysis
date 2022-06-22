@@ -13,7 +13,7 @@ class Docanalysis:
     def __init__(self):
         """This function makes all the constants"""
         self.entity_extraction = EntityExtraction()
-        self.version="0.0.7"
+        self.version="0.1.1"
 
     def handle_logger_creation(self, args):
         """[summary]
@@ -140,6 +140,19 @@ class Docanalysis:
             type=str,
             help="searches the corpus/sections with synonymns from ami-dict",
         )
+        parser.add_argument(
+            "--make_json",
+            default=False,
+            type=str,
+            help="output in json format",
+        )
+        parser.add_argument(
+            "--search_html",
+            default=False,
+            action="store_true",
+            help="searches html document",
+        )
+
 
         parser.add_argument(
             "-l",
@@ -167,7 +180,7 @@ class Docanalysis:
         self.handle_logger_creation(args)
         self.entity_extraction.extract_entities_from_papers(args.project_name,args.dictionary,search_section=args.search_section,entities=args.entities,query=args.query,hits=args.hits,
                                      run_pygetpapers=args.run_pygetpapers, make_section= args.make_section, removefalse=True,
-                                     csv_name=args.output,make_ami_dict=args.make_ami_dict,spacy_model=args.spacy_model,html_path=args.html, synonyms=args.synonyms)
+                                     csv_name=args.output,make_ami_dict=args.make_ami_dict,spacy_model=args.spacy_model,html_path=args.html, synonyms=args.synonyms, make_json=args.make_json, search_html=args.search_html)
 
 
 
