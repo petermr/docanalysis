@@ -1,5 +1,10 @@
 ## docanalysis 
-`docanalysis` is a Command Line Tool that ingests [CProjects](https://github.com/petermr/tigr2ess/blob/master/getpapers/TUTORIAL.md#cproject-and-ctrees) and carries out text-analysis of documents, including sectioning, NLP/text-mining, vocabulary generation. Uses [NLTK](https://www.nltk.org/) and other Python tools for many operations, and [spaCy](https://spacy.io/) or [scispaCy](https://allenai.github.io/scispacy/) for extraction and annotation of entities. Outputs summary data and word-dictionaries. 
+`docanalysis` is a Command Line Tool that ingests corpora [(CProjects)](https://github.com/petermr/tigr2ess/blob/master/getpapers/TUTORIAL.md#cproject-and-ctrees) and carries out text-analysis of documents, including
+- sectioning
+- NLP/text-mining
+- dictionary generation 
+
+Besides the bespoke code, it uses [NLTK](https://www.nltk.org/) and other Python tools for many operations, and [spaCy](https://spacy.io/) or [scispaCy](https://allenai.github.io/scispacy/) for extraction and annotation of entities. Outputs summary data and word-dictionaries. 
 
 ### Install `docanalysis`
 You can download `docanalysis` from PYPI. 
