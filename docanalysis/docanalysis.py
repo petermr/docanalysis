@@ -53,33 +53,33 @@ class Docanalysis:
             "--run_pygetpapers",
             default=False,
             action="store_true",
-            help="downloads papers from EuropePMC via pygetpapers",
+            help="[Command] downloads papers from EuropePMC via pygetpapers",
         )
         parser.add_argument(
             "--make_section",
             default=False,
             action="store_true",
-            help="makes sections",
+            help="[Command] makes sections; requires a fulltext.xml in CTree directories",
         )
         parser.add_argument(
             "-q",
             "--query",
             default=None,
             type=str,
-            help="provide query to pygetpapers",
+            help="[pygetpapers] query string",
         )
         parser.add_argument(
             "-k",
             "--hits",
             type=str,
             default=None,
-            help="specify number of papers to download from pygetpapers",
+            help="[pygetpapers] number of papers to download",
         )
 
         parser.add_argument(
             "--project_name",
             type=str,
-            help="provide CProject directory name",
+            help="CProject directory name",
             default=os.path.join(os.getcwd(), default_path),
         )
         parser.add_argument(
@@ -87,18 +87,18 @@ class Docanalysis:
             "--dictionary",
             default=False,
             type=str,
-            help="provide ami dictionary to annotate sentences or support supervised entity extraction",
+            help="[file name/url] existing ami dictionary to annotate sentences or support supervised entity extraction",
         )
         parser.add_argument(
             "-o",
             "--output",
             default=False,
-            help="outputs csv file",
+            help="outputs csv with sentences/terms",
         )
         parser.add_argument(
             "--make_ami_dict",
             default=False,
-            help="provide title for ami-dict. Makes ami-dict of all extracted entities",
+            help="[Command] title for ami-dict. Makes ami-dict of all extracted entities; works only with spacy",
         )
         parser.add_argument(
             "--search_section",
@@ -107,7 +107,7 @@ class Docanalysis:
             dest='search_section',
             type=str, 
             nargs='*', 
-            help="provide section(s) to annotate. Choose from: ALL, ACK, AFF, AUT, CON, DIS, ETH, FIG, INT, KEY, MET, RES, TAB, TIL. Defaults to ALL",
+            help="[NER/dictionary search] section(s) to annotate. Choose from: ALL, ACK, AFF, AUT, CON, DIS, ETH, FIG, INT, KEY, MET, RES, TAB, TIL. Defaults to ALL",
         )
 
         parser.add_argument(
@@ -115,8 +115,8 @@ class Docanalysis:
             default=['ALL'],
             action='store', dest='entities',
                     type=str, nargs='*', 
-            help="provide entities to extract. Default(ALL). Choose from "
-            "SpaCy: CARDINAL, DATE, EVENT, FAC, GPE, LANGUAGE, LAW, LOC, MONEY, NORP, ORDINAL, ORG, PERCENT, PERSON, PRODUCT, QUANTITY, TIME, WORK_OF_ART; "
+            help="[NER] entities to extract. Default (ALL). Common entities "
+            "SpaCy: GPE, LANGUAGE, ORG, PERSON (for additional ones check: ); "
             "SciSpaCy: CHEMICAL, DISEASE",
         )
 
@@ -124,33 +124,33 @@ class Docanalysis:
             "--spacy_model",
             default=False,
             type=str,
-            help="optional. Choose between spacy or scispacy models. Defaults to spacy",
+            help="[NER] optional. Choose between spacy or scispacy models. Defaults to spacy",
         )
 
         parser.add_argument(
             "--html",
             default=False,
             type=str,
-            help="saves output in html format to given path",
+            help="outputs html with sentences/terms",
         )
 
         parser.add_argument(
             "--synonyms",
             default=False,
             type=str,
-            help="searches the corpus/sections with synonymns from ami-dict",
+            help="annotate the corpus/sections with synonyms from ami-dict",
         )
         parser.add_argument(
             "--make_json",
             default=False,
             type=str,
-            help="output in json format",
+            help="outputs json with sentences/terms",
         )
         parser.add_argument(
             "--search_html",
             default=False,
             action="store_true",
-            help="searches html document",
+            help="searches html documents (mainly IPCC)",
         )
 
 
