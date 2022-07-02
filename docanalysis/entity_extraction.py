@@ -14,6 +14,7 @@ from docanalysis.ami_sections import AMIAbsSection
 from pathlib import Path
 from pygetpapers import Pygetpapers
 from collections import Counter
+from abbreviations import schwartz_hearst
 import pip
 import json
 import re
@@ -98,7 +99,7 @@ class EntityExtraction:
 
     def extract_entities_from_papers(self, corpus_path, terms_xml_path, search_sections,entities,query=None, hits=30,
                                      run_pygetpapers=False, make_section=False, removefalse=True, 
-                                     csv_name=False, make_ami_dict=False,spacy_model=False,html_path=False, synonyms=False, make_json=False, search_html=False):
+                                     csv_name=False, make_ami_dict=False,spacy_model=False,html_path=False, synonyms=False, make_json=False, search_html=False, abb="t"):
         self.spacy_model=spacy_model                             
         corpus_path=os.path.abspath(corpus_path)
         if run_pygetpapers:
@@ -145,6 +146,8 @@ class EntityExtraction:
                         dict_with_parsed_xml=self.sentence_dictionary)
                 if html_path:
                     self.dictionary_to_html(os.path.join(corpus_path,html_path))
+        if abb:
+            self.abbreviation_search_using_sw(self.sentence_dictionary)
         if csv_name:
             self.convert_dict_to_csv(
                 path=os.path.join(corpus_path, f'{csv_name}'), dict_with_parsed_xml=self.sentence_dictionary)
@@ -232,8 +235,9 @@ class EntityExtraction:
         with open(paragraph_path, encoding="utf-8") as f:
             content = f.read()
             soup = BeautifulSoup(content, 'html.parser')
-            paragraph_text = soup.body.p.text
-            return paragraph_text
+            for div_ipcc in soup.find_all("div"):
+                paragraph_text = div_ipcc.text
+                return paragraph_text
 
     def run_spacy_over_sections(self, dict_with_parsed_xml,entities_names):
         self.switch_spacy_versions(self.spacy_model)
@@ -252,6 +256,15 @@ class EntityExtraction:
             if (ent.label_ in entities_names) or (entities_names==['ALL']):
                 self.add_parsed_entities_to_lists(
                         entities, labels, position_end, position_start, ent)
+    
+
+    def abbreviation_search_using_sw(self, dict_with_parsed_xml):
+        for text in dict_with_parsed_xml:
+            dict_for_sentence = dict_with_parsed_xml[text]
+            dict_for_sentence["abb"] = []
+            pairs = schwartz_hearst.extract_abbreviation_definition_pairs(doc_text= dict_for_sentence['paragraph'])
+            dict_for_sentence["abb"] = pairs
+
 
     def _get_abbreviations(self, doc, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end):
         for abrv in doc._.abbreviations:
