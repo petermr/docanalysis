@@ -4,12 +4,12 @@ import logging
 from glob import glob
 import spacy
 from spacy import displacy
+from nltk import tokenize
 from spacy.matcher import PhraseMatcher
 import pandas as pd
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 import xml.etree.ElementTree as ET
-from nltk import tokenize
 from docanalysis.ami_sections import AMIAbsSection
 from pathlib import Path
 from pygetpapers import Pygetpapers
@@ -22,7 +22,14 @@ from lxml import etree
 import pyparsing as pp
 from pygetpapers.download_tools import DownloadTools
 from urllib.request import urlopen
-
+import nltk
+try:
+  nltk.data.find('tokenizers/punkt')
+  nltk.data.find('corpora/stopwords')
+except LookupError:
+  nltk.download('punkt')
+  nltk.download('stopwords')
+  from nltk import tokenize
 
 def install(package):
     if hasattr(pip, 'main'):
