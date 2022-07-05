@@ -14,9 +14,7 @@ class AMIAbsSection(ABC):
     def __init__(self) -> None:
         pass
 
-    # @abstractmethod
-    # def get_reserved_child_files(self):
-    #     pass
+    
     @classmethod
     def make_xml_sections(cls, file, outdir: str, force: bool) -> None:
         """make sections """

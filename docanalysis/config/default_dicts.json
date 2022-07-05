@@ -1,0 +1,15 @@
+{
+  "EO_ACTIVITY": "https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/activity/eo_activity.xml",
+  "EO_COMPOUND": "https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/compound/eo_compound.xml",
+  "EO_ANALYSIS": "https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/analysis/eo_analysis_method.xml",
+  "EO_EXTRACTION": "https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/extraction/eo_extraction.xml",
+  "EO_PLANT": "https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/plant/eo_plant.xml",
+  "PLANT_GENUS": "https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/plant_genus/plant_genus.xml",
+  "EO_PLANT_PART": "https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/plant_part/plant_part.xml",
+  "EO_TARGET": "https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/target/eo_target_organism.xml",
+  "COUNTRY": "https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/country/country.xml",
+  "DISEASE": "https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/disease/disease.xml",
+  "ORGANIZATION": "https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/organization/organization.xml",
+  "DRUG": "https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/drug/drug.xml",
+  "TEST_TRACE": "https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/test_trace/test_trace.xml"
+}
