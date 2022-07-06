@@ -13,7 +13,7 @@ class Docanalysis:
     def __init__(self):
         """This function makes all the constants"""
         self.entity_extraction = EntityExtraction()
-        self.version="0.1.1"
+        self.version="0.1.2"
 
     def handle_logger_creation(self, args):
         """[summary]
@@ -152,6 +152,11 @@ class Docanalysis:
             action="store_true",
             help="searches html documents (mainly IPCC)",
         )
+        parser.add_argument(
+            "--extract_abb",
+            default=False,
+            help="[Command] title for abb-ami-dict. Extracts abbreviations and expansions; makes ami-dict of all extracted entities"
+        )
 
 
         parser.add_argument(
@@ -180,7 +185,7 @@ class Docanalysis:
         self.handle_logger_creation(args)
         self.entity_extraction.extract_entities_from_papers(args.project_name,args.dictionary,search_sections=args.search_section,entities=args.entities,query=args.query,hits=args.hits,
                                      run_pygetpapers=args.run_pygetpapers, make_section= args.make_section, removefalse=True,
-                                     csv_name=args.output,make_ami_dict=args.make_ami_dict,spacy_model=args.spacy_model,html_path=args.html, synonyms=args.synonyms, make_json=args.make_json, search_html=args.search_html)
+                                     csv_name=args.output,make_ami_dict=args.make_ami_dict,spacy_model=args.spacy_model,html_path=args.html, synonyms=args.synonyms, make_json=args.make_json, search_html=args.search_html, extract_abb=args.extract_abb)
 
 
 

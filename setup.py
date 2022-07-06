@@ -23,11 +23,7 @@ requirements = ['scispacy','beautifulsoup4==4.10.0', 'braceexpand==0.1.7', 'colo
 
 setup(
     name='docanalysis',
-<<<<<<< HEAD
-    version="0.1.0",
-=======
-    version="0.1.1",
->>>>>>> ca1c6ece6640b98e05d6f3dcd3de1f93655a50a4
+    version="0.1.2",
     description='extract structured information from ethics paragraphs',
     long_description_content_type='text/markdown',
     long_description=readme,

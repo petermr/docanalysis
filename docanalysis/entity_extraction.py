@@ -19,7 +19,6 @@ import pip
 import json
 import re
 from lxml import etree
-import pyparsing as pp
 from pygetpapers.download_tools import DownloadTools
 from urllib.request import urlopen
 import nltk
@@ -38,56 +37,20 @@ def install(package):
         pip._internal.main(['install', package])
 
 #nlp_phrase = spacy.load("en_core_web_sm")
-
-
+DOCANALYSIS_FOLDER = Path(__file__).parent
+CONFIG_SECTIONS = Path(DOCANALYSIS_FOLDER, 'config', 'default_sections.json')
+CONFIG_AMI_DICT = Path(DOCANALYSIS_FOLDER, 'config', 'default_dicts.json')
 class EntityExtraction:
     """ """
 
     def __init__(self):
         logging.basicConfig(level=logging.INFO)
-        self.sections = self.make_default_sections()
-        self.dict_of_ami_dict = self.default_ami_dicts()
+        self.sections = self.json_to_dict(CONFIG_SECTIONS)
+        self.dict_of_ami_dict = self.json_to_dict(CONFIG_AMI_DICT)
         self.all_paragraphs = {}
         self.sentence_dictionary = {}
         self.spacy_model = 'spacy'
         self.nlp = None
-
-    def default_ami_dicts(self):
-        return {
-            'EO_ACTIVITY': 'https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/activity/eo_activity.xml',
-            'EO_COMPOUND': 'https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/compound/eo_compound.xml',
-            'EO_ANALYSIS': 'https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/analysis/eo_analysis_method.xml',
-            'EO_EXTRACTION': 'https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/extraction/eo_extraction.xml',
-            'EO_PLANT': 'https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/plant/eo_plant.xml',
-            'PLANT_GENUS': 'https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/plant_genus/plant_genus.xml',
-            'EO_PLANT_PART': 'https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/plant_part/plant_part.xml',
-            'EO_TARGET': 'https://raw.githubusercontent.com/petermr/dictionary/main/cevopen/target/eo_target_organism.xml',
-            'COUNTRY': 'https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/country/country.xml',
-            'DISEASE': 'https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/disease/disease.xml',
-            'ORGANIZATION': 'https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/organization/organization.xml',
-            'DRUG': 'https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/drug/drug.xml',
-            'TEST_TRACE': 'https://raw.githubusercontent.com/petermr/dictionary/main/openVirus20210120/test_trace/test_trace.xml'}
-
-    def make_default_sections(self):
-
-        return {"ABS": ['*abstract.xml'],
-                "ACK": ['*ack.xml'],
-                "AFF": ['*aff.xml'],
-                "AUT": ['*contrib-group.xml'],
-                "CON": ['*conclusion*/*.xml'],
-                # might bring unwanted sections like tables, fig. captions etc. Maybe get only title and paragraphs?
-                "DIS": ['*discussion*/**/*_title.xml', '*discussion*/**/*_p.xml'],
-                "ETH": ['*ethic*/*.xml'],
-                "FIG": ['*fig*.xml'],
-                "INT": ['*introduction*/*.xml', '*background*/*.xml'],
-                "KEY": ['*kwd-group.xml'],
-                # also gets us supplementary material. Not sure how to exclude them
-                "MET": ['*method*/*.xml', '*material*/*.xml'],
-                # not sure if we should use recursive globbing or not.
-                "RES": ['*result*/*/*_title.xml', '*result*/*/*_p.xml'],
-                "TAB": ['*table*.xml'],
-                "TIL": ['*article-meta/*title-group.xml'],
-                "HTML": ['*.html']}
 
     def switch_spacy_versions(self, spacy_type):
         logging.info(f'Loading {spacy_type}')
@@ -119,7 +82,7 @@ class EntityExtraction:
 
     def extract_entities_from_papers(self, corpus_path, terms_xml_path, search_sections, entities, query=None, hits=30,
                                      run_pygetpapers=False, make_section=False, removefalse=True,
-                                     csv_name=False, make_ami_dict=False, spacy_model=False, html_path=False, synonyms=False, make_json=False, search_html=False, abb="t"):
+                                     csv_name=False, make_ami_dict=False, spacy_model=False, html_path=False, synonyms=False, make_json=False, search_html=False, extract_abb=False):
         self.spacy_model = spacy_model
         corpus_path = os.path.abspath(corpus_path)
         if run_pygetpapers:
@@ -162,15 +125,17 @@ class EntityExtraction:
             if synonyms:
                 synonyms_list = self.get_synonyms_from_ami_xml(terms_xml_path)
                 self.add_if_file_contains_terms(
-                    terms=synonyms_list, dict_with_parsed_xml=self.sentence_dictionary, searching='synonyms')
+                    compiled_terms=synonyms_list, dict_with_parsed_xml=self.sentence_dictionary, searching='synonyms')
                 if removefalse:
                     self.remove_statements_not_having_xmldict_terms(
                         dict_with_parsed_xml=self.sentence_dictionary)
                 if html_path:
                     self.dictionary_to_html(
                         os.path.join(corpus_path, html_path))
-        if abb:
+        if extract_abb:
             self.abbreviation_search_using_sw(self.sentence_dictionary)
+            abb_ami_dict_path = os.path.join(corpus_path, extract_abb)
+            self.make_ami_dict_from_abbreviation(extract_abb, self.sentence_dictionary, abb_ami_dict_path)
         if csv_name:
             self.convert_dict_to_csv(
                 path=os.path.join(corpus_path, f'{csv_name}'), dict_with_parsed_xml=self.sentence_dictionary)
@@ -180,7 +145,7 @@ class EntityExtraction:
         if make_ami_dict:
             ami_dict_path = os.path.join(corpus_path, make_ami_dict)
             self.handle_ami_dict_creation(
-                self.sentence_dictionary, ami_dict_path)
+                self.sentence_dictionary, make_ami_dict, ami_dict_path)
 
         return self.sentence_dictionary
 
@@ -290,8 +255,51 @@ class EntityExtraction:
             dict_for_sentence = dict_with_parsed_xml[text]
             dict_for_sentence["abb"] = []
             pairs = schwartz_hearst.extract_abbreviation_definition_pairs(
-                doc_text=dict_for_sentence['paragraph'])
+                doc_text=dict_for_sentence['sentence'])
             dict_for_sentence["abb"] = pairs
+            self.make_list_from_dict(pairs)
+    
+
+    def make_abb_exp_list(self, result_dictionary):
+        list_of_name_lists = []
+        list_of_term_lists = []
+        for entry in result_dictionary:
+            sentence_dictionary = result_dictionary[entry]
+            if 'abb' in sentence_dictionary:
+                pairs_dicts = (result_dictionary[entry]['abb'])
+                name_list_for_every_dict, term_list_for_every_dict = self.make_list_from_dict(pairs_dicts)
+                list_of_name_lists.append(name_list_for_every_dict)
+                list_of_term_lists.append(term_list_for_every_dict)
+        return self._list_of_lists_to_single_list(list_of_name_lists), self._list_of_lists_to_single_list(list_of_term_lists)
+
+    def make_list_from_dict(self, pairs):
+        keys_list = []
+        values_list = []
+        keys_list.extend(pairs.keys())
+        values_list.extend(pairs.values())
+        return keys_list, values_list
+    
+    def _list_of_lists_to_single_list(self, list_of_lists):
+       return [item for sublist in list_of_lists for item in sublist]
+
+    def make_ami_dict_from_abbreviation(self, title, result_dictionary, path):
+        name_list, term_list = self.make_abb_exp_list(result_dictionary)
+        dictionary_element = etree.Element("dictionary")
+        dictionary_element.attrib['title'] = title
+        for name, term in zip(name_list, term_list):
+            try:
+                entry_element = etree.SubElement(dictionary_element, "entry")
+                entry_element.attrib['name'] = name
+                entry_element.attrib['term'] = term
+            except Exception as e:
+                logging.error(f"Couldn't add {term} to amidict")
+        xml_dict = self._etree_to_string(dictionary_element)
+        self.write_string_to_file(xml_dict, f'{path}.xml')
+        logging.info(f'wrote all abbreviations to ami dict {path}.xml')
+
+    def _etree_to_string(self, dictionary_element):
+        xml_dict = etree.tostring(dictionary_element, pretty_print=True).decode('utf-8')
+        return xml_dict
 
     def _get_abbreviations(self, doc, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end):
         for abrv in doc._.abbreviations:
@@ -301,7 +309,6 @@ class EntityExtraction:
             abbreviation_end.append(abrv.end)
 
     def add_if_file_contains_terms(self, compiled_terms, dict_with_parsed_xml, searching='terms'):
-
         for statement in tqdm(dict_with_parsed_xml):
             dict_for_sentence = dict_with_parsed_xml[statement]
             dict_for_sentence[f'has_{searching}'] = []
@@ -312,18 +319,6 @@ class EntityExtraction:
                 dict_for_sentence[f'has_{searching}'].append(term_list)
                 dict_for_sentence[f'weight_{searching}'] = frequency
                 dict_for_sentence['span'].append(span_list)
-
-    def is_phrase_in(self, phrases, text):
-        token_list = []
-        text = text.lower()
-        for phrase in phrases:
-            phrase.lower().strip()
-            rule = pp.ZeroOrMore(pp.Keyword(phrase))
-            for token, start, end in rule.scanString(text):
-                if token:
-                    token_list.append(token[0])
-            frequency = (len(token_list))
-        return token_list, frequency
 
     def search_sentence_with_compiled_terms(self, compiled_terms, sentence):
         # https://stackoverflow.com/questions/47681756/match-exact-phrase-within-a-string-in-python
@@ -350,17 +345,20 @@ class EntityExtraction:
         else:
             logging.error(f'{xml_path} is not a supported dictionary. Choose from: EO_ACTIVITY, EO_COMPOUND, EO_EXTRACTION, EO_PLANT, EO_PLANT_PART, PLANT_GENUS,EO_TARGET, COUNTRY, DISEASE, DRUG, ORGANIZATION ')
 
-        compiled_terms = self._compiled_regex(root)
+        compiled_terms = self._compiled_regex(root.iter('entry'))
         return (set(compiled_terms))
 
-    def _compiled_regex(self, root):
+    def _compiled_regex(self, iterate_over):
         compiled_terms = []
-        for para in root.iter('entry'):
-            term = (para.attrib["term"])
+        for para in iterate_over:
+            try:
+                term = (para.attrib["term"])
+            except KeyError:
+                term = para.text
             try:
                 compiled_term = self.regex_compile(term)
             except re.error:
-                print(f'cannot use term {term}')
+                logging.warning(f'cannot use term {term}')
             compiled_terms.append(compiled_term)
         return compiled_terms
 
@@ -371,16 +369,14 @@ class EntityExtraction:
         if xml_path in self.dict_of_ami_dict.keys():
             logging.info(f"getting synonyms from {xml_path}")
             tree = ET.parse(urlopen(self.dict_of_ami_dict[xml_path]))
+            root = tree.getroot()
         elif xml_path not in self.dict_of_ami_dict.keys():
-            logging.error(f'{xml_path} is not a supported dictionary. Choose from: EO_ACTIVITY, EO_COMPOUND, EO_EXTRACTION, EO_PLANT, EO_PLANT_PART, PLANT_GENUS,EO_TARGET, COUNTRY, DISEASE, DRUG, ORGANIZATION ')
-        else:
             logging.info(f"getting synonyms from {xml_path}")
             tree = ET.parse(xml_path)
-        root = tree.getroot()
-        root = tree.getroot()
-        synonyms = []
-        for synonym in (root.findall("./entry/synonym")):
-            synonyms.append(synonym.text)
+            root = tree.getroot()
+        else:
+            logging.error(f'{xml_path} is not a supported dictionary. Choose from: EO_ACTIVITY, EO_COMPOUND, EO_EXTRACTION, EO_PLANT, EO_PLANT_PART, PLANT_GENUS,EO_TARGET, COUNTRY, DISEASE, DRUG, ORGANIZATION ')
+        synonyms = self._compiled_regex(root.findall("./entry/synonym"))
         return synonyms
 
     def make_required_lists(self):
@@ -452,17 +448,6 @@ class EntityExtraction:
         for term in statement_to_pop:
             dict_with_parsed_xml.pop(term)
 
-    @staticmethod
-    def extract_particular_fields(dict_with_parsed_xml, field):
-        field_list = []
-        for sentence in dict_with_parsed_xml:
-            sentect_dict = dict_with_parsed_xml[sentence]
-            for entity, label in zip(sentect_dict['entities'], sentect_dict['labels']):
-                if label == field:
-                    if entity not in field_list:
-                        field_list.append(entity)
-        return field_list
-
     def make_ami_dict_from_list(self, list_of_terms_with_count, title):
         dictionary_element = etree.Element("dictionary")
         dictionary_element.attrib['title'] = title
@@ -473,28 +458,31 @@ class EntityExtraction:
                 entry_element.attrib['count'] = str(term[1])
             except Exception as e:
                 logging.error(f"Couldn't add {term} to amidict")
-        return etree.tostring(dictionary_element, pretty_print=True).decode('utf-8')
+        return self._etree_to_string(dictionary_element)
 
     def write_string_to_file(self, string_to_put, title):
         with open(title, mode='w', encoding='utf-8') as f:
             f.write(string_to_put)
 
-    def handle_ami_dict_creation(self, result_dictionary, title):
+    def handle_ami_dict_creation(self, result_dictionary, title, path):
         list_of_entities = []
         for entry in result_dictionary:
             if 'entities' in result_dictionary[entry]:
                 entity = result_dictionary[entry]['entities']
-                list_of_entity_strings = [i.text for i in entity]
-                list_of_entities.extend(list_of_entity_strings)
+                list_of_entities.extend(entity)
         dict_of_entities_with_count = Counter(list_of_entities)
         list_of_terms_with_count = dict_of_entities_with_count.most_common()
         xml_dict = self.make_ami_dict_from_list(
             list_of_terms_with_count, title)
-        self.write_string_to_file(xml_dict, f'{title}.xml')
-        logging.info("Wrote all the entities extracted to ami dict")
+        self.write_string_to_file(xml_dict, f'{path}.xml')
+        logging.info(f"Wrote all the entities extracted to {path}.xml")
+
+    def json_to_dict(self, json_file):
+     with open(json_file, 'r') as JSON:
+       json_dict = json.load(JSON)
+       return (json_dict)
 
 # take out the constants
-# abstract the methods // private methods
 # look through download_tools (pygetpapers) and see if we have overlapping functionality.
 # functionality_from_(where you are getting a data)
 

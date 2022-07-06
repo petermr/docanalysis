@@ -3,6 +3,7 @@ from glob import glob
 import os
 from abbreviations import schwartz_hearst
 from lxml import etree
+import yake
 
 def read_text_from_html(paragraph_path):
     with open(paragraph_path, encoding="utf-8") as f:
@@ -36,18 +37,43 @@ def write_string_to_file(string_to_put,title):
         f.write(string_to_put)
     print(f"wrote dict to {title}")
 
+def extract_keyphrase(paragraph_text):
+    custom_kw_extractor = yake.KeywordExtractor(lan='en', n=5, top=10, features=None)
+    keywords = custom_kw_extractor.extract_keywords(paragraph_text)
+    keywords_list = []
+    for kw in keywords:
+        keywords_list.append(kw[0])
+    print(keywords_list)
+
 def does_everything(corpus_path):
+    all_text = []
     all_keys = []
     all_values = []
     all_paragraph_paths = get_glob(corpus_path)
     for paragraph_path in all_paragraph_paths:
         paragraph_text = read_text_from_html(paragraph_path)
+        all_text.append(paragraph_text)
         keys, values = abbreviation_search_using_sw(paragraph_text)
         all_keys.extend(keys)
         all_values.extend(values)
+    all_text_string = joinStrings(all_text)
+    print(all_text_string)
+    extract_keyphrase(all_text_string)
     dict_string = make_ami_dict_from_list("abb", all_keys, all_values)
     return dict_string
 
-path = os.path.join(os.path.expanduser('~'), "ipcc_sectioned")
-dict_string = does_everything(path)
-write_string_to_file( dict_string, "abb.xml")
+
+def joinStrings(stringList):
+    return ''.join(string for string in stringList)
+
+#path = os.path.join(os.path.expanduser('~'), "ipcc_sectioned")
+#dict_string = does_everything(path)
+#write_string_to_file( dict_string, "abb.xml")
+
+import json
+def json_to_dict(json_file):
+     with open(json_file, 'r') as JSON:
+       json_dict = json.load(JSON)
+       print(json_dict)
+
+json_to_dict('config/default_sections.json')
