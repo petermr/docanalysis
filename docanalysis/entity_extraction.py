@@ -37,9 +37,9 @@ def install(package):
         pip._internal.main(['install', package])
 
 #nlp_phrase = spacy.load("en_core_web_sm")
-DOCANALYSIS_FOLDER = Path(__file__).parent
-CONFIG_SECTIONS = Path(DOCANALYSIS_FOLDER, 'config', 'default_sections.json')
-CONFIG_AMI_DICT = Path(DOCANALYSIS_FOLDER, 'config', 'default_dicts.json')
+
+CONFIG_SECTIONS = 'https://raw.githubusercontent.com/petermr/docanalysis/main/docanalysis/config/default_sections.json'
+CONFIG_AMI_DICT = 'https://raw.githubusercontent.com/petermr/docanalysis/main/docanalysis/config/default_dicts.json'
 class EntityExtraction:
     """ """
 
@@ -477,10 +477,10 @@ class EntityExtraction:
         self.write_string_to_file(xml_dict, f'{path}.xml')
         logging.info(f"Wrote all the entities extracted to {path}.xml")
 
-    def json_to_dict(self, json_file):
-     with open(json_file, 'r') as JSON:
-       json_dict = json.load(JSON)
-       return (json_dict)
+    def json_to_dict(self, json_file_link):
+        path = urlopen(json_file_link)
+        json_dict = json.load(path)
+        return (json_dict)
 
 # take out the constants
 # look through download_tools (pygetpapers) and see if we have overlapping functionality.

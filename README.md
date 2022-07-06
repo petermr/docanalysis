@@ -22,58 +22,47 @@ Download python from: [https://www.python.org/downloads/](https://www.python.org
 `docanalysis --help` should list the flags we support and their use.
 
 ```
-usage: docanalysis [-h] [--run_pygetpapers] [--make_section] [-q QUERY]
-                   [-k HITS] [--project_name PROJECT_NAME] [-d DICTIONARY]
-                   [-o OUTPUT] [--make_ami_dict MAKE_AMI_DICT]
-                   [--search_section [SEARCH_SECTION [SEARCH_SECTION ...]]]
-                   [--entities [ENTITIES [ENTITIES ...]]]
-                   [--spacy_model SPACY_MODEL] [--html HTML]
-                   [--synonyms SYNONYMS] [--make_json MAKE_JSON] [-l LOGLEVEL]
-                   [-f LOGFILE]
+usage: docanalysis.py [-h] [--run_pygetpapers] [--make_section] [-q QUERY] [-k HITS] [--project_name PROJECT_NAME] [-d DICTIONARY] [-o OUTPUT]
+                      [--make_ami_dict MAKE_AMI_DICT] [--search_section [SEARCH_SECTION [SEARCH_SECTION ...]]] [--entities [ENTITIES [ENTITIES ...]]]
+                      [--spacy_model SPACY_MODEL] [--html HTML] [--synonyms SYNONYMS] [--make_json MAKE_JSON] [--search_html] [--extract_abb EXTRACT_ABB]
+                      [-l LOGLEVEL] [-f LOGFILE]
 
-Welcome to docanalysis version 0.1.1. -h or --help for help
+Welcome to docanalysis version 0.1.3. -h or --help for help
 
 optional arguments:
   -h, --help            show this help message and exit
-  --run_pygetpapers     downloads papers from EuropePMC via pygetpapers
-  --make_section        makes sections
+  --run_pygetpapers     [Command] downloads papers from EuropePMC via pygetpapers
+  --make_section        [Command] makes sections; requires a fulltext.xml in CTree directories
   -q QUERY, --query QUERY
-                        provide query to pygetpapers
-  -k HITS, --hits HITS  specify number of papers to download from pygetpapers
+                        [pygetpapers] query string
+  -k HITS, --hits HITS  [pygetpapers] number of papers to download
   --project_name PROJECT_NAME
-                        provide CProject directory name
+                        CProject directory name
   -d DICTIONARY, --dictionary DICTIONARY
-                        provide ami dictionary to annotate sentences or
-                        support supervised entity extraction
+                        [file name/url] existing ami dictionary to annotate sentences or support supervised entity extraction
   -o OUTPUT, --output OUTPUT
-                        outputs csv file
+                        outputs csv with sentences/terms
   --make_ami_dict MAKE_AMI_DICT
-                        provide title for ami-dict. Makes ami-dict of all
-                        extracted entities
+                        [Command] title for ami-dict. Makes ami-dict of all extracted entities; works only with spacy
   --search_section [SEARCH_SECTION [SEARCH_SECTION ...]]
-                        provide section(s) to annotate. Choose from: ALL, ACK,
-                        AFF, AUT, CON, DIS, ETH, FIG, INT, KEY, MET, RES, TAB,
-                        TIL. Defaults to ALL
+                        [NER/dictionary search] section(s) to annotate. Choose from: ALL, ACK, AFF, AUT, CON, DIS, ETH, FIG, INT, KEY, MET, RES, TAB, TIL. Defaults to
+                        ALL
   --entities [ENTITIES [ENTITIES ...]]
-                        provide entities to extract. Default(ALL). Choose from
-                        SpaCy: CARDINAL, DATE, EVENT, FAC, GPE, LANGUAGE, LAW,
-                        LOC, MONEY, NORP, ORDINAL, ORG, PERCENT, PERSON,
-                        PRODUCT, QUANTITY, TIME, WORK_OF_ART; SciSpaCy:
-                        CHEMICAL, DISEASE
+                        [NER] entities to extract. Default (ALL). Common entities SpaCy: GPE, LANGUAGE, ORG, PERSON (for additional ones check: ); SciSpaCy: CHEMICAL,
+                        DISEASE
   --spacy_model SPACY_MODEL
-                        optional. Choose between spacy or scispacy models.
-                        Defaults to spacy
-  --html HTML           saves output in html format to given path
-  --synonyms SYNONYMS   searches the corpus/sections with synonymns from ami-
-                        dict
+                        [NER] optional. Choose between spacy or scispacy models. Defaults to spacy
+  --html HTML           outputs html with sentences/terms
+  --synonyms SYNONYMS   annotate the corpus/sections with synonyms from ami-dict
   --make_json MAKE_JSON
-                        output in json format
+                        outputs json with sentences/terms
+  --search_html         searches html documents (mainly IPCC)
+  --extract_abb EXTRACT_ABB
+                        [Command] title for abb-ami-dict. Extracts abbreviations and expansions; makes ami-dict of all extracted entities
   -l LOGLEVEL, --loglevel LOGLEVEL
-                        provide logging level. Example --log warning
-                        <<info,warning,debug,error,critical>>, default='info'
+                        provide logging level. Example --log warning <<info,warning,debug,error,critical>>, default='info'
   -f LOGFILE, --logfile LOGFILE
-                        saves log to specified file in output directory as
-                        well as printing to terminal
+                        saves log to specified file in output directory as well as printing to terminal
 ```
 
 #### Download papers from [EPMC](https://europepmc.org/) via `pygetpapers`
@@ -299,6 +288,78 @@ Snippet of the dictionary
 <entry count="1" term="College of Forest Resources and Environmental Science"/>
 <entry count="1" term="Michigan Technological University"/>
 ```
+
+### Extract Abbreviations
+
+```
+docanalysis --project_name corpus\ethics_10 --output dict_search_5.csv  --make_json dict_search_5.json --make_ami_dict entities --extract_abb ethics_abb
+```
+
+`--extract_abb` extracts all abbreviations and make an ami-dictionary of abbreviations and its expansion. 
+
+EXAMPLE DICTIONARY: 
+```
+<dictionary title="ethics_abb">
+  <entry name="ASD" term="Atrial septal defect"/>
+  <entry name="SPSS" term="Statistical Package for Social Sciences"/>
+  <entry name="ACGME" term="Accreditation Council of Graduate Medical Education"/>
+  <entry name="ABP" term="American Board of Paediatrics"/>
+  <entry name="TBL" term="Team Based Learning"/>
+  <entry name="TBL" term="Team-Based Learning"/>
+  <entry name="UNTH" term="University of Nigeria Teaching Hospital"/>
+  <entry name="PAH" term="pulmonary hypertension"/>
+  <entry name="HREC" term="Human Sciences Research Council, Research Ethics Committee"/>
+  <entry name="HREC" term="Human Sciences Research Council, Research Ethics Committee"/>
+  <entry name="CDC" term="Center for Disease Control and Prevention"/>
+  <entry name="ASD" term="Atrial septal defect"/>
+  <entry name="PAH" term="pulmonary arterial hypertension"/>
+  <entry name="CVDs" term="cardiovascular diseases"/>
+  <entry name="BNs" term="Bayesian networks"/>
+  <entry name="GI" term="gastrointestinal cancer"/>
+  <entry name="ART" term="antiretroviral therapy"/>
+  <entry name="HIV" term="human immunodeficiency virus"/>
+  <entry name="GATE" term="Global Cooperation on Assistive Technology"/>
+</dictionary>
+```
+
+### Search HTML
+If you working with HTML files (IPCC Reports, for example) and not XMLs in CProjects, you can use `--search_html` flag.
+
+```
+docanalysis --project_name C:\Users\shweata\ipcc_sectioned  --output abb.csv  --make_json abb.json --extract_abb chap4 --search_html 
+```
+
+ Make sure that your `html` sections is in `sections` folder. Here's an example structure: 
+
+```
+C:.
+|   dict_search_2.csv
+|   dict_search_2.json
+|
+\---chap4
+    |   chapter_4
+    |
+    \---sections
+            4.1.html
+            4.2.1.html
+            4.2.2.html
+            4.2.3.html
+            4.2.4.html
+            4.2.5.html
+            4.2.7.html
+            4.2.html
+            4.3.1.html
+            4.3.2.html
+            4.3.html
+            4.4.1.html
+            4.4.2.html
+            4.4.html
+            4.5.html
+            executive_summary.html
+            frequently_asked_questions.html
+            table_of_contents.html
+```
+If you haven't sectioned your `html`, please use `py4ami` to section it.  
 #### What is a dictionary
 Dictionary, in `ami`'s terminology, a set of terms/phrases in XML format. 
 Dictionaries related to ethics and acknowledgments are available in [Ethics Dictionary](https://github.com/petermr/docanalysis/tree/main/ethics_dictionary) folder

@@ -1,3 +1,4 @@
+abbreviations==0.2.5
 beautifulsoup4==4.10.0
 braceexpand==0.1.7
 coloredlogs==15.0.1
@@ -14,6 +15,5 @@ spacy==3.0.7
 tkinterweb==3.10.7
 tqdm==4.62.3
 yake==0.4.8
-abbreviations
 https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.4.0/en_core_sci_sm-0.4.0.tar.gz
 

@@ -71,9 +71,8 @@ def joinStrings(stringList):
 #write_string_to_file( dict_string, "abb.xml")
 
 import json
-def json_to_dict(json_file):
-     with open(json_file, 'r') as JSON:
-       json_dict = json.load(JSON)
-       print(json_dict)
+from urllib.request import urlopen
 
-json_to_dict('config/default_sections.json')
+PATH = urlopen()
+json_dict = json.load(PATH)
+print(json_dict)
