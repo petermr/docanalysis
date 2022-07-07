@@ -1,6 +1,7 @@
 from distutils.log import error
 import os
 import logging
+import requests
 from glob import glob
 import spacy
 from spacy import displacy
@@ -115,7 +116,7 @@ class EntityExtraction:
                 corpus_path, search_sections)
         else:
             logging.error('section papers using --make_sections before search')
-        if spacy_model or extract_abb or make_ami_dict:
+        if spacy_model or csv_name or extract_abb or make_ami_dict:
             if search_html:
                 self.make_dict_with_parsed_document(document_type='html')
             else:
@@ -306,11 +307,14 @@ class EntityExtraction:
         name_list, term_list = self.make_abb_exp_list(result_dictionary)
         dictionary_element = etree.Element("dictionary")
         dictionary_element.attrib['title'] = title
-        for name, term in zip(name_list, term_list):
+        for name, term in tqdm(zip(name_list, term_list)):
+
+            wiki_lookup_list = self.wiki_lookup(term)
             try:
                 entry_element = etree.SubElement(dictionary_element, "entry")
                 entry_element.attrib['name'] = name
                 entry_element.attrib['term'] = term
+                entry_element.attrib['wikidataID'] = str(wiki_lookup_list)
             except Exception as e:
                 logging.error(f"Couldn't add {term} to amidict")
         xml_dict = self._etree_to_string(dictionary_element)
@@ -528,6 +532,24 @@ class EntityExtraction:
         path = urlopen(json_file_link)
         json_dict = json.load(path)
         return (json_dict)
+    
+    def wiki_lookup(self, query):
+        params	= {
+        "action"		: "wbsearchentities",
+        "search"		: query,
+        "language"	: "en",
+        "format"		: "json"
+        }
+        data	= requests.get("https://www.wikidata.org/w/api.php",params=params)
+        result = data.json()
+        hit_list = []
+        for hit in result['search']:
+            try:
+                if "scientific article" not in hit["description"]:
+                    hit_list.append(hit["url"])
+            except:
+                    hit_list.append(hit["url"])
+        return hit_list
     
     def remove_a_key_value_pair_from_dict(self, dict, key_to_remove):
         new_dict = {key:val for key, val in dict.items() if key != key_to_remove }

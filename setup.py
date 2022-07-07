@@ -23,7 +23,7 @@ requirements = ['abbreviations', 'scispacy','beautifulsoup4==4.10.0', 'braceexpa
 
 setup(
     name='docanalysis',
-    version="0.1.4",
+    version="0.1.6",
     description='extract structured information from ethics paragraphs',
     long_description_content_type='text/markdown',
     long_description=readme,

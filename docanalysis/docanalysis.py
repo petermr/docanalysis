@@ -13,10 +13,10 @@ class Docanalysis:
     def __init__(self):
         """This function makes all the constants"""
         self.entity_extraction = EntityExtraction()
-        self.version="0.1.4"
+        self.version="0.1.6"
 
     def handle_logger_creation(self, args):
-        """[summary]
+        """handles the logging on cml
 
         :param args: [description]
         :type args: [type]
