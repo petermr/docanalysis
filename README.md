@@ -326,7 +326,7 @@ EXAMPLE DICTIONARY:
 If you working with HTML files (IPCC Reports, for example) and not XMLs in CProjects, you can use `--search_html` flag.
 
 ```
-docanalysis --project_name C:\Users\shweata\ipcc_sectioned  --output abb.csv  --make_json abb.json --extract_abb chap4 --search_html 
+docanalysis --project_name corpus\ethics_10  --extract_abb ethics_abb
 ```
 
  Make sure that your `html` sections is in `sections` folder. Here's an example structure: 
@@ -365,9 +365,7 @@ Dictionary, in `ami`'s terminology, a set of terms/phrases in XML format.
 Dictionaries related to ethics and acknowledgments are available in [Ethics Dictionary](https://github.com/petermr/docanalysis/tree/main/ethics_dictionary) folder
 
 If you'd like to create a custom dictionary, you can find the steps, [here](https://github.com/petermr/tigr2ess/blob/master/dictionaries/TUTORIAL.md)
-#### All at one go!
-```
-docanalysis --run_pygetpapers -q "terpene" -k 10 --project_name terpene_10 --make_section --output entities_202202019.csv --make_ami_dict entities_20220209.xml 
+
 ```
 ### Python tools used
 - [`pygetpapers`](https://github.com/petermr/pygetpapers) - scrape open repositories to download papers of interest
