@@ -6,12 +6,25 @@ from lxml import etree
 import yake
 
 def read_text_from_html(paragraph_path):
-    with open(paragraph_path, encoding="utf-8") as f:
-        content = f.read()
-        soup = BeautifulSoup(content, 'html.parser')
-        for div_ipcc in soup.find_all("div"):
-            paragraph_text = div_ipcc.text
-            return paragraph_text
+  with open(paragraph_path, 'r') as f:
+      html = f.read()
+      soup = BeautifulSoup(html, features="html.parser")
+
+      # kill all script and style elements
+      for script in soup(["script", "style"]):
+          script.extract()    # rip it out
+
+      # get text
+      text = soup.get_text()
+
+      # break into lines and remove leading and trailing space on each
+      #lines = (line.strip() for line in text.splitlines())
+      # break multi-headlines into a line each
+      #chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+      # drop blank lines
+      #text_write = '\n'.join(chunk for chunk in chunks if chunk)
+      #text = '\n'.join(chunk for chunk in chunks if chunk)
+      return text
 
 def get_glob(corpus_path):
     paragraph_path = glob(os.path.join(corpus_path, '**', 'sections', '**', "*html"), recursive=True)
@@ -52,27 +65,30 @@ def does_everything(corpus_path):
     all_paragraph_paths = get_glob(corpus_path)
     for paragraph_path in all_paragraph_paths:
         paragraph_text = read_text_from_html(paragraph_path)
+        #print(paragraph_text)
         all_text.append(paragraph_text)
         keys, values = abbreviation_search_using_sw(paragraph_text)
         all_keys.extend(keys)
         all_values.extend(values)
-    all_text_string = joinStrings(all_text)
-    print(all_text_string)
-    extract_keyphrase(all_text_string)
-    dict_string = make_ami_dict_from_list("abb", all_keys, all_values)
-    return dict_string
+    print(len(all_keys), all_values)
+    #all_text_string = joinStrings(all_text)
+    #print(all_text_string)
+    #extract_keyphrase(all_text_string)
+    #dict_string = make_ami_dict_from_list("abb", all_keys, all_values)
+    #return dict_string
 
 
 def joinStrings(stringList):
     return ''.join(string for string in stringList)
 
-#path = os.path.join(os.path.expanduser('~'), "ipcc_sectioned")
-#dict_string = does_everything(path)
+path = os.path.join(os.path.expanduser('~'), "ipcc_sectioned")
+does_everything(path)
 #write_string_to_file( dict_string, "abb.xml")
 
 import json
 from urllib.request import urlopen
 
-PATH = urlopen()
-json_dict = json.load(PATH)
-print(json_dict)
+#PATH = urlopen()
+#json_dict = json.load(PATH)
+#print(json_dict)
+

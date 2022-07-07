@@ -14,7 +14,6 @@ from docanalysis.ami_sections import AMIAbsSection
 from pathlib import Path
 from pygetpapers import Pygetpapers
 from collections import Counter
-from abbreviations import schwartz_hearst
 import pip
 import json
 import re
@@ -35,6 +34,15 @@ def install(package):
         pip.main(['install', package])
     else:
         pip._internal.main(['install', package])
+
+try: 
+    from abbreviations import schwartz_hearst
+except ModuleNotFoundError:
+    install('abbreviations')
+    from abbreviations import schwartz_hearst
+
+    
+
 
 #nlp_phrase = spacy.load("en_core_web_sm")
 
@@ -78,11 +86,12 @@ class EntityExtraction:
         html = displacy.render(list_of_docs, style="ent",
                                page=True, minify=True)
         logging.info(f"saving output: {html_path}")
-        self.write_string_to_file(html, html_path)
+        self._write_string_to_file(html, html_path)
 
     def extract_entities_from_papers(self, corpus_path, terms_xml_path, search_sections, entities, query=None, hits=30,
                                      run_pygetpapers=False, make_section=False, removefalse=True,
                                      csv_name=False, make_ami_dict=False, spacy_model=False, html_path=False, synonyms=False, make_json=False, search_html=False, extract_abb=False):
+                                        
         self.spacy_model = spacy_model
         corpus_path = os.path.abspath(corpus_path)
         if run_pygetpapers:
@@ -106,7 +115,7 @@ class EntityExtraction:
                 corpus_path, search_sections)
         else:
             logging.error('section papers using --make_sections before search')
-        if spacy_model or csv_name or make_ami_dict:
+        if spacy_model or extract_abb or make_ami_dict:
             if search_html:
                 self.make_dict_with_parsed_document(document_type='html')
             else:
@@ -149,11 +158,18 @@ class EntityExtraction:
 
         return self.sentence_dictionary
 
-    def run_pygetpapers(self, QUERY, HITS, OUTPUT):
+    def run_pygetpapers(self, query, hits, output):
+        """calls pygetpapers to query EPMC for papers; downloads specified number of papers
+
+        Args:
+            query (str): query to pygetpapers/EPMC
+            hits (int): number of papers to download
+            output (str): name of the folder
+        """
         pygetpapers_call = Pygetpapers()
         pygetpapers_call.run_command(
-            query=QUERY, limit=HITS, output=OUTPUT, xml=True)
-        logging.info(f"making CProject {OUTPUT} with {HITS} papers on {QUERY}")
+            query=query, limit=hits, output=output, xml=True)
+        logging.info(f"making CProject {output} with {hits} papers on {query}")
 
     def run_ami_section(self, path):
         file_list = glob(os.path.join(
@@ -208,7 +224,7 @@ class EntityExtraction:
         dict_for_sentences["sentence"] = sentence
         dict_for_sentences["section"] = section
 
-    def read_text_from_path(self, paragraph_path, search_html=False):
+    def read_text_from_path(self, paragraph_path):
         try:
             tree = ET.parse(paragraph_path)
             root = tree.getroot()
@@ -226,9 +242,8 @@ class EntityExtraction:
         with open(paragraph_path, encoding="utf-8") as f:
             content = f.read()
             soup = BeautifulSoup(content, 'html.parser')
-            for div_ipcc in soup.find_all("div"):
-                paragraph_text = div_ipcc.text
-                return paragraph_text
+            for every_div in soup.find_all('div'):
+                return (every_div.text)
 
     def run_spacy_over_sections(self, dict_with_parsed_xml, entities_names):
         self.switch_spacy_versions(self.spacy_model)
@@ -251,13 +266,18 @@ class EntityExtraction:
                     entities, labels, position_end, position_start, ent)
 
     def abbreviation_search_using_sw(self, dict_with_parsed_xml):
+        """Extracts abbreviations from sentences using schwartz_hearst. Credit: Ananya Singha
+
+        Args:
+            dict_with_parsed_xml (dict): main python dictionary with sentences
+        """
         for text in dict_with_parsed_xml:
             dict_for_sentence = dict_with_parsed_xml[text]
             dict_for_sentence["abb"] = []
             pairs = schwartz_hearst.extract_abbreviation_definition_pairs(
                 doc_text=dict_for_sentence['sentence'])
             dict_for_sentence["abb"] = pairs
-            self.make_list_from_dict(pairs)
+            self._make_list_from_dict(pairs)
     
 
     def make_abb_exp_list(self, result_dictionary):
@@ -267,12 +287,12 @@ class EntityExtraction:
             sentence_dictionary = result_dictionary[entry]
             if 'abb' in sentence_dictionary:
                 pairs_dicts = (result_dictionary[entry]['abb'])
-                name_list_for_every_dict, term_list_for_every_dict = self.make_list_from_dict(pairs_dicts)
+                name_list_for_every_dict, term_list_for_every_dict = self._make_list_from_dict(pairs_dicts)
                 list_of_name_lists.append(name_list_for_every_dict)
                 list_of_term_lists.append(term_list_for_every_dict)
         return self._list_of_lists_to_single_list(list_of_name_lists), self._list_of_lists_to_single_list(list_of_term_lists)
 
-    def make_list_from_dict(self, pairs):
+    def _make_list_from_dict(self, pairs):
         keys_list = []
         values_list = []
         keys_list.extend(pairs.keys())
@@ -294,7 +314,7 @@ class EntityExtraction:
             except Exception as e:
                 logging.error(f"Couldn't add {term} to amidict")
         xml_dict = self._etree_to_string(dictionary_element)
-        self.write_string_to_file(xml_dict, f'{path}.xml')
+        self._write_string_to_file(xml_dict, f'{path}.xml')
         logging.info(f'wrote all abbreviations to ami dict {path}.xml')
 
     def _etree_to_string(self, dictionary_element):
@@ -409,6 +429,7 @@ class EntityExtraction:
         position_end.append(ent.end_char)
 
     def convert_dict_to_csv(self, path, dict_with_parsed_xml):
+        dict_with_parsed_xml = self.remove_paragraph_form_parsed_xml_dict(dict_with_parsed_xml)
 
         df = pd.DataFrame(dict_with_parsed_xml)
         df = df.T
@@ -423,7 +444,18 @@ class EntityExtraction:
         df.to_csv(path, encoding='utf-8', line_terminator='\r\n')
         logging.info(f"wrote output to {path}")
 
+    def remove_paragraph_form_parsed_xml_dict(self, dict_with_parsed_xml):
+        for entry in dict_with_parsed_xml:
+            self.remove_a_key_value_pair_from_dict(dict_with_parsed_xml[entry], "paragraph")
+        return dict_with_parsed_xml
+
     def convert_dict_to_json(self, path, dict_with_parsed_xml):
+        """writes python dictionary to json file
+
+        Args:
+            path (str): json file path to write to
+            dict_with_parsed_xml (dict): main dictionary with sentences, search hits, entities, etc.
+        """
         with open(path, mode='w', encoding='utf-8') as f:
             json.dump(dict_with_parsed_xml, f, indent=4)
         logging.info(f"wrote JSON output to {path}")
@@ -460,11 +492,18 @@ class EntityExtraction:
                 logging.error(f"Couldn't add {term} to amidict")
         return self._etree_to_string(dictionary_element)
 
-    def write_string_to_file(self, string_to_put, title):
+    def _write_string_to_file(self, string_to_put, title):
         with open(title, mode='w', encoding='utf-8') as f:
             f.write(string_to_put)
 
     def handle_ami_dict_creation(self, result_dictionary, title, path):
+        """creates and writes ami dictionary with entities extracted and their frequency. 
+
+        Args:
+            result_dictionary (dict): main python dictionary with sentences, entities, etc.
+            title (str): title of ami-dictionary (xml file)
+            path (str): file path
+        """
         list_of_entities = []
         for entry in result_dictionary:
             if 'entities' in result_dictionary[entry]:
@@ -474,13 +513,25 @@ class EntityExtraction:
         list_of_terms_with_count = dict_of_entities_with_count.most_common()
         xml_dict = self.make_ami_dict_from_list(
             list_of_terms_with_count, title)
-        self.write_string_to_file(xml_dict, f'{path}.xml')
+        self._write_string_to_file(xml_dict, f'{path}.xml')
         logging.info(f"Wrote all the entities extracted to {path}.xml")
 
     def json_to_dict(self, json_file_link):
+        """loads json file as python dictionary
+
+        Args:
+            json_file_link (str): link to json file on the web
+
+        Returns:
+            dictionary: python dictionary from json
+        """
         path = urlopen(json_file_link)
         json_dict = json.load(path)
         return (json_dict)
+    
+    def remove_a_key_value_pair_from_dict(self, dict, key_to_remove):
+        new_dict = {key:val for key, val in dict.items() if key != key_to_remove }
+        return new_dict
 
 # take out the constants
 # look through download_tools (pygetpapers) and see if we have overlapping functionality.
