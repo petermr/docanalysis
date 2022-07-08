@@ -151,11 +151,13 @@ class EntityExtraction:
                         dict_with_parsed_xml=self.sentence_dictionary, searching='abb')
 
         if csv_name:
+            dict_with_parsed_xml_no_paragrph = self.remove_paragraph_form_parsed_xml_dict(self.sentence_dictionary, "paragraph")
             self.convert_dict_to_csv(
-                path=os.path.join(corpus_path, f'{csv_name}'), dict_with_parsed_xml=self.sentence_dictionary)
+                path=os.path.join(corpus_path, f'{csv_name}'), dict_with_parsed_xml=dict_with_parsed_xml_no_paragrph)
         if make_json:
+            dict_with_parsed_xml_no_paragrph = self.remove_paragraph_form_parsed_xml_dict(self.sentence_dictionary, "paragraph")
             self.convert_dict_to_json(path=os.path.join(
-                corpus_path, f'{make_json}'), dict_with_parsed_xml=self.sentence_dictionary)
+                corpus_path, f'{make_json}'), dict_with_parsed_xml=dict_with_parsed_xml_no_paragrph)
         if make_ami_dict:
             ami_dict_path = os.path.join(corpus_path, make_ami_dict)
             self.handle_ami_dict_creation(
@@ -247,7 +249,7 @@ class EntityExtraction:
         with open(paragraph_path, encoding="utf-8") as f:
             content = f.read()
             soup = BeautifulSoup(content, 'html.parser')
-            return soup.text
+            return soup.text.replace('\n', ' ')
             #for every_div in soup.find_all('div'):
             #    return (every_div.text)
 
@@ -438,9 +440,7 @@ class EntityExtraction:
         position_end.append(ent.end_char)
 
     def convert_dict_to_csv(self, path, dict_with_parsed_xml):
-        dict_with_parsed_xml_no_paragrph = self.remove_paragraph_form_parsed_xml_dict(dict_with_parsed_xml, "paragraph")
-
-        df = pd.DataFrame(dict_with_parsed_xml_no_paragrph)
+        df = pd.DataFrame(dict_with_parsed_xml)
         df = df.T
         for col in df:
             try:
