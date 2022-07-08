@@ -135,7 +135,7 @@ class EntityExtraction:
             if synonyms:
                 synonyms_list = self.get_synonyms_from_ami_xml(terms_xml_path)
                 self.add_if_file_contains_terms(
-                    compiled_terms=synonyms_list, dict_with_parsed_xml=self.sentence_dictionary, searching='synonyms')
+                    compiled_terms=synonyms_list, dict_with_parsed_xml=self.sentence_dictionary, searching='has_synonyms')
                 if removefalse:
                     self.remove_statements_not_having_xmldict_terms(
                         dict_with_parsed_xml=self.sentence_dictionary)
@@ -146,6 +146,10 @@ class EntityExtraction:
             self.abbreviation_search_using_sw(self.sentence_dictionary)
             abb_ami_dict_path = os.path.join(corpus_path, extract_abb)
             self.make_ami_dict_from_abbreviation(extract_abb, self.sentence_dictionary, abb_ami_dict_path)
+            if removefalse:
+                self.remove_statements_not_having_xmldict_terms(
+                        dict_with_parsed_xml=self.sentence_dictionary, searching='abb')
+
         if csv_name:
             self.convert_dict_to_csv(
                 path=os.path.join(corpus_path, f'{csv_name}'), dict_with_parsed_xml=self.sentence_dictionary)
@@ -243,8 +247,9 @@ class EntityExtraction:
         with open(paragraph_path, encoding="utf-8") as f:
             content = f.read()
             soup = BeautifulSoup(content, 'html.parser')
-            for every_div in soup.find_all('div'):
-                return (every_div.text)
+            return soup.text
+            #for every_div in soup.find_all('div'):
+            #    return (every_div.text)
 
     def run_spacy_over_sections(self, dict_with_parsed_xml, entities_names):
         self.switch_spacy_versions(self.spacy_model)
@@ -332,15 +337,15 @@ class EntityExtraction:
             abbreviation_start.append(abrv.start)
             abbreviation_end.append(abrv.end)
 
-    def add_if_file_contains_terms(self, compiled_terms, dict_with_parsed_xml, searching='terms'):
+    def add_if_file_contains_terms(self, compiled_terms, dict_with_parsed_xml, searching='has_terms'):
         for statement in tqdm(dict_with_parsed_xml):
             dict_for_sentence = dict_with_parsed_xml[statement]
-            dict_for_sentence[f'has_{searching}'] = []
+            dict_for_sentence[f'{searching}'] = []
             dict_for_sentence['span'] = []
             term_list, span_list, frequency = self.search_sentence_with_compiled_terms(
                 compiled_terms, dict_for_sentence['sentence'])
             if term_list:
-                dict_for_sentence[f'has_{searching}'].append(term_list)
+                dict_for_sentence[f'{searching}'].append(term_list)
                 dict_for_sentence[f'weight_{searching}'] = frequency
                 dict_for_sentence['span'].append(span_list)
 
@@ -433,9 +438,9 @@ class EntityExtraction:
         position_end.append(ent.end_char)
 
     def convert_dict_to_csv(self, path, dict_with_parsed_xml):
-        dict_with_parsed_xml = self.remove_paragraph_form_parsed_xml_dict(dict_with_parsed_xml)
+        dict_with_parsed_xml_no_paragrph = self.remove_paragraph_form_parsed_xml_dict(dict_with_parsed_xml, "paragraph")
 
-        df = pd.DataFrame(dict_with_parsed_xml)
+        df = pd.DataFrame(dict_with_parsed_xml_no_paragrph)
         df = df.T
         for col in df:
             try:
@@ -448,9 +453,10 @@ class EntityExtraction:
         df.to_csv(path, encoding='utf-8', line_terminator='\r\n')
         logging.info(f"wrote output to {path}")
 
-    def remove_paragraph_form_parsed_xml_dict(self, dict_with_parsed_xml):
+    def remove_paragraph_form_parsed_xml_dict(self, dict_with_parsed_xml, key_to_remove):
         for entry in dict_with_parsed_xml:
-            self.remove_a_key_value_pair_from_dict(dict_with_parsed_xml[entry], "paragraph")
+            dict_with_parsed_xml[entry].pop(key_to_remove, None)
+        print(dict_with_parsed_xml)
         return dict_with_parsed_xml
 
     def convert_dict_to_json(self, path, dict_with_parsed_xml):
@@ -464,11 +470,11 @@ class EntityExtraction:
             json.dump(dict_with_parsed_xml, f, indent=4)
         logging.info(f"wrote JSON output to {path}")
 
-    def remove_statements_not_having_xmldict_terms(self, dict_with_parsed_xml, searching='terms'):
+    def remove_statements_not_having_xmldict_terms(self, dict_with_parsed_xml, searching='has_terms'):
         statement_to_pop = []
         for statement in dict_with_parsed_xml:
             sentect_dict = dict_with_parsed_xml[statement]
-            if len(sentect_dict[f'has_{searching}']) == 0:
+            if len(sentect_dict[f'{searching}']) == 0:
                 statement_to_pop.append(statement)
 
         for term in statement_to_pop:
@@ -551,9 +557,6 @@ class EntityExtraction:
                     hit_list.append(hit["url"])
         return hit_list
     
-    def remove_a_key_value_pair_from_dict(self, dict, key_to_remove):
-        new_dict = {key:val for key, val in dict.items() if key != key_to_remove }
-        return new_dict
 
 # take out the constants
 # look through download_tools (pygetpapers) and see if we have overlapping functionality.
