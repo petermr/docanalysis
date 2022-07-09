@@ -23,12 +23,13 @@ from pygetpapers.download_tools import DownloadTools
 from urllib.request import urlopen
 import nltk
 try:
-  nltk.data.find('tokenizers/punkt')
-  nltk.data.find('corpora/stopwords')
+    nltk.data.find('tokenizers/punkt')
+    nltk.data.find('corpora/stopwords')
 except LookupError:
-  nltk.download('punkt')
-  nltk.download('stopwords')
-  from nltk import tokenize
+    nltk.download('punkt')
+    nltk.download('stopwords')
+    from nltk import tokenize
+
 
 def install(package):
     if hasattr(pip, 'main'):
@@ -36,19 +37,20 @@ def install(package):
     else:
         pip._internal.main(['install', package])
 
-try: 
+
+try:
     from abbreviations import schwartz_hearst
 except ModuleNotFoundError:
     install('abbreviations')
     from abbreviations import schwartz_hearst
-
-    
 
 
 #nlp_phrase = spacy.load("en_core_web_sm")
 
 CONFIG_SECTIONS = 'https://raw.githubusercontent.com/petermr/docanalysis/main/docanalysis/config/default_sections.json'
 CONFIG_AMI_DICT = 'https://raw.githubusercontent.com/petermr/docanalysis/main/docanalysis/config/default_dicts.json'
+
+
 class EntityExtraction:
     """ """
 
@@ -92,7 +94,7 @@ class EntityExtraction:
     def extract_entities_from_papers(self, corpus_path, terms_xml_path, search_sections, entities, query=None, hits=30,
                                      run_pygetpapers=False, make_section=False, removefalse=True,
                                      csv_name=False, make_ami_dict=False, spacy_model=False, html_path=False, synonyms=False, make_json=False, search_html=False, extract_abb=False):
-                                        
+
         self.spacy_model = spacy_model
         corpus_path = os.path.abspath(corpus_path)
         if run_pygetpapers:
@@ -123,15 +125,16 @@ class EntityExtraction:
                 self.make_dict_with_parsed_document()
         if spacy_model:
             self.run_spacy_over_sections(self.sentence_dictionary, entities)
-            self.remove_statements_not_having_xmldict_entities(
-                dict_with_parsed_xml=self.sentence_dictionary)
+            self.remove_statements_not_having_xmldict_terms(
+                dict_with_parsed_xml=self.sentence_dictionary, searching='entities')
         if terms_xml_path:
-            compiled_terms = self.get_terms_from_ami_xml(terms_xml_path)
-            self.add_if_file_contains_terms(
-                compiled_terms=compiled_terms, dict_with_parsed_xml=self.sentence_dictionary)
-            if removefalse:
-                self.remove_statements_not_having_xmldict_terms(
-                    dict_with_parsed_xml=self.sentence_dictionary)
+            for i in range(len(terms_xml_path)):
+                compiled_terms = self.get_terms_from_ami_xml(terms_xml_path[i])
+                self.add_if_file_contains_terms(
+                    compiled_terms=compiled_terms, dict_with_parsed_xml=self.sentence_dictionary, searching=f'{i}')
+                if removefalse:
+                    self.remove_statements_not_having_xmldict_terms(
+                        dict_with_parsed_xml=self.sentence_dictionary, searching=f'{i}')
             if synonyms:
                 synonyms_list = self.get_synonyms_from_ami_xml(terms_xml_path)
                 self.add_if_file_contains_terms(
@@ -145,17 +148,20 @@ class EntityExtraction:
         if extract_abb:
             self.abbreviation_search_using_sw(self.sentence_dictionary)
             abb_ami_dict_path = os.path.join(corpus_path, extract_abb)
-            self.make_ami_dict_from_abbreviation(extract_abb, self.sentence_dictionary, abb_ami_dict_path)
+            self.make_ami_dict_from_abbreviation(
+                extract_abb, self.sentence_dictionary, abb_ami_dict_path)
             if removefalse:
                 self.remove_statements_not_having_xmldict_terms(
-                        dict_with_parsed_xml=self.sentence_dictionary, searching='abb')
+                    dict_with_parsed_xml=self.sentence_dictionary, searching='abb')
 
         if csv_name:
-            dict_with_parsed_xml_no_paragrph = self.remove_paragraph_form_parsed_xml_dict(self.sentence_dictionary, "paragraph")
+            dict_with_parsed_xml_no_paragrph = self.remove_paragraph_form_parsed_xml_dict(
+                self.sentence_dictionary, "paragraph")
             self.convert_dict_to_csv(
                 path=os.path.join(corpus_path, f'{csv_name}'), dict_with_parsed_xml=dict_with_parsed_xml_no_paragrph)
         if make_json:
-            dict_with_parsed_xml_no_paragrph = self.remove_paragraph_form_parsed_xml_dict(self.sentence_dictionary, "paragraph")
+            dict_with_parsed_xml_no_paragrph = self.remove_paragraph_form_parsed_xml_dict(
+                self.sentence_dictionary, "paragraph")
             self.convert_dict_to_json(path=os.path.join(
                 corpus_path, f'{make_json}'), dict_with_parsed_xml=dict_with_parsed_xml_no_paragrph)
         if make_ami_dict:
@@ -250,8 +256,6 @@ class EntityExtraction:
             content = f.read()
             soup = BeautifulSoup(content, 'html.parser')
             return soup.text.replace('\n', ' ')
-            #for every_div in soup.find_all('div'):
-            #    return (every_div.text)
 
     def run_spacy_over_sections(self, dict_with_parsed_xml, entities_names):
         self.switch_spacy_versions(self.spacy_model)
@@ -286,7 +290,6 @@ class EntityExtraction:
                 doc_text=dict_for_sentence['sentence'])
             dict_for_sentence["abb"] = pairs
             self._make_list_from_dict(pairs)
-    
 
     def make_abb_exp_list(self, result_dictionary):
         list_of_name_lists = []
@@ -295,7 +298,8 @@ class EntityExtraction:
             sentence_dictionary = result_dictionary[entry]
             if 'abb' in sentence_dictionary:
                 pairs_dicts = (result_dictionary[entry]['abb'])
-                name_list_for_every_dict, term_list_for_every_dict = self._make_list_from_dict(pairs_dicts)
+                name_list_for_every_dict, term_list_for_every_dict = self._make_list_from_dict(
+                    pairs_dicts)
                 list_of_name_lists.append(name_list_for_every_dict)
                 list_of_term_lists.append(term_list_for_every_dict)
         return self._list_of_lists_to_single_list(list_of_name_lists), self._list_of_lists_to_single_list(list_of_term_lists)
@@ -306,9 +310,9 @@ class EntityExtraction:
         keys_list.extend(pairs.keys())
         values_list.extend(pairs.values())
         return keys_list, values_list
-    
+
     def _list_of_lists_to_single_list(self, list_of_lists):
-       return [item for sublist in list_of_lists for item in sublist]
+        return [item for sublist in list_of_lists for item in sublist]
 
     def make_ami_dict_from_abbreviation(self, title, result_dictionary, path):
         name_list, term_list = self.make_abb_exp_list(result_dictionary)
@@ -329,7 +333,8 @@ class EntityExtraction:
         logging.info(f'wrote all abbreviations to ami dict {path}.xml')
 
     def _etree_to_string(self, dictionary_element):
-        xml_dict = etree.tostring(dictionary_element, pretty_print=True).decode('utf-8')
+        xml_dict = etree.tostring(
+            dictionary_element, pretty_print=True).decode('utf-8')
         return xml_dict
 
     def _get_abbreviations(self, doc, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end):
@@ -343,13 +348,13 @@ class EntityExtraction:
         for statement in tqdm(dict_with_parsed_xml):
             dict_for_sentence = dict_with_parsed_xml[statement]
             dict_for_sentence[f'{searching}'] = []
-            dict_for_sentence['span'] = []
+            dict_for_sentence[f'{searching}_span'] = []
             term_list, span_list, frequency = self.search_sentence_with_compiled_terms(
                 compiled_terms, dict_for_sentence['sentence'])
             if term_list:
                 dict_for_sentence[f'{searching}'].append(term_list)
                 dict_for_sentence[f'weight_{searching}'] = frequency
-                dict_for_sentence['span'].append(span_list)
+                dict_for_sentence[f'{searching}_span'].append(span_list)
 
     def search_sentence_with_compiled_terms(self, compiled_terms, sentence):
         # https://stackoverflow.com/questions/47681756/match-exact-phrase-within-a-string-in-python
@@ -456,7 +461,6 @@ class EntityExtraction:
     def remove_paragraph_form_parsed_xml_dict(self, dict_with_parsed_xml, key_to_remove):
         for entry in dict_with_parsed_xml:
             dict_with_parsed_xml[entry].pop(key_to_remove, None)
-        print(dict_with_parsed_xml)
         return dict_with_parsed_xml
 
     def convert_dict_to_json(self, path, dict_with_parsed_xml):
@@ -474,17 +478,7 @@ class EntityExtraction:
         statement_to_pop = []
         for statement in dict_with_parsed_xml:
             sentect_dict = dict_with_parsed_xml[statement]
-            if len(sentect_dict[f'{searching}']) == 0:
-                statement_to_pop.append(statement)
-
-        for term in statement_to_pop:
-            dict_with_parsed_xml.pop(term)
-
-    def remove_statements_not_having_xmldict_entities(self, dict_with_parsed_xml):
-        statement_to_pop = []
-        for statement in dict_with_parsed_xml:
-            sentect_dict = dict_with_parsed_xml[statement]
-            if len(sentect_dict['entities']) == 0:
+            if len(sentect_dict[searching]) == 0:
                 statement_to_pop.append(statement)
 
         for term in statement_to_pop:
@@ -538,15 +532,16 @@ class EntityExtraction:
         path = urlopen(json_file_link)
         json_dict = json.load(path)
         return (json_dict)
-    
+
     def wiki_lookup(self, query):
-        params	= {
-        "action"		: "wbsearchentities",
-        "search"		: query,
-        "language"	: "en",
-        "format"		: "json"
+        params = {
+            "action"		: "wbsearchentities",
+            "search"		: query,
+            "language"	: "en",
+            "format"		: "json"
         }
-        data	= requests.get("https://www.wikidata.org/w/api.php",params=params)
+        data = requests.get(
+            "https://www.wikidata.org/w/api.php", params=params)
         result = data.json()
         hit_list = []
         for hit in result['search']:
@@ -554,9 +549,9 @@ class EntityExtraction:
                 if "scientific article" not in hit["description"]:
                     hit_list.append(hit["url"])
             except:
-                    hit_list.append(hit["url"])
+                hit_list.append(hit["url"])
         return hit_list
-    
+
 
 # take out the constants
 # look through download_tools (pygetpapers) and see if we have overlapping functionality.

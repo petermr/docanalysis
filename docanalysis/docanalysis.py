@@ -13,7 +13,7 @@ class Docanalysis:
     def __init__(self):
         """This function makes all the constants"""
         self.entity_extraction = EntityExtraction()
-        self.version="0.1.8"
+        self.version="0.1.9"
 
     def handle_logger_creation(self, args):
         """handles the logging on cml
@@ -85,8 +85,9 @@ class Docanalysis:
         parser.add_argument(
             "-d",
             "--dictionary",
-            default=False,
+            default=[],
             type=str,
+            nargs='*',
             help="[file name/url] existing ami dictionary to annotate sentences or support supervised entity extraction",
         )
         parser.add_argument(
