@@ -64,6 +64,11 @@ class EntityExtraction:
         self.nlp = None
 
     def switch_spacy_versions(self, spacy_type):
+        """Method to toggle between spacy and scispacy 
+
+        Args:
+            spacy_type (string): "spacy" or "scispacy"
+        """
         logging.info(f'Loading {spacy_type}')
         if spacy_type == "scispacy":
             from scispacy.abbreviation import AbbreviationDetector
@@ -94,6 +99,8 @@ class EntityExtraction:
     def extract_entities_from_papers(self, corpus_path, terms_xml_path, search_sections, entities, query=None, hits=30,
                                      run_pygetpapers=False, make_section=False, removefalse=True,
                                      csv_name=False, make_ami_dict=False, spacy_model=False, html_path=False, synonyms=False, make_json=False, search_html=False, extract_abb=False):
+        """logic implementation (Q: how detailed should the description here be?)
+        """
 
         self.spacy_model = spacy_model
         corpus_path = os.path.abspath(corpus_path)
@@ -185,6 +192,11 @@ class EntityExtraction:
         logging.info(f"making CProject {output} with {hits} papers on {query}")
 
     def run_ami_section(self, path):
+        """ Creates sections folder for each paper (CTree); sections papers into front, body, back and floats based on JATS
+
+        Args:
+            path (string): CProject path
+        """
         file_list = glob(os.path.join(
             path, '**', 'fulltext.xml'), recursive=True)
         for paper in file_list:
@@ -197,6 +209,15 @@ class EntityExtraction:
                 logging.warning(f"{paper} is empty")
 
     def get_glob_for_section(self, path, section_names):
+        """_summary_
+
+        Args:
+            path (_type_): _description_
+            section_names (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         for section_name in section_names:
             if section_name in self.sections.keys():
                 self.all_paragraphs[section_name] = []
@@ -223,14 +244,14 @@ class EntityExtraction:
                 sentences = tokenize.sent_tokenize(paragraph_text)
                 for sentence in sentences:
                     self.sentence_dictionary[counter] = {}
-                    self.make_dict_attributes(
+                    self._make_dict_attributes(
                         counter, section, section_path, paragraph_text, sentence)
                     counter += 1
         logging.info(
             f"Found {len(self.sentence_dictionary)} sentences in the section(s).")
         return self.sentence_dictionary
 
-    def make_dict_attributes(self, counter, section, section_path, paragraph_text, sentence):
+    def _make_dict_attributes(self, counter, section, section_path, paragraph_text, sentence):
         dict_for_sentences = self.sentence_dictionary[counter]
         dict_for_sentences["file_path"] = section_path
         dict_for_sentences["paragraph"] = paragraph_text
@@ -262,19 +283,19 @@ class EntityExtraction:
         for paragraph in tqdm(dict_with_parsed_xml):
             if len(dict_with_parsed_xml[paragraph]['sentence']) > 0:
                 doc = self.nlp(dict_with_parsed_xml[paragraph]['sentence'])
-                entities, labels, position_end, position_start, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end = self.make_required_lists()
+                entities, labels, position_end, position_start, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end = self._make_required_lists()
                 if self.spacy_model == "scispacy":
                     self._get_abbreviations(
                         doc, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end)
                 self._get_entities(entities_names, doc, entities,
                                    labels, position_end, position_start)
-                self.add_lists_to_dict(dict_with_parsed_xml[paragraph], entities, labels, position_end,
+                self._add_lists_to_dict(dict_with_parsed_xml[paragraph], entities, labels, position_end,
                                        position_start, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end)
 
     def _get_entities(self, entities_names, doc, entities, labels, position_end, position_start):
         for ent in doc.ents:
             if (ent.label_ in entities_names) or (entities_names == ['ALL']):
-                self.add_parsed_entities_to_lists(
+                self._add_parsed_entities_to_lists(
                     entities, labels, position_end, position_start, ent)
 
     def abbreviation_search_using_sw(self, dict_with_parsed_xml):
@@ -392,13 +413,13 @@ class EntityExtraction:
             except KeyError:
                 term = para.text
             try:
-                compiled_term = self.regex_compile(term)
+                compiled_term = self._regex_compile(term)
             except re.error:
                 logging.warning(f'cannot use term {term}')
             compiled_terms.append(compiled_term)
         return compiled_terms
 
-    def regex_compile(self, term):
+    def _regex_compile(self, term):
         return re.compile(r'\b{}\b'.format(term))
 
     def get_synonyms_from_ami_xml(self, xml_path):
@@ -415,7 +436,7 @@ class EntityExtraction:
         synonyms = self._compiled_regex(root.findall("./entry/synonym"))
         return synonyms
 
-    def make_required_lists(self):
+    def _make_required_lists(self):
         abbreviations = []
         abbreviations_longform = []
         abbreviation_start = []
@@ -426,7 +447,7 @@ class EntityExtraction:
         position_end = []
         return entities, labels, position_end, position_start, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end
 
-    def add_lists_to_dict(self, dict_for_sentence, entities, labels, position_end,
+    def _add_lists_to_dict(self, dict_for_sentence, entities, labels, position_end,
                           position_start, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end):
 
         dict_for_sentence['entities'] = entities
@@ -438,13 +459,19 @@ class EntityExtraction:
         dict_for_sentence['abbreviation_start'] = abbreviation_start
         dict_for_sentence['abbreviation_end'] = abbreviation_end
 
-    def add_parsed_entities_to_lists(self, entities, labels, position_end, position_start, ent=None):
+    def _add_parsed_entities_to_lists(self, entities, labels, position_end, position_start, ent=None):
         entities.append(ent.text)
         labels.append(ent.label_)
         position_start.append(ent.start_char)
         position_end.append(ent.end_char)
 
     def convert_dict_to_csv(self, path, dict_with_parsed_xml):
+        """Turns python dictionary into CSV using pandas
+
+        Args:
+            path (string): CSV file to write output
+            dict_with_parsed_xml (dict): python dictionary that needs to be converted to csv
+        """
         df = pd.DataFrame(dict_with_parsed_xml)
         df = df.T
         for col in df:
@@ -485,6 +512,15 @@ class EntityExtraction:
             dict_with_parsed_xml.pop(term)
 
     def make_ami_dict_from_list(self, list_of_terms_with_count, title):
+        """makes ami-dict from a python dictionary containing terms and frequencies. 
+
+        Args:
+            list_of_terms_with_count (dict): python dictionary containing terms and their frequency of occurence
+            title (string): title of the xml ami-dict as well as the name of the XML file
+
+        Returns:
+            file: xml ami-dict
+        """
         dictionary_element = etree.Element("dictionary")
         dictionary_element.attrib['title'] = title
         for term in list_of_terms_with_count:
@@ -534,6 +570,14 @@ class EntityExtraction:
         return (json_dict)
 
     def wiki_lookup(self, query):
+        """Queries Wikidata API for Wikidata Item IDs for terms in ami-dict
+
+        Args:
+            query (string): term to query wikdiata for ID
+
+        Returns:
+            list: potential Wikidata Item URLs
+        """
         params = {
             "action"		: "wbsearchentities",
             "search"		: query,
