@@ -326,7 +326,7 @@ EXAMPLE DICTIONARY:
 If you working with HTML files (IPCC Reports, for example) and not XMLs in CProjects, you can use `--search_html` flag.
 
 ```
-docanalysis --project_name corpus\ethics_10  --extract_abb ethics_abb
+docanalysis --project_name corpus\ipcc_sectioned  --extract_abb ethics_abb --search_html
 ```
 
  Make sure that your `html` sections is in `sections` folder. Here's an example structure: 
