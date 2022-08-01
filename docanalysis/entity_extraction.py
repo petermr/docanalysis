@@ -209,14 +209,14 @@ class EntityExtraction:
                 logging.warning(f"{paper} is empty")
 
     def get_glob_for_section(self, path, section_names):
-        """_summary_
+        """globs for xml files in section folder of each CTree
 
         Args:
-            path (_type_): _description_
-            section_names (_type_): _description_
+            path (string): CProject path
+            section_names (string): one or more keys (section names) from CONFIG_SECTIONS
 
         Returns:
-            _type_: _description_
+            list: list of globs
         """
         for section_name in section_names:
             if section_name in self.sections.keys():
@@ -230,6 +230,14 @@ class EntityExtraction:
         return self.all_paragraphs
 
     def make_dict_with_parsed_document(self, document_type="xml"):
+        """creates dictionary with parsed xml or html
+
+        Args:
+            document_type (str, optional): type of file fed: xml or html. Defaults to "xml".
+
+        Returns:
+            dict: python dict containing parsed text from xml or html
+        """
 
         self.sentence_dictionary = {}
 
@@ -259,6 +267,14 @@ class EntityExtraction:
         dict_for_sentences["section"] = section
 
     def read_text_from_path(self, paragraph_path):
+        """ uses ElementTree to read text from xml files
+
+        Args:
+            paragraph_path (string): path to xml file 
+
+        Returns:
+            string: raw text from xml
+        """ 
         try:
             tree = ET.parse(paragraph_path)
             root = tree.getroot()
@@ -273,12 +289,26 @@ class EntityExtraction:
         return paragraph_text
 
     def read_text_from_html(self, paragraph_path):
+        """ uses beautifulsoup to read text from html files
+
+        Args:
+            paragraph_path (string): path to html file 
+
+        Returns:
+            string: raw text from html
+        """       
         with open(paragraph_path, encoding="utf-8") as f:
             content = f.read()
             soup = BeautifulSoup(content, 'html.parser')
             return soup.text.replace('\n', ' ')
 
     def run_spacy_over_sections(self, dict_with_parsed_xml, entities_names):
+        """uses spacy to extract specific Named-Entities from sentences in python dict
+
+        Args:
+            dict_with_parsed_xml (dict): main dict with sentences
+            entities_names (list): list of kinds of Named-Entities that needs to be extacted
+        """
         self.switch_spacy_versions(self.spacy_model)
         for paragraph in tqdm(dict_with_parsed_xml):
             if len(dict_with_parsed_xml[paragraph]['sentence']) > 0:
@@ -313,6 +343,15 @@ class EntityExtraction:
             self._make_list_from_dict(pairs)
 
     def make_abb_exp_list(self, result_dictionary):
+        """make lists of abbreviations and expansions to input into xml dictionary creating method
+
+        Args:
+            result_dictionary (dict): main dictionary that contains sentences and abbreviation dict (abb and expansion)
+
+        Returns:
+            list: all abbreviations 
+            list: all corresponding expansions
+        """
         list_of_name_lists = []
         list_of_term_lists = []
         for entry in result_dictionary:
@@ -336,6 +375,13 @@ class EntityExtraction:
         return [item for sublist in list_of_lists for item in sublist]
 
     def make_ami_dict_from_abbreviation(self, title, result_dictionary, path):
+        """create xml ami-dict containing abbreviations extracted from sentences
+
+        Args:
+            title (str): title of xml ami-dict
+            result_dictionary (dict): main dictionary with sentences and corresponding abbeviations
+            path (str): path where the xml ami-dict file would lie
+        """
         name_list, term_list = self.make_abb_exp_list(result_dictionary)
         dictionary_element = etree.Element("dictionary")
         dictionary_element.attrib['title'] = title
@@ -366,6 +412,13 @@ class EntityExtraction:
             abbreviation_end.append(abrv.end)
 
     def add_if_file_contains_terms(self, compiled_terms, dict_with_parsed_xml, searching='has_terms'):
+        """populate the main dictionary with term matches, its frequency and span
+
+        Args:
+            compiled_terms (list): list of compiled ami-dict terms
+            dict_with_parsed_xml (dict): dictionary containing sentences
+            searching (str, optional): dict key name. Defaults to 'has_terms'.
+        """
         for statement in tqdm(dict_with_parsed_xml):
             dict_for_sentence = dict_with_parsed_xml[statement]
             dict_for_sentence[f'{searching}'] = []
@@ -378,6 +431,17 @@ class EntityExtraction:
                 dict_for_sentence[f'{searching}_span'].append(span_list)
 
     def search_sentence_with_compiled_terms(self, compiled_terms, sentence):
+        """search sentences using the compiled ami-dict entry
+
+        Args:
+            compiled_terms (list): list of compiled ami-dict terms
+            sentence (string): sentence to search using compiled terms
+
+        Returns:
+            list: list of terms that was found after searching sentence
+            list: list of spans corresponding to found terms
+            int: number of term hits
+        """
         # https://stackoverflow.com/questions/47681756/match-exact-phrase-within-a-string-in-python
         match_list = []
         span_list = []
@@ -391,6 +455,15 @@ class EntityExtraction:
         return match_list, span_list, frequency
 
     def get_terms_from_ami_xml(self, xml_path):
+        """parses ami-dict (xml) and reads the entry terms; ami-dict can either be the default ones (user specifies python dict key) or customized ones (user specifies full path to it)
+
+
+        Args:
+            xml_path (string): either keys from dict_of_ami_dict or full path to ami-dict
+
+        Returns:
+            list: list of regex compiled entry terms from ami-dict
+        """
         if xml_path in self.dict_of_ami_dict.keys():
             logging.info(f"getting terms from {xml_path}")
             tree = ET.parse(urlopen(self.dict_of_ami_dict[xml_path]))
@@ -423,6 +496,15 @@ class EntityExtraction:
         return re.compile(r'\b{}\b'.format(term))
 
     def get_synonyms_from_ami_xml(self, xml_path):
+        """parses ami-dict (xml) and reads the entry's synonyms; ami-dict can either be the default ones (user specifies python dict key) or customized ones (user specifies full path to it)
+
+
+        Args:
+            xml_path (string): either keys from dict_of_ami_dict or full path to ami-dict
+
+        Returns:
+            list: list of regex compiled entry's synonyms from ami-dict
+        """
         if xml_path in self.dict_of_ami_dict.keys():
             logging.info(f"getting synonyms from {xml_path}")
             tree = ET.parse(urlopen(self.dict_of_ami_dict[xml_path]))
@@ -486,6 +568,15 @@ class EntityExtraction:
         logging.info(f"wrote output to {path}")
 
     def remove_paragraph_form_parsed_xml_dict(self, dict_with_parsed_xml, key_to_remove):
+        """pops out the specified key value pairs from python dictionaries
+
+        Args:
+            dict_with_parsed_xml (dict): python dict from which a key-value pair needs to be removed
+            key_to_remove (string): key of the pair that needs to be removed
+
+        Returns:
+            dict: python dict with the specified key-value pair removed
+        """
         for entry in dict_with_parsed_xml:
             dict_with_parsed_xml[entry].pop(key_to_remove, None)
         return dict_with_parsed_xml
@@ -502,6 +593,12 @@ class EntityExtraction:
         logging.info(f"wrote JSON output to {path}")
 
     def remove_statements_not_having_xmldict_terms(self, dict_with_parsed_xml, searching='has_terms'):
+        """removes key-value pairs from the main python dict that do not have any match hits
+
+        Args:
+            dict_with_parsed_xml (dict): python dictionary from which the specific key-value pairs needs to be removed
+            searching (str, optional): the key to the pair in the nested-dict that needs to be removed 
+        """
         statement_to_pop = []
         for statement in dict_with_parsed_xml:
             sentect_dict = dict_with_parsed_xml[statement]
@@ -581,7 +678,7 @@ class EntityExtraction:
         params = {
             "action"		: "wbsearchentities",
             "search"		: query,
-            "language"	: "en",
+            "language"	    : "en",
             "format"		: "json"
         }
         data = requests.get(
