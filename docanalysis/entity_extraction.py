@@ -52,7 +52,7 @@ CONFIG_AMI_DICT = 'https://raw.githubusercontent.com/petermr/docanalysis/main/do
 
 
 class EntityExtraction:
-    """ """
+    """EntityExtraction Class"""
 
     def __init__(self):
         logging.basicConfig(level=logging.INFO)
@@ -88,6 +88,11 @@ class EntityExtraction:
                 self.nlp = spacy.load('en_core_web_sm')
 
     def dictionary_to_html(self, html_path):
+        """Converts dictionary to html
+
+        Args:
+            html_path (string): path to save html
+        """
         list_of_docs = []
         for sentence in self.sentence_dictionary:
             list_of_docs.append(self.sentence_dictionary[sentence]['doc'])
@@ -274,7 +279,7 @@ class EntityExtraction:
 
         Returns:
             string: raw text from xml
-        """ 
+        """
         try:
             tree = ET.parse(paragraph_path)
             root = tree.getroot()
@@ -296,7 +301,7 @@ class EntityExtraction:
 
         Returns:
             string: raw text from html
-        """       
+        """
         with open(paragraph_path, encoding="utf-8") as f:
             content = f.read()
             soup = BeautifulSoup(content, 'html.parser')
@@ -320,7 +325,7 @@ class EntityExtraction:
                 self._get_entities(entities_names, doc, entities,
                                    labels, position_end, position_start)
                 self._add_lists_to_dict(dict_with_parsed_xml[paragraph], entities, labels, position_end,
-                                       position_start, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end)
+                                        position_start, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end)
 
     def _get_entities(self, entities_names, doc, entities, labels, position_end, position_start):
         for ent in doc.ents:
@@ -530,7 +535,7 @@ class EntityExtraction:
         return entities, labels, position_end, position_start, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end
 
     def _add_lists_to_dict(self, dict_for_sentence, entities, labels, position_end,
-                          position_start, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end):
+                           position_start, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end):
 
         dict_for_sentence['entities'] = entities
         dict_for_sentence['labels'] = labels
@@ -676,10 +681,10 @@ class EntityExtraction:
             list: potential Wikidata Item URLs
         """
         params = {
-            "action"		: "wbsearchentities",
-            "search"		: query,
-            "language"	    : "en",
-            "format"		: "json"
+            "action": "wbsearchentities",
+            "search": query,
+            "language": "en",
+            "format": "json"
         }
         data = requests.get(
             "https://www.wikidata.org/w/api.php", params=params)
