@@ -88,6 +88,8 @@ class Globber:
 class AmiPath:
     """holds a (keyed) scheme for generating lists of path globs
     The scheme has several segments which can be set to create a glob expr.
+
+
     """
     # keys for path scheme templates
     T_FIGURES = "fig_captions"
@@ -115,6 +117,10 @@ class AmiPath:
         """creates a new AmiPath object from selected template
         key: to template
         edit_dict: dictionary with values to edit in
+
+        :param key: 
+        :param edit_dict:  (Default value = None)
+
         """
         key = key.lower()
         if key is None or key not in TEMPLATES:
@@ -129,11 +135,16 @@ class AmiPath:
         return ami_path
 
     def edit_scheme(self, edit_dict):
-        """edits values in self.scheme using edit_dict"""
+        """edits values in self.scheme using edit_dict
+
+        :param edit_dict: 
+
+        """
         for k, v in edit_dict.items():
             self.scheme[k] = v
 
     def permute_sets(self):
+        """ """
         self.scheme_list = []
         self.scheme_list.append(self.scheme)
         # if scheme has sets, expand them
@@ -144,14 +155,15 @@ class AmiPath:
     def expand_set_lists(self):
         """expands the sets in a scheme
         note: sets are held as lists in JSON
-
+        
         a scheme with 2 sets of size n and m is
         expanded to n*m schemes covering all permutations
         of the set values
-
+        
         self.scheme_list contains all the schemes
-
+        
         returns True if any sets are expanded
+
 
         """
         change = False
@@ -172,6 +184,8 @@ class AmiPath:
     def get_glob_string_list(self):
         """expand sets in AmiPath
         creates m*n... glob strings for sets with len n and m
+
+
         """
         self.permute_sets()
         self.glob_string_list = []
@@ -182,6 +196,11 @@ class AmiPath:
 
     @classmethod
     def create_glob_string(cls, scheme):
+        """
+
+        :param scheme: 
+
+        """
         globx = ""
         for sect, value in scheme.items():
             cls.logger.debug(sect, type(value), value)
@@ -207,6 +226,11 @@ class AmiPath:
 
     @classmethod
     def convert_to_glob(cls, value):
+        """
+
+        :param value: 
+
+        """
         valuex = value
         if type(value) == list:
             # tacky. string quotes and add commas and parens
@@ -217,27 +241,39 @@ class AmiPath:
         return valuex
 
     def get_globbed_files(self):
+        """ """
         files = Globber(self).get_globbed_files()
         self.logger.debug("files", len(files))
         return files
 
 
 class BraceGlobber:
+    """ """
 
     def braced_glob(self, path, recursive=False):
+        """
+
+        :param path: 
+        :param recursive:  (Default value = False)
+
+        """
         ll = [glob(x, recursive=recursive) for x in braceexpand(path)]
         return ll
 
 
 class FileLib:
+    """ """
 
     logger = logging.getLogger("file_lib")
 
     @classmethod
     def force_mkdir(cls, dirx):
         """ensure dirx exists
-
+        
         :dirx: directory
+
+        :param dirx: 
+
         """
         if not os.path.exists(dirx):
             try:
@@ -248,8 +284,11 @@ class FileLib:
     @classmethod
     def force_mkparent(cls, file):
         """ensure parent directory exists
-
+        
         :path: whose parent directory is to be created if absent
+
+        :param file: 
+
         """
         if file is not None:
             cls.force_mkdir(cls.get_parent_dir(file))
@@ -260,8 +299,13 @@ class FileLib:
         :path: path to write to
         :data: str data to write
         :overwrite: force write iuf path exists
-
+        
         may throw exception from write
+
+        :param file: 
+        :param data: 
+        :param overwrite:  (Default value = True)
+
         """
         if file is not None:
             if os.path.exists(file) and not overwrite:
@@ -273,6 +317,13 @@ class FileLib:
 
     @classmethod
     def copy_file_or_directory(cls, dest_path, src_path, overwrite):
+        """
+
+        :param dest_path: 
+        :param src_path: 
+        :param overwrite: 
+
+        """
         if dest_path.exists():
             if not overwrite:
                 file_type = "dirx" if dest_path.is_dir() else "path"
@@ -299,8 +350,11 @@ class FileLib:
     @staticmethod
     def create_absolute_name(file):
         """create absolute/relative name for a path relative to py4ami
-
+        
         TODO this is messy
+
+        :param file: 
+
         """
         absolute_file = None
         if file is not None:
@@ -310,32 +364,35 @@ class FileLib:
 
     @classmethod
     def get_py4ami(cls):
-        """ gets paymi_m pathname
-
-        """
+        """gets paymi_m pathname"""
         return Path(__file__).parent.resolve()
 
     @classmethod
     def get_pyami_root(cls):
-        """ gets paymi root pathname
-
-        """
+        """gets paymi root pathname"""
         return Path(__file__).parent.parent.resolve()
 
     @classmethod
     def get_pyami_resources(cls):
-        """ gets paymi root pathname
-
-        """
+        """gets paymi root pathname"""
         return Path(cls.get_py4ami(), RESOURCES)
 
     @classmethod
     def get_parent_dir(cls, file):
+        """
+
+        :param file: 
+
+        """
         return None if file is None else PurePath(file).parent
 
     @classmethod
     def read_pydictionary(cls, file):
-        """read a json path into a python dictiomary"""
+        """read a json path into a python dictiomary
+
+        :param file: 
+
+        """
         import ast
         with open(file, "r") as f:
             pydict = ast.literal_eval(f.read())
@@ -343,9 +400,11 @@ class FileLib:
 
     @classmethod
     def punct2underscore(cls, text):
-        """ replace all ASCII punctuation except '.' , '-', '_' by '_'
-
+        """replace all ASCII punctuation except '.' , '-', '_' by '_'
+        
         for filenames
+
+        :param text: 
 
         """
         from py4ami.text_lib import TextUtil
@@ -362,6 +421,8 @@ class FileLib:
         """get suffix
         INCLUDES the "."
 
+        :param file: 
+
         """
         _suffix = None if file is None else Path(file).suffix
         return _suffix
@@ -370,6 +431,7 @@ class FileLib:
 # see https://realpython.com/python-pathlib/
 
 def main():
+    """ """
     print("started file_lib")
     # test_templates()
 
@@ -388,6 +450,12 @@ else:
 
 
 def glob_re(pattern, strings):
+    """
+
+    :param pattern: 
+    :param strings: 
+
+    """
     return filter(re.compile(pattern).match, strings)
 
 

@@ -8,18 +8,20 @@ from tqdm import tqdm
 from functools import partialmethod
 from docanalysis.entity_extraction import EntityExtraction
 
+
 class Docanalysis:
 
     def __init__(self):
         """This function makes all the constants"""
         self.entity_extraction = EntityExtraction()
-        self.version="0.1.9"
+        self.version = "0.1.9"
 
     def handle_logger_creation(self, args):
         """handles the logging on cml
 
-        :param args: [description]
-        :type args: [type]
+        :param args: description]
+        :type args: type]
+
         """
         coloredlogs.install()
         levels = {
@@ -104,10 +106,10 @@ class Docanalysis:
         parser.add_argument(
             "--search_section",
             default=['ALL'],
-            action='store', 
+            action='store',
             dest='search_section',
-            type=str, 
-            nargs='*', 
+            type=str,
+            nargs='*',
             help="[NER/dictionary search] section(s) to annotate. Choose from: ALL, ACK, AFF, AUT, CON, DIS, ETH, FIG, INT, KEY, MET, RES, TAB, TIL. Defaults to ALL",
         )
 
@@ -115,7 +117,7 @@ class Docanalysis:
             "--entities",
             default=['ALL'],
             action='store', dest='entities',
-                    type=str, nargs='*', 
+            type=str, nargs='*',
             help="[NER] entities to extract. Default (ALL). Common entities "
             "SpaCy: GPE, LANGUAGE, ORG, PERSON (for additional ones check: ); "
             "SciSpaCy: CHEMICAL, DISEASE",
@@ -159,7 +161,6 @@ class Docanalysis:
             help="[Command] title for abb-ami-dict. Extracts abbreviations and expansions; makes ami-dict of all extracted entities"
         )
 
-
         parser.add_argument(
             "-l",
             "--loglevel",
@@ -184,10 +185,9 @@ class Docanalysis:
             if vars(args)[arg] == "False":
                 vars(args)[arg] = False
         self.handle_logger_creation(args)
-        self.entity_extraction.extract_entities_from_papers(args.project_name,args.dictionary,search_sections=args.search_section,entities=args.entities,query=args.query,hits=args.hits,
-                                     run_pygetpapers=args.run_pygetpapers, make_section= args.make_section, removefalse=True,
-                                     csv_name=args.output,make_ami_dict=args.make_ami_dict,spacy_model=args.spacy_model,html_path=args.html, synonyms=args.synonyms, make_json=args.make_json, search_html=args.search_html, extract_abb=args.extract_abb)
-
+        self.entity_extraction.extract_entities_from_papers(args.project_name, args.dictionary, search_sections=args.search_section, entities=args.entities, query=args.query, hits=args.hits,
+                                                            run_pygetpapers=args.run_pygetpapers, make_section=args.make_section, removefalse=True,
+                                                            csv_name=args.output, make_ami_dict=args.make_ami_dict, spacy_model=args.spacy_model, html_path=args.html, synonyms=args.synonyms, make_json=args.make_json, search_html=args.search_html, extract_abb=args.extract_abb)
 
 
 def main():

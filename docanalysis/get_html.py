@@ -6,6 +6,11 @@ from lxml import etree
 import yake
 
 def read_text_from_html(paragraph_path):
+    """
+
+    :param paragraph_path: 
+
+    """
   with open(paragraph_path, 'r') as f:
       html = f.read()
       soup = BeautifulSoup(html, features="html.parser")
@@ -27,16 +32,33 @@ def read_text_from_html(paragraph_path):
       return text
 
 def get_glob(corpus_path):
+    """
+
+    :param corpus_path: 
+
+    """
     paragraph_path = glob(os.path.join(corpus_path, '**', 'sections', '**', "*html"), recursive=True)
     return paragraph_path
 
 def abbreviation_search_using_sw(paragraph_text):
+    """
+
+    :param paragraph_text: 
+
+    """
     pairs = schwartz_hearst.extract_abbreviation_definition_pairs(doc_text=paragraph_text)
     keys = pairs.keys()
     values = pairs.values()
     return keys, values
 
 def make_ami_dict_from_list(title, keys, values):
+    """
+
+    :param title: 
+    :param keys: 
+    :param values: 
+
+    """
     dictionary_element=  etree.Element("dictionary")
     dictionary_element.attrib['title']= title
     for term, expansion in zip(keys, values):
@@ -46,11 +68,22 @@ def make_ami_dict_from_list(title, keys, values):
     return etree.tostring(dictionary_element, pretty_print=True).decode('utf-8')
 
 def write_string_to_file(string_to_put,title):
+    """
+
+    :param string_to_put: 
+    :param title: 
+
+    """
     with open(title,mode='w', encoding='utf-8') as f:
         f.write(string_to_put)
     print(f"wrote dict to {title}")
 
 def extract_keyphrase(paragraph_text):
+    """
+
+    :param paragraph_text: 
+
+    """
     custom_kw_extractor = yake.KeywordExtractor(lan='en', n=5, top=10, features=None)
     keywords = custom_kw_extractor.extract_keywords(paragraph_text)
     keywords_list = []
@@ -59,6 +92,11 @@ def extract_keyphrase(paragraph_text):
     print(keywords_list)
 
 def does_everything(corpus_path):
+    """
+
+    :param corpus_path: 
+
+    """
     all_text = []
     all_keys = []
     all_values = []
@@ -79,6 +117,11 @@ def does_everything(corpus_path):
 
 
 def joinStrings(stringList):
+    """
+
+    :param stringList: 
+
+    """
     return ''.join(string for string in stringList)
 
 path = os.path.join(os.path.expanduser('~'), "ipcc_sectioned")
