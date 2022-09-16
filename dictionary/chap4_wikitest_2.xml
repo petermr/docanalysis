@@ -1,0 +1,124 @@
+<dictionary title="chap4_wikitest_2">
+  <entry name="SDGs" term="Sustainable  Development Goals" wikidataID=""/>
+  <entry name="NDCs" term="Nationally  Determined  Contributions" wikidataID=""/>
+  <entry name="GHG" term="Greenhouse  Gases" wikidataID=""/>
+  <entry name="GWPs" term="global warming potentials" wikidataID="Q57402965"/>
+  <entry name="BRs" term="biennial reports" wikidataID="Q66306895"/>
+  <entry name="BURs" term="biennial update reports" wikidataID=""/>
+  <entry name="BTRs" term="biennial transparency reports" wikidataID=""/>
+  <entry name="LCTPi" term="Low Carbon Technology Partnerships" wikidataID=""/>
+  <entry name="OGMP" term="Oil  and  Gas  Methane  Partnership" wikidataID=""/>
+  <entry name="LEDS" term="low-emissions development strategies" wikidataID=""/>
+  <entry name="Amendment" term="ationClimate  Action  and  Low  Carbon  Development" wikidataID=""/>
+  <entry name="CCS" term="carbon capture and sequestration">
+    <raw wikidataID="Q59595408, Q59599221, Q59597782, Q59638196"/>
+  </entry>
+  <entry name="CDR" term="carbon dioxide removal">
+    <raw wikidataID="Q30314404, Q56298528, Q59296188, Q59411018"/>
+  </entry>
+  <entry name="HFC" term="hydrofluorocarbon">
+    <raw wikidataID="Q1031943, Q59100158"/>
+  </entry>
+  <entry name="GWP" term="global warming potential">
+    <raw wikidataID="Q901028, Q57084968, Q57084755, Q57084921, Q57084776, Q57402965"/>
+  </entry>
+  <entry name="GWPs" term="global warming potentials" wikidataID="Q57402965"/>
+  <entry name="BRs" term="biennial reports" wikidataID="Q66306895"/>
+  <entry name="BURs" term="biennial update reports" wikidataID=""/>
+  <entry name="BTRs" term="biennial transparency reports" wikidataID=""/>
+  <entry name="LCTPi" term="Low Carbon Technology Partnerships" wikidataID=""/>
+  <entry name="OGMP" term="Oil  and  Gas  Methane  Partnership" wikidataID=""/>
+  <entry name="LEDS" term="low-emissions development strategies" wikidataID=""/>
+  <entry name="Amendment" term="ationClimate  Action  and  Low  Carbon  Development" wikidataID=""/>
+  <entry name="CCS" term="carbon capture and sequestration">
+    <raw wikidataID="Q59595408, Q59599221, Q59597782, Q59638196"/>
+  </entry>
+  <entry name="CDR" term="carbon dioxide removal">
+    <raw wikidataID="Q30314404, Q56298528, Q59296188, Q59411018"/>
+  </entry>
+  <entry name="HFC" term="hydrofluorocarbon">
+    <raw wikidataID="Q1031943, Q59100158"/>
+  </entry>
+  <entry name="GWP" term="global warming potential">
+    <raw wikidataID="Q901028, Q57084968, Q57084755, Q57084921, Q57084776, Q57402965"/>
+  </entry>
+  <entry name="SDPS" term="shifting development pathways to increased sustainability" wikidataID=""/>
+  <entry name="LCDI" term="Low Carbon Development  Initiative" wikidataID=""/>
+  <entry name="IMP" term="Illustrative  Mitigation  Pathways" wikidataID=""/>
+  <entry name="SSP" term="Shared  Socio-economic  Pathway" wikidataID=""/>
+  <entry name="France" term="Franck  Lecocq" wikidataID=""/>
+  <entry name="SDPS" term="shifting development pathways to increased sustainability" wikidataID=""/>
+  <entry name="LCDI" term="Low Carbon Development  Initiative" wikidataID=""/>
+  <entry name="IMP" term="Illustrative  Mitigation  Pathways" wikidataID=""/>
+  <entry name="SSP" term="Shared  Socio-economic  Pathway" wikidataID=""/>
+  <entry name="France" term="Franck  Lecocq" wikidataID=""/>
+  <entry name="GHG" term="greenhouse  gas" wikidataID=""/>
+  <entry name="ETSs" term="emissions  trading  systems" wikidataID=""/>
+  <entry name="NBS" term="nature-based solutions">
+    <raw wikidataID="Q2421934, Q74278659, Q56752602, Q56752590, Q56873279"/>
+  </entry>
+  <entry name="GHG" term="greenhouse  gas" wikidataID=""/>
+  <entry name="ETSs" term="emissions  trading  systems" wikidataID=""/>
+  <entry name="NBS" term="nature-based solutions">
+    <raw wikidataID="Q2421934, Q74278659, Q56752602, Q56752590, Q56873279"/>
+  </entry>
+  <entry name="ITUC" term="International Trade Union Confederation">
+    <raw wikidataID="Q1071706, Q5974948"/>
+  </entry>
+  <entry name="ILO" term="International Labour Organization">
+    <raw wikidataID="Q54129, Q29883540, Q29700241, Q100269536, Q111172886, Q100269543, Q64532154"/>
+  </entry>
+  <entry name="UNEP" term="UN Environmental Programme" wikidataID=""/>
+  <entry name="EU" term="European Trade Union Confederation" wikidataID="Q1377852"/>
+  <entry name="global" term="Global Union">
+    <raw wikidataID="Q5570909, Q3108971, Q47163025"/>
+  </entry>
+  <entry name="TUCA" term="Trade Union Confederation of the Americas" wikidataID="Q3356083"/>
+  <entry name="NDCs" term="nationally  determined  contributions" wikidataID=""/>
+  <entry name="SDPS" term="Shifting development pathways to increased sustainability" wikidataID=""/>
+  <entry name="SDGs" term="Sustainable  Development Goals" wikidataID=""/>
+  <entry name="NDCs" term="Nationally  Determined  Contributions" wikidataID=""/>
+  <entry name="GHG" term="Greenhouse  Gases" wikidataID=""/>
+  <entry name="GWPs" term="global warming potentials" wikidataID="Q57402965"/>
+  <entry name="BRs" term="biennial reports" wikidataID="Q66306895"/>
+  <entry name="BURs" term="biennial update reports" wikidataID=""/>
+  <entry name="BTRs" term="biennial transparency reports" wikidataID=""/>
+  <entry name="LCTPi" term="Low Carbon Technology Partnerships" wikidataID=""/>
+  <entry name="OGMP" term="Oil  and  Gas  Methane  Partnership" wikidataID=""/>
+  <entry name="LEDS" term="low-emissions development strategies" wikidataID=""/>
+  <entry name="CCS" term="carbon capture and sequestration">
+    <raw wikidataID="Q59595408, Q59599221, Q59597782, Q59638196"/>
+  </entry>
+  <entry name="CDR" term="carbon dioxide removal">
+    <raw wikidataID="Q30314404, Q56298528, Q59296188, Q59411018"/>
+  </entry>
+  <entry name="HFC" term="hydrofluorocarbon">
+    <raw wikidataID="Q1031943, Q59100158"/>
+  </entry>
+  <entry name="GWP" term="global warming potential">
+    <raw wikidataID="Q901028, Q57084968, Q57084755, Q57084921, Q57084776, Q57402965"/>
+  </entry>
+  <entry name="SDPS" term="shifting development pathways to increased sustainability" wikidataID=""/>
+  <entry name="LCDI" term="Low Carbon Development  Initiative" wikidataID=""/>
+  <entry name="IMP" term="Illustrative  Mitigation  Pathways" wikidataID=""/>
+  <entry name="SSP" term="Shared  Socio-economic  Pathway" wikidataID=""/>
+  <entry name="France" term="Franck  Lecocq" wikidataID=""/>
+  <entry name="GHG" term="greenhouse  gas" wikidataID=""/>
+  <entry name="ETSs" term="emissions  trading  systems" wikidataID=""/>
+  <entry name="NBS" term="nature-based solutions">
+    <raw wikidataID="Q2421934, Q74278659, Q56752602, Q56752590, Q56873279"/>
+  </entry>
+  <entry name="ITUC" term="International Trade Union Confederation">
+    <raw wikidataID="Q1071706, Q5974948"/>
+  </entry>
+  <entry name="ILO" term="International Labour Organization">
+    <raw wikidataID="Q54129, Q29883540, Q29700241, Q100269536, Q111172886, Q100269543, Q64532154"/>
+  </entry>
+  <entry name="UNEP" term="UN Environmental Programme" wikidataID=""/>
+  <entry name="EU" term="European Trade Union Confederation" wikidataID="Q1377852"/>
+  <entry name="global" term="Global Union">
+    <raw wikidataID="Q5570909, Q3108971, Q47163025"/>
+  </entry>
+  <entry name="TUCA" term="Trade Union Confederation of the Americas" wikidataID="Q3356083"/>
+  <entry name="ICIs" term="international  cooperative  initiatives" wikidataID=""/>
+</dictionary>

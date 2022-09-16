@@ -463,7 +463,7 @@ class EntityExtraction:
                 entry_element.attrib['name'] = name
                 entry_element.attrib['term'] = term
                 if len(wiki_lookup_list) == 0:
-                    entry_element.attrib['wikidataID'] = " "
+                    entry_element.attrib['wikidataID'] = ""
                 elif len(wiki_lookup_list) == 1:
                     entry_element.attrib['wikidataID'] = ", ".join(wiki_lookup_list)
                 else:
