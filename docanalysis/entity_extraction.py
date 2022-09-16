@@ -462,7 +462,13 @@ class EntityExtraction:
                 entry_element = etree.SubElement(dictionary_element, "entry")
                 entry_element.attrib['name'] = name
                 entry_element.attrib['term'] = term
-                entry_element.attrib['wikidataID'] = str(wiki_lookup_list)
+                if len(wiki_lookup_list) == 0:
+                    entry_element.attrib['wikidataID'] = " "
+                elif len(wiki_lookup_list) == 1:
+                    entry_element.attrib['wikidataID'] = ", ".join(wiki_lookup_list)
+                else:
+                    raw_element = etree.SubElement(entry_element, 'raw')
+                    raw_element.attrib['wikidataID'] = ", ".join(wiki_lookup_list)
             except Exception as e:
                 logging.error(f"Couldn't add {term} to amidict")
         xml_dict = self._etree_to_string(dictionary_element)
@@ -822,9 +828,9 @@ class EntityExtraction:
         for hit in result['search']:
             try:
                 if "scientific article" not in hit["description"]:
-                    hit_list.append(hit["url"])
+                    hit_list.append(hit["id"])
             except:
-                hit_list.append(hit["url"])
+                hit_list.append(hit["id"])
         return hit_list
 
 
