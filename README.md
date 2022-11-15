@@ -401,7 +401,7 @@ Creating a `venv`
 
 Activating `venv`
 ```
->> venv\Scripts\activate.bat
+>> source venv/bin/activate
 ```
 
 Refer the [official documentation](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) for more help. 
