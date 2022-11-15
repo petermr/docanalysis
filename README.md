@@ -6,6 +6,37 @@
 
 Besides the bespoke code, it uses [NLTK](https://www.nltk.org/) and other Python tools for many operations, and [spaCy](https://spacy.io/) or [scispaCy](https://allenai.github.io/scispacy/) for extraction and annotation of entities. Outputs summary data and word-dictionaries. 
 
+### Set up `venv`
+We recommend you create a virtual environment (`venv`) before installing `docanalysis` and that you activate the `venv` before each time you run `docanalysis`.
+
+#### Windows
+Creating a `venv`
+```
+>> mkdir docanalysis_demo
+>> cd docanalysis_demo
+>> python -m venv venv
+```
+
+Activating `venv`
+```
+>> venv\Scripts\activate.bat
+```
+
+#### MacOS
+Creating a `venv`
+```
+>> mkdir docanalysis_demo
+>> cd docanalysis_demo
+>> python3 -m venv venv
+```
+
+Activating `venv`
+```
+>> source venv/bin/activate
+```
+
+Refer the [official documentation](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) for more help. 
+
 ### Install `docanalysis`
 You can download `docanalysis` from PYPI. 
 ```
@@ -375,36 +406,7 @@ If you'd like to create a custom dictionary, you can find the steps, [here](http
      - Here's the list of NER labels [SpaCy's English model](https://spacy.io/models/en) provides:  
      `CARDINAL, DATE, EVENT, FAC, GPE, LANGUAGE, LAW, LOC, MONEY, NORP, ORDINAL, ORG, PERCENT, PERSON, PRODUCT, QUANTITY, TIME, WORK_OF_ART`
 
-### Set up `venv`
-We recommend you create a virtual environment (`venv`) before installing `docanalysis` and activate the `venv` every time you run `docanalysis`.
 
-#### Windows
-Creating a `venv`
-```
->> mkdir docanalysis_demo
->> cd docanalysis_demo
->> python -m venv venv
-```
-
-Activating `venv`
-```
->> venv\Scripts\activate.bat
-```
-
-#### MacOS
-Creating a `venv`
-```
->> mkdir docanalysis_demo
->> cd docanalysis_demo
->> python3 -m venv venv
-```
-
-Activating `venv`
-```
->> source venv/bin/activate
-```
-
-Refer the [official documentation](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) for more help. 
 ### Credits: 
 -  [Ayush Garg](https://github.com/ayush4921)
 -  [Shweata N. Hegde](https://github.com/ShweataNHegde/)
