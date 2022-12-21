@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <script type="text/javascript" src="eel.js"></script>
+
+    <title>Docanalysis GUI</title>
+  </head>
+  <body>
+    <div>
+      <button>Use an existing Corpus</button>
+    </div>
+    <br>
+    <div>
+      <input id="query">Query</input>
+      <input id="number">Number of papers</input>
+      <input id="path" type="file" webkitdirectory directory multiple/>
+    <button id="make_corpus" onclick="make_papers()">Make a Corpus</button>
+    </div>
+  </body>
+</html>
