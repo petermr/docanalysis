@@ -14,7 +14,7 @@ class Docanalysis:
     def __init__(self):
         """This function makes all the constants"""
         self.entity_extraction = EntityExtraction()
-        self.version = "0.1.9"
+        self.version = "0.2.1"
 
     def handle_logger_creation(self, args):
         """handles the logging on cml
@@ -37,10 +37,7 @@ class Docanalysis:
         if level == logging.DEBUG:
             tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
 
-        if args.logfile:
-            self.handle_logfile(args, level)
-        else:
-            coloredlogs.install(level=level, fmt='%(levelname)s: %(message)s')
+        coloredlogs.install(level=level, fmt='%(levelname)s: %(message)s')
 
     def handlecli(self):
         """Handles the command line interface using argparse"""
@@ -125,7 +122,7 @@ class Docanalysis:
 
         parser.add_argument(
             "--spacy_model",
-            default=False,
+            default="spacy",
             type=str,
             help="[NER] optional. Choose between spacy or scispacy models. Defaults to spacy",
         )
@@ -170,24 +167,31 @@ class Docanalysis:
         )
 
         parser.add_argument(
-            "-f",
-            "--logfile",
+            "--getmeta",
             default=False,
-            type=str,
-            help="saves log to specified file in output directory as well as printing to terminal",
+            action="store_true",
+            help="saves meta data to the output aswell",
         )
-
+        parser.add_argument(
+            "--seperate_rows",
+            default=False,
+            action="store_true",
+            help="Make new column for each entity",
+        )
         if len(sys.argv) == 1:
             parser.print_help(sys.stderr)
             sys.exit()
         args = parser.parse_args()
+        self.run(args)
+
+    def run(self, args):
         for arg in vars(args):
             if vars(args)[arg] == "False":
                 vars(args)[arg] = False
         self.handle_logger_creation(args)
         self.entity_extraction.extract_entities_from_papers(args.project_name, args.dictionary, search_sections=args.search_section, entities=args.entities, query=args.query, hits=args.hits,
                                                             run_pygetpapers=args.run_pygetpapers, make_section=args.make_section, removefalse=True,
-                                                            csv_name=args.output, make_ami_dict=args.make_ami_dict, spacy_model=args.spacy_model, html_path=args.html, synonyms=args.synonyms, make_json=args.make_json, search_html=args.search_html, extract_abb=args.extract_abb)
+                                                            csv_name=args.output, make_ami_dict=args.make_ami_dict, spacy_model=args.spacy_model, html_path=args.html, synonyms=args.synonyms, make_json=args.make_json, search_html=args.search_html, extract_abb=args.extract_abb, getmeta=args.getmeta, seperate_rows=args.seperate_rows)
 
 
 def main():

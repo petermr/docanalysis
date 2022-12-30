@@ -1,0 +1,16 @@
+{
+    "Docanalysis":{
+        "description": "DOCANALYSIS entity recognition tool",
+        "arguments": [
+            "--project_name",
+            "--output",
+            "--spacy_model"],
+        "inputs": [
+            {"name":"Project Name", "type":"DIRECTORY", "value":""},
+            {"name":"Output", "type":"DIRECTORY", "value":"output.csv"},
+            {"name":"spacy_model", "type":"STRING", "value":"spacy"}
+        ],
+        "pre_commands":["echo commands to execute before executing file"],
+        "post_commands":["echo commands to execute after executing file"]
+    }
+}

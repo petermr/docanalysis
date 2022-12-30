@@ -50,7 +50,7 @@ except ModuleNotFoundError:
     from abbreviations import schwartz_hearst
 
 
-#nlp_phrase = spacy.load("en_core_web_sm")
+# nlp_phrase = spacy.load("en_core_web_sm")
 
 CONFIG_SECTIONS = 'https://raw.githubusercontent.com/petermr/docanalysis/main/docanalysis/config/default_sections.json'
 CONFIG_AMI_DICT = 'https://raw.githubusercontent.com/petermr/docanalysis/main/docanalysis/config/default_dicts.json'
@@ -92,6 +92,13 @@ class EntityExtraction:
                 from spacy.cli import download
                 download('en_core_web_sm')
                 self.nlp = spacy.load('en_core_web_sm')
+        else:
+            try:
+                self.nlp = spacy.load(spacy_type)
+            except OSError:
+                logging.error(
+                    "Please install the model first using the links given at https://allenai.github.io/scispacy/")
+                return
 
     def dictionary_to_html(self, html_path):
         """Converts dictionary to html
@@ -110,7 +117,7 @@ class EntityExtraction:
 
     def extract_entities_from_papers(self, corpus_path, terms_xml_path, search_sections, entities, query=None, hits=30,
                                      run_pygetpapers=False, make_section=False, removefalse=True,
-                                     csv_name=False, make_ami_dict=False, spacy_model=False, html_path=False, synonyms=False, make_json=False, search_html=False, extract_abb=False):
+                                     csv_name=False, make_ami_dict=False, spacy_model=False, html_path=False, synonyms=False, make_json=False, search_html=False, extract_abb=False, getmeta=True, seperate_rows=False):
         """logic implementation (Q: how detailed should the description here be?)
 
         :param corpus_path: 
@@ -158,9 +165,10 @@ class EntityExtraction:
             logging.error('section papers using --make_sections before search')
         if spacy_model or csv_name or extract_abb or make_ami_dict:
             if search_html:
-                self.make_dict_with_parsed_document(document_type='html')
+                self.make_dict_with_parsed_document(
+                    document_type='html', getmeta=getmeta)
             else:
-                self.make_dict_with_parsed_document()
+                self.make_dict_with_parsed_document(getmeta=getmeta)
         if spacy_model:
             self.run_spacy_over_sections(self.sentence_dictionary, entities)
             self.remove_statements_not_having_xmldict_terms(
@@ -170,19 +178,18 @@ class EntityExtraction:
                 compiled_terms = self.get_terms_from_ami_xml(terms_xml_path[i])
                 self.add_if_file_contains_terms(
                     compiled_terms=compiled_terms, dict_with_parsed_xml=self.sentence_dictionary, searching=f'{i}')
+                if synonyms:
+                    synonyms_list = self.get_synonyms_from_ami_xml(
+                        terms_xml_path[i])
+                    self.add_if_file_contains_terms(
+                        compiled_terms=synonyms_list, dict_with_parsed_xml=self.sentence_dictionary, searching='has_synonyms')
+                    if html_path:
+                        self.dictionary_to_html(
+                            os.path.join(corpus_path, html_path))
                 if removefalse:
                     self.remove_statements_not_having_xmldict_terms(
                         dict_with_parsed_xml=self.sentence_dictionary, searching=f'{i}')
-            if synonyms:
-                synonyms_list = self.get_synonyms_from_ami_xml(terms_xml_path)
-                self.add_if_file_contains_terms(
-                    compiled_terms=synonyms_list, dict_with_parsed_xml=self.sentence_dictionary, searching='has_synonyms')
-                if removefalse:
-                    self.remove_statements_not_having_xmldict_terms(
-                        dict_with_parsed_xml=self.sentence_dictionary)
-                if html_path:
-                    self.dictionary_to_html(
-                        os.path.join(corpus_path, html_path))
+
         if extract_abb:
             self.abbreviation_search_using_sw(self.sentence_dictionary)
             abb_ami_dict_path = os.path.join(corpus_path, extract_abb)
@@ -195,8 +202,13 @@ class EntityExtraction:
         if csv_name:
             dict_with_parsed_xml_no_paragrph = self.remove_paragraph_form_parsed_xml_dict(
                 self.sentence_dictionary, "paragraph")
-            self.convert_dict_to_csv(
-                path=os.path.join(corpus_path, f'{csv_name}'), dict_with_parsed_xml=dict_with_parsed_xml_no_paragrph)
+            if seperate_rows:
+                self.convert_dict_to_csv_with_seperate_rows(
+                    path=os.path.join(corpus_path, f'{csv_name}'), dict_with_parsed_xml=dict_with_parsed_xml_no_paragrph, extract_abb=extract_abb)
+            else:
+                self.convert_dict_to_csv(
+                    path=os.path.join(corpus_path, f'{csv_name}'), dict_with_parsed_xml=dict_with_parsed_xml_no_paragrph)
+
         if make_json:
             dict_with_parsed_xml_no_paragrph = self.remove_paragraph_form_parsed_xml_dict(
                 self.sentence_dictionary, "paragraph")
@@ -265,7 +277,7 @@ class EntityExtraction:
                     "please make sure that you have selected only the supported sections: ACK, AFF, AUT, CON, DIS, ETH, FIG, INT, KEY, MET, RES, TAB, TIL")
         return self.all_paragraphs
 
-    def make_dict_with_parsed_document(self, document_type="xml"):
+    def make_dict_with_parsed_document(self, document_type="xml", getmeta=True):
         """creates dictionary with parsed xml or html
 
         :param document_type: type of file fed: xml or html. Defaults to "xml".
@@ -288,12 +300,26 @@ class EntityExtraction:
                 sentences = tokenize.sent_tokenize(paragraph_text)
                 for sentence in sentences:
                     self.sentence_dictionary[counter] = {}
+                    if getmeta:
+                        path = self.findpath('PMC', section_path)
+                        json_path = os.path.join(path, "eupmc_result.json")
+                        f = open(json_path)
+                        meta_data = json.load(f)
+                        self.sentence_dictionary[counter].update(meta_data)
                     self._make_dict_attributes(
                         counter, section, section_path, paragraph_text, sentence)
                     counter += 1
         logging.info(
             f"Found {len(self.sentence_dictionary)} sentences in the section(s).")
         return self.sentence_dictionary
+
+    def findpath(self, searchtext, filepath):
+        path = os.path.normpath(filepath)
+        while path != "":
+            path, folder = os.path.split(path)
+            if searchtext.lower() in folder.lower():
+                return os.path.join(path, folder)
+        return "Not found"
 
     def _make_dict_attributes(self, counter, section, section_path, paragraph_text, sentence):
         """
@@ -465,10 +491,12 @@ class EntityExtraction:
                 if len(wiki_lookup_list) == 0:
                     entry_element.attrib['wikidataID'] = ""
                 elif len(wiki_lookup_list) == 1:
-                    entry_element.attrib['wikidataID'] = ", ".join(wiki_lookup_list)
+                    entry_element.attrib['wikidataID'] = ", ".join(
+                        wiki_lookup_list)
                 else:
                     raw_element = etree.SubElement(entry_element, 'raw')
-                    raw_element.attrib['wikidataID'] = ", ".join(wiki_lookup_list)
+                    raw_element.attrib['wikidataID'] = ", ".join(
+                        wiki_lookup_list)
             except Exception as e:
                 logging.error(f"Couldn't add {term} to amidict")
         xml_dict = self._etree_to_string(dictionary_element)
@@ -689,7 +717,29 @@ class EntityExtraction:
                     "'", "").str.replace("'", "")
             except:
                 pass
-        df.to_csv(path, encoding='utf-8', line_terminator='\r\n')
+        df.to_csv(path, encoding='utf-8', line_terminator='\r\n', sep="\t")
+        logging.info(f"wrote output to {path}")
+
+    def convert_dict_to_csv_with_seperate_rows(self, path, dict_with_parsed_xml, extract_abb):
+        """Turns python dictionary into CSV using pandas
+
+            :param path: CSV file to write output
+            :type path: string
+            :param dict_with_parsed_xml: python dictionary that needs to be converted to csv
+            :type dict_with_parsed_xml: dict
+
+            """
+        df = pd.DataFrame(dict_with_parsed_xml)
+        df = df.T
+        print(df.head())
+        if extract_abb:
+            df = df.explode(
+                ['entities', 'labels', 'position_start', 'position_end', 'abbreviations',
+                 'abbreviations_longform', 'abbreviation_start', 'abbreviation_end'])
+        else:
+            df = df.explode(
+                ['entities', 'labels', 'position_start', 'position_end'])
+        df.to_csv(path, encoding='utf-8', line_terminator='\r\n', sep="\t")
         logging.info(f"wrote output to {path}")
 
     def remove_paragraph_form_parsed_xml_dict(self, dict_with_parsed_xml, key_to_remove):
