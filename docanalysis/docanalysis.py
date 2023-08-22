@@ -14,7 +14,7 @@ class Docanalysis:
     def __init__(self):
         """This function makes all the constants"""
         self.entity_extraction = EntityExtraction()
-        self.version = "0.1.9"
+        self.version = "0.2.0"
 
     def handle_logger_creation(self, args):
         """handles the logging on cml
@@ -120,7 +120,6 @@ class Docanalysis:
             type=str, nargs='*',
             help="[NER] entities to extract. Default (ALL). Common entities "
             "SpaCy: GPE, LANGUAGE, ORG, PERSON (for additional ones check: ); "
-            "SciSpaCy: CHEMICAL, DISEASE",
         )
 
         parser.add_argument(

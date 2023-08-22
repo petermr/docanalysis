@@ -68,24 +68,16 @@ class EntityExtraction:
         self.spacy_model = 'spacy'
         self.nlp = None
 
-    def switch_spacy_versions(self, spacy_type):
-        """Method to toggle between spacy and scispacy
+    def download_spacy(self, spacy_type):
+        """Download or load spacy
 
-        :param spacy_type: "spacy" or "scispacy"
+        :param spacy_type: "spacy
         :type spacy_type: string
 
         """
         logging.info(f'Loading {spacy_type}')
-        if spacy_type == "scispacy":
-            from scispacy.abbreviation import AbbreviationDetector
-            try:
-                self.nlp = spacy.load('en_ner_bc5cdr_md')
-            except OSError:
-                install(
-                    'https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.4.0/en_ner_bc5cdr_md-0.4.0.tar.gz')
-                self.nlp = spacy.load('en_ner_bc5cdr_md')
-            self.nlp.add_pipe("abbreviation_detector")
-        elif spacy_type == "spacy":
+
+        if spacy_type == "spacy":
             try:
                 self.nlp = spacy.load('en_core_web_sm')
             except OSError:
@@ -356,14 +348,11 @@ class EntityExtraction:
         :type entities_names: list
 
         """
-        self.switch_spacy_versions(self.spacy_model)
+        self.download_spacy(self.spacy_model)
         for paragraph in tqdm(dict_with_parsed_xml):
             if len(dict_with_parsed_xml[paragraph]['sentence']) > 0:
                 doc = self.nlp(dict_with_parsed_xml[paragraph]['sentence'])
                 entities, labels, position_end, position_start, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end = self._make_required_lists()
-                if self.spacy_model == "scispacy":
-                    self._get_abbreviations(
-                        doc, abbreviations, abbreviations_longform, abbreviation_start, abbreviation_end)
                 self._get_entities(entities_names, doc, entities,
                                    labels, position_end, position_start)
                 self._add_lists_to_dict(dict_with_parsed_xml[paragraph], entities, labels, position_end,

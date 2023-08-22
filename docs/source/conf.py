@@ -13,7 +13,7 @@ sys.path.append(os.path.abspath('../..'))
 project = 'Docanalysis'
 copyright = '2022, Ayush Garg, Shweata N Hedge'
 author = 'Ayush Garg, Shweata N Hedge'
-release = '0.1.9'
+release = '0.2.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
