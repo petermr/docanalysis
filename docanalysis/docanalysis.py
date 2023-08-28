@@ -14,7 +14,7 @@ class Docanalysis:
     def __init__(self):
         """This function makes all the constants"""
         self.entity_extraction = EntityExtraction()
-        self.version = "0.2.1"
+        self.version = "0.2.4"
 
     def handle_logger_creation(self, args):
         """handles the logging on cml
@@ -126,7 +126,7 @@ class Docanalysis:
             "--spacy_model",
             default=False,
             type=str,
-            help="[NER] optional. Choose between spacy or scispacy models. Defaults to spacy",
+            help="[NER] optional.",
         )
 
         parser.add_argument(

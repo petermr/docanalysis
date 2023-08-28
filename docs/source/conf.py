@@ -11,9 +11,9 @@ import sphinx_rtd_theme
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.append(os.path.abspath('../..'))
 project = 'Docanalysis'
-copyright = '2022, Ayush Garg, Shweata N Hedge'
-author = 'Ayush Garg, Shweata N Hedge'
-release = '0.2.1'
+copyright = '2022, Ayush Garg, Shweata N Hegde'
+author = 'Ayush Garg, Shweata N Hegde'
+release = '0.2.4'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
