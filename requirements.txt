@@ -14,4 +14,4 @@ tkinterweb>=3.10.7
 tqdm>=4.62.3
 yake>=0.4.8
 sphinx_rtd_theme>=1.0.0
-
+py4ami
