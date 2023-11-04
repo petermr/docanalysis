@@ -398,8 +398,8 @@ class FileLib:
             pydict = ast.literal_eval(f.read())
         return pydict
 
-#    @classmethod
-#    def punct2underscore(cls, text):
+    @classmethod
+    def punct2underscore(cls, text):
         """replace all ASCII punctuation except '.' , '-', '_' by '_'
         
         for filenames
@@ -407,15 +407,15 @@ class FileLib:
         :param text: 
 
         """
-
-#        from py4ami.text_lib import TextUtil
+       # from py4ami.text_lib import TextUtil
         # this is non-trivial https://stackoverflow.com/questions/10017147/removing-a-list-of-characters-in-string
 
-#        non_file_punct = '\t \n{}!@#$%^&*()[]:;\'",|\\~+=/`'
+        non_file_punct = '\t \n{}!@#$%^&*()[]:;\'",|\\~+=/`'
         # [unicode(x.strip()) if x is not None else '' for x in row]
 
-#        text0 = TextUtil.replace_chars(text, non_file_punct, "_")
-#        return text0
+        #text0 = TextUtil.replace_chars(text, non_file_punct, "_")
+        text0 = ''.join([c if c not in non_file_punct else "_" for c in text])
+        return text0
 
     @classmethod
     def get_suffix(cls, file):

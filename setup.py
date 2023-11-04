@@ -22,7 +22,7 @@ requirements = ['abbreviations', 'beautifulsoup4==4.10.0', 'braceexpand==0.1.7',
 
 setup(
     name='docanalysis',
-    version="0.2.6",
+    version="0.2.7",
     description='extract structured information from ethics paragraphs',
     long_description_content_type='text/markdown',
     long_description=readme,
