@@ -190,7 +190,7 @@ class Docanalysis:
                                                             csv_name=args.output, make_ami_dict=args.make_ami_dict, spacy_model=args.spacy_model, html_path=args.html, synonyms=args.synonyms, make_json=args.make_json, search_html=args.search_html, extract_abb=args.extract_abb)
 
 
-def main():
+def mmainain():
     """Runs the CLI"""
     calldocanalysis = Docanalysis()
     calldocanalysis.handlecli()

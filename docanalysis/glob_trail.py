@@ -18,6 +18,11 @@ RES = ['*result*/*/*_title.xml', '*result*/*/*_p.xml'] # not sure if we should u
 TAB = ['*table*.xml']
 TIL = ['*article-meta/*title-group.xml']
 
+# climate
+EXS = ['*executive_summary.xml', "*executive_summary/*.xml"]
+FAQ = ['*faq.xml', '*faq/*.xml']
+
+
 # glob
 path = os.getcwd()
 cproj = 'corpus/asp_nat_products'
