@@ -1,3 +1,4 @@
+For updated tutorial, please check the [Wiki](https://github.com/petermr/docanalysis/wiki/docanalysis-Tutorial) page.
 ## docanalysis 
 `docanalysis` is a Command Line Tool that ingests corpora [(CProjects)](https://github.com/petermr/tigr2ess/blob/master/getpapers/TUTORIAL.md#cproject-and-ctrees) and carries out text-analysis of documents, including
 - sectioning
