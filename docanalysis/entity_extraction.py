@@ -678,7 +678,7 @@ class EntityExtraction:
                     "'", "").str.replace("'", "")
             except:
                 pass
-        df.to_csv(path, encoding='utf-8', line_terminator='\r\n')
+        df.to_csv(path, encoding='utf-8', lineterminator='\r\n')
         logging.info(f"wrote output to {path}")
 
     def remove_paragraph_form_parsed_xml_dict(self, dict_with_parsed_xml, key_to_remove):

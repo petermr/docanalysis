@@ -11,11 +11,11 @@ import os
 with open('README.md', encoding='utf-8') as readme_file:
     readme = readme_file.read()
 
-requirements = ['abbreviations', 'beautifulsoup4==4.10.0', 'braceexpand==0.1.7', 'coloredlogs==15.0.1', 'ConfigArgParse==1.5.3', 'lxml==4.7.1', 'nltk==3.6.7', 'pandas==1.3.4',
+requirements = ['abbreviations', 'beautifulsoup4==4.10.0', 'braceexpand==0.1.7', 'coloredlogs==15.0.1', 'ConfigArgParse==1.5.3', 'lxml>=4.8.0', 'nltk==3.6.7', 'pandas>=2.1.0',
                 'pygetpapers',
                 'pytest==6.2.5',
                 'setuptools==60.3.1',
-                'spacy==3.0.7',
+                'spacy>=3.8,<3.10',
                 'tkinterweb==3.10.7',
                 'tqdm==4.62.3'
                 ]
