@@ -1,4 +1,4 @@
-from distutils.log import error
+from logging import error
 import os
 import logging
 import requests
